@@ -320,15 +320,15 @@ Repository: https://github.com/inertia186/radiator
 
 ## First tutorial
 
-(none, this is part 1)
+[Using Steem-API with Ruby Part 1](https://busy.org/@krischik/using-steem-api-with-ruby-part-1)
 
-## Latest tutorial
+## Previous tutorial
 
-(none, this is part 1)
+[Using Steem-API with Ruby Part 1](https://busy.org/@krischik/using-steem-api-with-ruby-part-1)
+
+![Steemit_Ruby.jpg](https://ipfs.busy.org/ipfs/Qmb2hiQCAWohe59NoRHxZXE4X5ok29ZRmNETGHE8qZdwQR)
 
 <center> ![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png) </center>
-
-utopian-io tutorials ruby steem-api programming
 
 <!-- vim: set wrap tabstop=8 shiftwidth=3 softtabstop=3 noexpandtab : -->
 <!-- vim: set textwidth=0 filetype=markdown foldmethod=marker nospell : -->
