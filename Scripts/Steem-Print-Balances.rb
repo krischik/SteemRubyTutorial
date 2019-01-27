@@ -16,60 +16,80 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the steem-ruby gem. This is only needed if you have
+# use the "steem.rb" file from the radiator gem. This is only needed if you have
 # both steem-api and radiator installed.
 
-gem "steem-ruby", :require => "steem"
+gem "radiator", :require => "steem"
 
 require 'pp'
 require 'colorize'
-require 'steem'
-
-$balance                   = 0.0
-$savings_balance           = 0.0
-$sbd_balance               = 0.0
-$savings_sbd_balance       = 0.0
-$vesting_shares            = 0.0
-$delegated_vesting_shares  = 0.0
-$received_vesting_shares   = 0.0
-$actual_vesting            = 0.0
+require 'radiator'
 
 ##
-# steem-ruby comes with a helpful Steem::Type::Amount class to handle account
-# balances. However Steem::Type::Amount won't let you access the actual amount
-# as float which is quite cumbersome when you want to make calculations.
+# steem-ruby comes with a helpful Radiator::Type::Amount class to handle
+# account balances. However Radiator::Type::Amount won't let you access any
+# attributes which makes using the class quite cumbersome.
 #
-# This class expands Steem::Type::Amount to add the missing functions.
+# This class expands Radiator::Type::Amount to add the missing functions
+# making it super convenienent.
 #
-class Amount < Steem::Type::Amount
+class Amount < Radiator::Type::Amount
+   ##
+   # add the missing attribute reader.
+   #
+   attr_reader :amount, :precision, :asset, :value
+
    ##
    # return amount as float to be used for calculations
+   #
+   # @return Float
+   #     actual amount as float
    #
    def to_f
      return @amount.to_f
    end # to_f
 
    ##
-   # operator to add two balances for the users convenience 
+   # operator to add two balances for the users convenience
    #
-   def +(Right)
-     return @amount.to_f + Right.to_f
+   # @param Numeric|Amount
+   #     amount to add
+   # @return Float
+   #     result of addition        
+   #
+   def +(right)
+      return (if right.is_a?(Numeric) then
+         @amount.to_f + right
+      else
+         @amount.to_f + right.to_f
+      end)
    end
 
    ##
    # operator to subtract two balances for the users convenience
    #
-   def -(Right)
-     return @amount.to_f + Right.to_f
+   # @param Numeric|Amount
+   #     amount to subtract
+   # @return Float
+   #     result of subtraction        
+   #
+   def -(right)
+      return (if right.is_a?(Numeric) then
+         @amount.to_f - right
+      else
+         @amount.to_f - right.to_f
+      end)
    end
 end # Amount
 
 ##
-# 
-def Print_Account_Balances (Accounts)
-   Accounts.each do |account|
-      puts ("Account: " + account.name).colorize(:blue)
-
+# print account informations for an array of accounts
+#
+# @param array accounts 
+#     the accounts to print
+#
+def Print_Account_Balances (accounts)
+   accounts.each do |account|
       # create amount instances for balances
 
       _balance                   = Amount.new account.balance
@@ -79,8 +99,9 @@ def Print_Account_Balances (Accounts)
       _vesting_shares            = Amount.new account.vesting_shares
       _delegated_vesting_shares  = Amount.new account.delegated_vesting_shares
       _received_vesting_shares   = Amount.new account.received_vesting_shares
-      _actual_vesting            = _vesting_shares - _delegated_vesting_shares + _received_vesting_shares
+      _actual_vesting            = _vesting_shares - (_delegated_vesting_shares + _received_vesting_shares)
 
+      puts ("Account: " + account.name).colorize(:blue)
       puts "  Steem           = %1$15.3f %2$s" % [_balance.to_f,                  _balance.asset]
       puts "  Steem Savings   = %1$15.3f %2$s" % [_savings_balance.to_f,          _savings_balance.asset]
       puts "  SBD             = %1$15.3f %2$s" % [_sbd_balance.to_f,              _sbd_balance.asset]
@@ -89,15 +110,6 @@ def Print_Account_Balances (Accounts)
       puts "  Delegated Steem = %1$18.6f %2$s" % [_delegated_vesting_shares.to_f, _delegated_vesting_shares.asset]
       puts "  Received Steem  = %1$18.6f %2$s" % [_received_vesting_shares.to_f,  _received_vesting_shares.asset]
       puts "  Actual Power    = %1$18.6f VESTS" % _actual_vesting
-
-      $balance                   = $balance                  + _balance                  
-      $savings_balance           = $savings_balance          + _savings_balance          
-      $sbd_balance               = $sbd_balance              + _sbd_balance              
-      $savings_sbd_balance       = $savings_sbd_balance      + _savings_sbd_balance      
-      $vesting_shares            = $vesting_shares           + _vesting_shares           
-      $delegated_vesting_shares  = $delegated_vesting_shares + _delegated_vesting_shares 
-      $received_vesting_shares   = $received_vesting_shares  + _received_vesting_shares  
-      $actual_vesting            = $actual_vesting           + _actual_vesting           
    end
 
    return
@@ -105,10 +117,10 @@ end # Print_Account_Balances
 
 if ARGV.length == 0 then
    puts """
-Steem-Dump-Balances — Dump account balances.
+Steem-Print-Balances — Print account balances.
 
 Usage:
-   Steem-Dump-Balances accountname …
+   Steem-Print-Balances accountname …
 
 """
 else
@@ -118,27 +130,25 @@ else
 
    # create instance to the steem database API
 
-   Database_Api = Steem::DatabaseApi.new
+   Database_Api = Radiator::DatabaseApi.new
 
    # request account informations from the Steem database and print out
-   # the accounts found using pretty print (pp) or print out error
+   # the accounts balances found using a new function or print out error
    # informations when an error occurred.
 
-   Database_Api.find_accounts(accounts: Account_Names) do |result|
-      Accounts = result.accounts
+   Result = Database_Api.get_accounts(Account_Names)
 
-      if Accounts.length == 0 then
-         puts "No accounts found.".yellow
-      else
-         Print_Account_Balances Accounts
-      end
-   rescue => error
+   if Result.key?('error') then
       puts "Error reading accounts:".red
-      pp error
+      pp Result.error
+   elsif Result.result.length == 0 then
+      puts "No accounts found.".yellow
+   else
+      Print_Account_Balances Result.result
    end
 end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
 # vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
-# vim: spell spelllang=en_gb fileencoding=utf-8 :
+# vim: set spell spelllang=en_gb fileencoding=utf-8 :
