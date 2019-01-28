@@ -1,6 +1,5 @@
 # Using Steem-API with Ruby Part 1
 
-![Steemit_Ruby.jpg](https://steemitimages.com/500x270/http://ipfs.busy.org/ipfs/Qmb2hiQCAWohe59NoRHxZXE4X5ok29ZRmNETGHE8qZdwQR)
 
 ## Repository
 

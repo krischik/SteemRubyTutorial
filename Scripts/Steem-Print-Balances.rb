@@ -31,7 +31,7 @@ require 'radiator'
 # attributes which makes using the class quite cumbersome.
 #
 # This class expands Radiator::Type::Amount to add the missing functions
-# making it super convenienent.
+# making it super convenient.
 #
 class Amount < Radiator::Type::Amount
    ##
@@ -42,7 +42,7 @@ class Amount < Radiator::Type::Amount
    ##
    # return amount as float to be used for calculations
    #
-   # @return Float
+   # @return [Float]
    #     actual amount as float
    #
    def to_f
@@ -52,9 +52,9 @@ class Amount < Radiator::Type::Amount
    ##
    # operator to add two balances for the users convenience
    #
-   # @param Numeric|Amount
+   # @param [Numeric|Amount]
    #     amount to add
-   # @return Float
+   # @return [Float]
    #     result of addition        
    #
    def +(right)
@@ -68,9 +68,9 @@ class Amount < Radiator::Type::Amount
    ##
    # operator to subtract two balances for the users convenience
    #
-   # @param Numeric|Amount
+   # @param [Numeric|Amount]
    #     amount to subtract
-   # @return Float
+   # @return [Float]
    #     result of subtraction        
    #
    def -(right)
@@ -83,12 +83,12 @@ class Amount < Radiator::Type::Amount
 end # Amount
 
 ##
-# print account informations for an array of accounts
+# print account information for an array of accounts
 #
-# @param array accounts 
-#     the accounts to print
+# @param [Array<Object>] accounts
+#     the accounts to print#
 #
-def Print_Account_Balances (accounts)
+def print_account_balances (accounts)
    accounts.each do |account|
       # create amount instances for balances
 
@@ -99,7 +99,14 @@ def Print_Account_Balances (accounts)
       _vesting_shares            = Amount.new account.vesting_shares
       _delegated_vesting_shares  = Amount.new account.delegated_vesting_shares
       _received_vesting_shares   = Amount.new account.received_vesting_shares
+
+      # calculate actual vesting by adding and subtracting delegation.
+
       _actual_vesting            = _vesting_shares - (_delegated_vesting_shares + _received_vesting_shares)
+
+      # pretty print out the balances. Note that for a quick printout
+      # Radiator::Type::Amount provides a simple to_s method. But this method
+      # won't align the decimal point
 
       puts ("Account: " + account.name).colorize(:blue)
       puts "  Steem           = %1$15.3f %2$s" % [_balance.to_f,                  _balance.asset]
@@ -120,7 +127,7 @@ if ARGV.length == 0 then
 Steem-Print-Balances — Print account balances.
 
 Usage:
-   Steem-Print-Balances accountname …
+   Steem-Print-Balances account_name …
 
 """
 else
@@ -132,9 +139,9 @@ else
 
    Database_Api = Radiator::DatabaseApi.new
 
-   # request account informations from the Steem database and print out
+   # request account information from the Steem database and print out
    # the accounts balances found using a new function or print out error
-   # informations when an error occurred.
+   # information when an error occurred.
 
    Result = Database_Api.get_accounts(Account_Names)
 
@@ -144,7 +151,7 @@ else
    elsif Result.result.length == 0 then
       puts "No accounts found.".yellow
    else
-      Print_Account_Balances Result.result
+      print_account_balances Result.result
    end
 end
 

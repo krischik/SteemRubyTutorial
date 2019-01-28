@@ -30,7 +30,7 @@ if ARGV.length == 0 then
 Steem-Dump-Accounts — Dump account infos from Steem database
 
 Usage:
-   Steem-Dump-Accounts accountname …
+   Steem-Dump-Accounts account_name …
 
 """
 else
@@ -42,9 +42,9 @@ else
 
    Database_Api = Steem::DatabaseApi.new
 
-   # request account informations from the Steem database and print out
+   # request account information from the Steem database and print out
    # the accounts found using pretty print (pp) or print out error
-   # informations when an error occurred.
+   # information when an error occurred.
 
    Database_Api.find_accounts(accounts: Account_Names) do |result|
       Accounts = result.accounts

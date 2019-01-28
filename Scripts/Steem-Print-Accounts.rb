@@ -30,7 +30,7 @@ if ARGV.length == 0 then
 Steem-Print-Accounts — Print account infos from Steem database
 
 Usage:
-   Steem-Print-Accounts accountname …
+   Steem-Print-Accounts account_name …
 
 """
 else
@@ -42,9 +42,9 @@ else
 
    Database_Api = Radiator::DatabaseApi.new
 
-   # request account informations from the steem database and print out
+   # request account information from the steem database and print out
    # the accounts found using pretty print (pp) or print out error
-   # informations when an error occurred.
+   # information when an error occurred.
 
    Result = Database_Api.get_accounts(Account_Names)
 
