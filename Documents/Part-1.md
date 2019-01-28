@@ -341,4 +341,4 @@ https://github.com/krischik/SteemRubyTutorial
 
 <!-- vim: set wrap tabstop=8 shiftwidth=3 softtabstop=3 noexpandtab : -->
 <!-- vim: set textwidth=0 filetype=markdown foldmethod=marker nospell : -->
-<!-- vim: spell spelllang=en_gb fileencoding=utf-8 -->
+<!-- vim: set spell spelllang=en_gb fileencoding=utf-8 : -->

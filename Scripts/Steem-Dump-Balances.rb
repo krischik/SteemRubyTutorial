@@ -16,8 +16,9 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the steem-ruby gem. This is only needed if you have
-# both steem-api and radiator installed.
+# use the "steem.rb" file from the steem-ruby gem. This is
+# only needed if you have both steem-api and radiator
+# installed.
 
 gem "steem-ruby", :require => "steem"
 
@@ -26,11 +27,13 @@ require 'colorize'
 require 'steem'
 
 ##
-# steem-ruby comes with a helpful Steem::Type::Amount class to handle account
-# balances. However Steem::Type::Amount won't let you access the actual amount
-# as float which is quite cumbersome when you want to make calculations.
+# steem-ruby comes with a helpful Steem::Type::Amount class
+# to handle account balances. However Steem::Type::Amount
+# won't let you access the actual amount as float which is
+# quite cumbersome when you want to make calculations.
 #
-# This class expands Steem::Type::Amount to add the missing functions.
+# This class expands Steem::Type::Amount to add the missing
+# functions.
 #
 class Amount < Steem::Type::Amount
    ##
@@ -60,7 +63,8 @@ class Amount < Steem::Type::Amount
    end
 
    ##
-   # operator to subtract two balances for the users convenience
+   # operator to subtract two balances for the users
+   # convenience
    #
    # @param [Numeric|Amount]
    #     amount to subtract
@@ -84,7 +88,8 @@ end # Amount
 #
 def print_account_balances (accounts)
    accounts.each do |account|
-      # create amount instances for each balance
+      # create an amount instances for each balance to be
+      # used for further processing
 
       _balance                   = Amount.new account.balance
       _savings_balance           = Amount.new account.savings_balance
@@ -98,9 +103,10 @@ def print_account_balances (accounts)
 
       _actual_vesting            = _vesting_shares - (_delegated_vesting_shares + _received_vesting_shares)
 
-      # pretty print out the balances. Note that for a quick printout
-      # Steem::Type::Amount provides a simple to_s method. But this method
-      # won't align the decimal point
+      # pretty print out the balances. Note that for a
+      # quick printout Steem::Type::Amount provides a
+      # simple to_s method. But this method won't align the
+      # decimal point
 
       puts ("Account: " + account.name).colorize(:blue)
       puts "  Steem           = %1$15.3f %2$s" % [_balance.to_f,                  _balance.asset]
@@ -133,9 +139,10 @@ else
 
    Database_Api = Steem::DatabaseApi.new
 
-   # request account information from the Steem database and print out
-   # the accounts balances found using a new function or print out error
-   # information when an error occurred.
+   # request account information from the Steem database
+   # and print out the accounts balances found using a new
+   # function or print out error information when an error
+   # occurred.
 
    Database_Api.find_accounts(accounts: Account_Names) do |result|
       Accounts = result.accounts
