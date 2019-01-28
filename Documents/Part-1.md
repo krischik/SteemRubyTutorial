@@ -1,6 +1,5 @@
 # Using Steem-API with Ruby Part 1
 
-![Steemit_Ruby.jpg](https://steemitimages.com/500x270/http://ipfs.busy.org/ipfs/Qmb2hiQCAWohe59NoRHxZXE4X5ok29ZRmNETGHE8qZdwQR)
 
 ## Repository
 
@@ -342,4 +341,4 @@ https://github.com/krischik/SteemRubyTutorial
 
 <!-- vim: set wrap tabstop=8 shiftwidth=3 softtabstop=3 noexpandtab : -->
 <!-- vim: set textwidth=0 filetype=markdown foldmethod=marker nospell : -->
-<!-- vim: spell spelllang=en_gb fileencoding=utf-8 -->
+<!-- vim: set spell spelllang=en_gb fileencoding=utf-8 : -->
