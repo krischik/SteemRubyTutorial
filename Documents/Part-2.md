@@ -1,4 +1,5 @@
 # Using Steem-API with Ruby Part 2
+
 utopian-io tutorials ruby steem-api programming
 
 ![Steemit_Ruby.jpg](https://steemitimages.com/500x270/http://ipfs.busy.org/ipfs/Qmb2hiQCAWohe59NoRHxZXE4X5ok29ZRmNETGHE8qZdwQR)
@@ -13,6 +14,7 @@ utopian-io tutorials ruby steem-api programming
 
 * Project Name: Radiator
 * Repository: [https://github.com/inertia186/radiator](https://github.com/inertia186/radiator)
+* Official Tutorial: [https://developers.steem.io/tutorials-ruby/getting_started](https://developers.steem.io/tutorials-ruby/getting_started)
 
 ## What Will I Learn?
 
@@ -23,13 +25,11 @@ This tutorial shows how to interact with the Steem blockchain and Steem database
 
 Since both APIs have advantages and disadvantages I have provided sample code for both APIs so you can decide which is more suitable for you.
 
-In this 2nd part you learn the use of the classes `Steem::Type::Amount` and `Radiator::Type::Amount` and how to handle account balaces using them.
+In this 2nd part you learn the use of the classes `Steem::Type::Amount` and `Radiator::Type::Amount` and how to handle account balances using them.
 
 ## Requirements
 
-You should have basic knowledge of Ruby programming and have an up to date ruby installed on your computer. If there is anything not clear you can ask in the comments.
-
-In order to use the provided sample you need to install at least Ruby 2.5 and the following ruby gems:
+You should have basic knowledge of Ruby programming you need to install at least Ruby 2.5 as well as the following ruby gems:
 
 ```sh
 gem install bundler
@@ -37,6 +37,8 @@ gem install colorize
 gem install steem-ruby
 gem install radiator
 ```
+
+If there is anything not clear you can ask in the comments.
 
 **Note:** Both steem-ruby and radiator provide a file called `steem.rb`. This means that:
 
@@ -53,52 +55,55 @@ In this second part of the tutorial I demonstrate how to print out account balan
 
 As mentioned there will be two examples showing the differences. Both `…::Amount` classes have there weaknesses which I compensate by introducing an extended `Amount` class making the rest of the code identical.
 
+You might notice that Steem Power is output in VESTS. In a future part I will show you how to convert VEST value into STEEM value.
+
 ## Implementation using steem-ruby
 
-Check out the comments in the sample code for more details. 
+Steem-ruby keeps balance data in low level structures which is rather cumbersome to use. Here an example:
 
-Hint: opening  [Steem-Dump-Balances.rb on GitHub](https://github.com/krischik/SteemRubyTutorial/blob/feature/Part2/Scripts/Steem-Dump-Balances.rb) will give you a nice display with syntax highlight.
+```
+  "sbd_balance"=>{"amount"=>"8716549", "precision"=>3, "nai"=>"@@000000013"},
+```
+
+The constructor `Steem::Type::Amount` class will parse the structure for you and make the data within more accessible and printable. Let's look in detail how to use `Steem::Type::Amount`:
+
+-----
+
+Make the script executable under Unix. Of course you need to add the correct path to your ruby executable.
 
 ```ruby
+#!/opt/local/bin/ruby
+```
 
-# use the "steem.rb" file from the steem-ruby gem. This is
-# only needed if you have both steem-api and radiator
-# installed.
+Use the "steem.rb" file from the steem-ruby gem. This is only needed if you have both steem-api and radiator installed.
 
+```ruby
 gem "steem-ruby", :require => "steem"
 
 require 'pp'
 require 'colorize'
 require 'steem'
+```
 
-##
-# steem-ruby comes with a helpful Steem::Type::Amount class
-# to handle account balances. However Steem::Type::Amount
-# won't let you access the actual amount as float which is
-# quite cumbersome when you want to make calculations.
-#
-# This class expands Steem::Type::Amount to add the missing
-# functions.
-#
+Steem-ruby comes with a helpful `Steem::Type::Amoun` class to handle account balances. However `Steem::Type::Amoun` won't let you access the actual amount as float which is quite cumbersome when you want to make calculations.
+
+This class expands `Steem::Type::Amoun` to add the missing functions.
+
+```ruby
 class Amount < Steem::Type::Amount
-   ##
-   # return amount as float to be used for calculations
-   #
-   # @return [Float]
-   #     actual amount as float
-   #
+```
+
+Return amount as float to be used for calculations
+
+```ruby
    def to_f
      return @amount.to_f
    end # to_f
+```
+  
+Operator to add two balances for the users convenience
 
-   ##
-   # operator to add two balances for the users convenience
-   #
-   # @param [Numeric|Amount]
-   #     amount to add
-   # @return [Float]
-   #     result of addition        
-   #
+```ruby
    def +(right)
       return (if right.is_a?(Numeric) then
          @amount.to_f + right
@@ -106,16 +111,11 @@ class Amount < Steem::Type::Amount
          @amount.to_f + right.to_f
       end)
    end
+```
 
-   ##
-   # operator to subtract two balances for the users
-   # convenience
-   #
-   # @param [Numeric|Amount]
-   #     amount to subtract
-   # @return [Float]
-   #     result of subtraction        
-   #
+Operator to subtract two balances for the users convenience
+
+```ruby
    def -(right)
       return (if right.is_a?(Numeric) then
          @amount.to_f - right
@@ -124,18 +124,18 @@ class Amount < Steem::Type::Amount
       end)
    end
 end # Amount
+```
 
-##
-# print account information for an array of accounts
-#
-# @param [Array<>] accounts
-#     the accounts to print
-#
+Print account information for an array of accounts
+
+```ruby
 def print_account_balances (accounts)
    accounts.each do |account|
-      # create an amount instances for each balance to be
-      # used for further processing
+```
 
+Create an amount instances for each balance to be used for further processing
+
+```ruby
       _balance                   = Amount.new account.balance
       _savings_balance           = Amount.new account.savings_balance
       _sbd_balance               = Amount.new account.sbd_balance
@@ -143,15 +143,17 @@ def print_account_balances (accounts)
       _vesting_shares            = Amount.new account.vesting_shares
       _delegated_vesting_shares  = Amount.new account.delegated_vesting_shares
       _received_vesting_shares   = Amount.new account.received_vesting_shares
+```
 
-      # calculate actual vesting by adding and subtracting delegation.
+Calculate actual vesting by adding and subtracting delegation.
 
+```ruby
       _actual_vesting            = _vesting_shares - (_delegated_vesting_shares + _received_vesting_shares)
+```
 
-      # pretty print out the balances. Note that for a quick printout
-      # Steem::Type::Amount provides a simple to_s method. But this method
-      # won't align the decimal point
+Pretty print out the balances. Note that for a quick printout Steem::Type::Amount provides a simple to_s method. But this method won't align the decimal point
 
+```ruby
       puts ("Account: " + account.name).colorize(:blue)
       puts "  Steem           = %1$15.3f %2$s" % [_balance.to_f,                  _balance.asset]
       puts "  Steem Savings   = %1$15.3f %2$s" % [_savings_balance.to_f,          _savings_balance.asset]
@@ -175,27 +177,34 @@ Usage:
 
 """
 else
-   # read arguments from command line
+```
 
+Read arguments from command line
+
+```ruby
    Account_Names = ARGV
+```
 
-   # create instance to the steem database API
+Create instance to the steem database API
 
+```ruby
    Database_Api = Steem::DatabaseApi.new
+```
 
-   # request account information from the Steem database
-   # and print out the accounts balances found using a new
-   # function or print out error information when an error
-   # occurred.
+Request account information from the Steem database and print out the accounts balances found using a new function or print out error information when an error occurred.
 
+```ruby
    Database_Api.find_accounts(accounts: Account_Names) do |result|
       Accounts = result.accounts
 
       if Accounts.length == 0 then
          puts "No accounts found.".yellow
       else
-         # print out the actual account balances.
+```
 
+Print out the actual account balances.
+
+```ruby
          print_account_balances Accounts
       end
    rescue => error
@@ -204,6 +213,9 @@ else
    end
 end
 ```
+-----
+
+**Hint:** Follow this link on Github for the complete script with syntax highlighting: [Steem-Dump-Balances.rb on GitHub](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Balances.rb).
 
 The output of the command (for the steem account) looks like this:
 
@@ -211,56 +223,57 @@ The output of the command (for the steem account) looks like this:
 
 ## Steem-Print-Accounts.rb using radiator
 
-[Steem-Print-Balances.rb on GitHub](https://github.com/krischik/SteemRubyTutorial/blob/feature/Part2/Scripts/Steem-Print-Balances.rb)
+Radiator keeps the amount data inside a string which nice for printing but still cumbersome for any further processing:
 
-Check out the comments in the sample code for more details.
+```
+  "sbd_balance"=>"8716.549 SBD",
+```
 
-Hint: opening  [Steem-Print-Balances.rb on GitHub](https://github.com/krischik/SteemRubyTutorial/blob/feature/Part2/Scripts/Steem-Print-Balances.rb) will give you a nice display with syntax highlight.
+Luckily we don't need to parse the string ourself. The constructor `Radiator::Type::Amount` class will do that for you and provides the same functionality then `Radiator::Type::Amount`.  Let's look in detail how to use `Radiator::Type::Amount`:
+
+-----
+
+Make the script executable under Unix. Of course you need to add the correct path to your ruby executable.
 
 ```ruby
-# use the "steem.rb" file from the radiator gem. This is
-# only needed if you have both steem-api and radiator
-# installed.
+#!/opt/local/bin/ruby
+```
 
+use the "steem.rb" file from the radiator gem. This is only needed if you have both steem-api and radiator installed.
+
+```ruby
 gem "radiator", :require => "steem"
 
 require 'pp'
 require 'colorize'
 require 'radiator'
+```
 
-##
-# steem-ruby comes with a helpful Radiator::Type::Amount
-# class to handle account balances. However 
-# Radiator::Type::Amount won't let you access any
-# attributes which makes using the class quite cumbersome.
-#
-# This class expands Radiator::Type::Amount to add the missing functions
-# making it super convenient.
-#
+steem-ruby comes with a helpful `Radiator::Type::Amount` class to handle account balances. However `Radiator::Type::Amount` won't let you access any attributes which makes using the class quite cumbersome.
+
+This class expands `Radiator::Type::Amount` to add the missing functions making it super convenient.
+
+```ruby
 class Amount < Radiator::Type::Amount
-   ##
-   # add the missing attribute reader.
-   #
-   attr_reader :amount, :precision, :asset, :value
+```
 
-   ##
-   # return amount as float to be used for calculations
-   #
-   # @return [Float]
-   #     actual amount as float
-   #
+add the missing attribute reader.
+
+```ruby
+   attr_reader :amount, :precision, :asset, :value
+```
+
+return amount as float to be used for calculations
+
+```ruby
    def to_f
      return @amount.to_f
    end # to_f
+```
 
-   ##
-   # operator to add two balances for the users convenience
-   #
-   # @param [Numeric|Amount]
-   #     amount to add
-   # @return [Float]
-   #     result of addition        
-   #
+Operator to add two balances for the users convenience
+
+```ruby
    def +(right)
       return (if right.is_a?(Numeric) then
          @amount.to_f + right
@@ -268,16 +281,11 @@ class Amount < Radiator::Type::Amount
          @amount.to_f + right.to_f
       end)
    end
+```
 
-   ##
-   # operator to subtract two balances for the users
-   # convenience
-   #
-   # @param [Numeric|Amount]
-   #     amount to subtract
-   # @return [Float]
-   #     result of subtraction        
-   #
+Operator to subtract two balances for the users convenience
+
+```ruby
    def -(right)
       return (if right.is_a?(Numeric) then
          @amount.to_f - right
@@ -286,18 +294,18 @@ class Amount < Radiator::Type::Amount
       end)
    end
 end # Amount
+```
 
-##
-# print account information for an array of accounts
-#
-# @param [Array<Object>] accounts
-#     the accounts to print#
-#
+Print account information for an array of accounts
+
+```ruby
 def print_account_balances (accounts)
    accounts.each do |account|
-      # create an amount instances for each balance to be
-      # used for further processing
+```
 
+Create an amount instances for each balance to be used for further processing
+
+```ruby
       _balance                   = Amount.new account.balance
       _savings_balance           = Amount.new account.savings_balance
       _sbd_balance               = Amount.new account.sbd_balance
@@ -305,17 +313,17 @@ def print_account_balances (accounts)
       _vesting_shares            = Amount.new account.vesting_shares
       _delegated_vesting_shares  = Amount.new account.delegated_vesting_shares
       _received_vesting_shares   = Amount.new account.received_vesting_shares
+```
 
-      # calculate actual vesting by adding and subtracting
-      # delegation.
+calculate actual vesting by adding and subtracting delegation.
 
+```ruby
       _actual_vesting            = _vesting_shares - (_delegated_vesting_shares + _received_vesting_shares)
+```
 
-      # pretty print out the balances. Note that for a
-      # quick printout Radiator::Type::Amount provides a 
-      # simple to_s method. But this method won't align the
-      # decimal point
+Pretty print out the balances. Note that for a quick printout Radiator::Type::Amount provides a simple `to_s` method. But this code will create a nicer output.
 
+```ruby
       puts ("Account: " + account.name).colorize(:blue)
       puts "  Steem           = %1$15.3f %2$s" % [_balance.to_f,                  _balance.asset]
       puts "  Steem Savings   = %1$15.3f %2$s" % [_savings_balance.to_f,          _savings_balance.asset]
@@ -339,19 +347,23 @@ Usage:
 
 """
 else
-   # read arguments from command line
+```
 
+Read arguments from command line
+
+```ruby
    Account_Names = ARGV
+```
 
-   # create instance to the steem database API
+Create instance to the steem database API
 
+```ruby
    Database_Api = Radiator::DatabaseApi.new
+```
 
-   # request account information from the Steem database
-   # and print out the accounts balances found using a new
-   # function or print out error information when an error
-   # occurred.
+Request account information from the Steem database and print out the accounts balances found using a new function or print out error information when an error occurred.
 
+```ruby
    Result = Database_Api.get_accounts(Account_Names)
 
    if Result.key?('error') then
@@ -364,19 +376,26 @@ else
    end
 end
 ```
+-----
 
-The output of the command (for the steem account) looks like this:
+**Hint:** Follow this link to Github for the complete script with syntax highlighting: [Steem-Print-Balances.rb on GitHub](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb).
+
+The output of the command (for the steem account) look identical to the previous output:
 
 ![Screenshot at Jan 27 17-44-59.png](https://ipfs.busy.org/ipfs/Qma1erQisKUvvKqAPLKFJTuNYGjjRkckzZK1DVgXbQD3AU)
 
 # Curriculum
 ## First tutorial
 
-* [Using Steem-API with Ruby Part 1](https://busy.org/@krischik/using-steem-api-with-ruby-part-1)
+* [Using Steem-API with Ruby Part 1](https://steemit.com/@krischik/using-steem-api-with-ruby-part-1)
 
 ## Previous tutorial
 
-* [Using Steem-API with Ruby Part 1](https://busy.org/@krischik/using-steem-api-with-ruby-part-1)
+* [Using Steem-API with Ruby Part 1](https://steemit.com/@krischik/using-steem-api-with-ruby-part-1)
+
+## Next tutorial
+
+* [Using Steem-API with Ruby Part 3](https://steemit.com/@krischik/using-steem-api-with-ruby-part-3)
 
 ## Proof of Work
 
