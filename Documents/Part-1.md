@@ -5,7 +5,6 @@ utopian-io tutorials ruby steem-api programming
 ![Steemit_Ruby.jpg](https://steemitimages.com/500x270/http://ipfs.busy.org/ipfs/Qmb2hiQCAWohe59NoRHxZXE4X5ok29ZRmNETGHE8qZdwQR)
 
 ## Repository
-
 ### steem-ruby
 
 Project Name: Steem Ruby
@@ -45,6 +44,7 @@ gem install radiator
 ```
 
 **Note:** Both steem-ruby and radiator provide a file called `steem.rb`. This means that:
+
 1. When you install both APIs you need to tell ruby which one to use.
 2. You can't use both APIs in the same script.
 
@@ -56,7 +56,7 @@ As mentioned there will be two examples and both samples are complete with error
 
 ## Implementation using steem-ruby
 
-First I show you how to get the account informations using steem-ruby. I called the script [Steem-Dump-Accounts.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scritps/Steem-Dump-Accounts.rb) as the output is more low level. Check out the comments in the sample code for details.
+First I show you how to get the account informations using steem-ruby. I called the script [Steem-Dump-Accounts.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Accounts.rb) as the output is more low level. Check out the comments in the sample code for details.
 
 Make the script executable under Unix. Of course you need to add the correct path to your ruby executable.
 
@@ -114,7 +114,7 @@ request account informations from the Steem database and print out the accounts 
 end
 ```
 
-**Hint:** opening  [Steem-Dump-Accounts.rb on GitHub](https://github.com/krischik/SteemRubyTutorial/blob/feature/Part2/Scripts/Steem-Dump-Accounts.rb) will give you a nice display with syntax highlight.
+**Hint:** opening  [Steem-Dump-Accounts.rb on GitHub](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Accounts.rb) will give you a nice display with syntax highlight.
 
 The output of the command (for the steemit account) looks like this:
 
@@ -200,7 +200,7 @@ The output of the command (for the steemit account) looks like this:
 
 ## Steem-Print-Accounts.rb using radiator
 
-Next I show you how to get the account informations using radiator. I called the script [Steem-Print-Accounts.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Sources/Steem-Print-Accounts.rb) as the output is more high level.  Check out the comments in the sample code for details. The one thing I would like to point it the use of an error attribute for error handling which is a bit awkward to use and leads to a rather ugly `Result.result` construct.
+Next I show you how to get the account informations using radiator. I called the script [Steem-Print-Accounts.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Accounts.rb) as the output is more high level.  Check out the comments in the sample code for details. The one thing I would like to point it the use of an error attribute for error handling which is a bit awkward to use and leads to a rather ugly `Result.result` construct.
 
 ```Ruby
 #!/opt/local/bin/ruby
@@ -254,7 +254,7 @@ request account informations from the steem database and print out the accounts 
 end
 ```
 
-**Hint:** opening  [Steem-Print-Accounts.rb on GitHub](https://github.com/krischik/SteemRubyTutorial/blob/feature/Part2/Scripts/Steem-Print-Accounts.rb) will give you a nice display with syntax highlight.
+**Hint:** opening  [Steem-Print-Accounts.rb on GitHub](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Accounts.rb) will give you a nice display with syntax highlight.
 
 The output of the command (for the steemit account) looks like this. Do note how all the balances are reformatted to be human readable and that there are 10 additional attributes at the end.
 
@@ -344,15 +344,15 @@ The output of the command (for the steemit account) looks like this. Do note how
 # Curriculum
 ## First tutorial
 
-[Using Steem-API with Ruby Part 1](https://busy.org/@krischik/using-steem-api-with-ruby-part-1)
+[Using Steem-API with Ruby Part 1](https://steemit.com/@krischik/using-steem-api-with-ruby-part-1)
 
 ## Previous tutorial
 
-[Using Steem-API with Ruby Part 1](https://busy.org/@krischik/using-steem-api-with-ruby-part-1)
+[Using Steem-API with Ruby Part 1](https://steemit.com/@krischik/using-steem-api-with-ruby-part-1)
 
 ## Next tutorial
 
-[Using Steem-API with Ruby Part 1](https://busy.org/@krischik/using-steem-api-with-ruby-part-2)
+[Using Steem-API with Ruby Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2)
 
 ## Proof of Work Done
 
