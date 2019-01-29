@@ -1,5 +1,5 @@
 #!/opt/local/bin/ruby
-############################################################# {{{1 ##########
+############################################################## {{{1 ##########
 #  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
@@ -14,23 +14,23 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
-############################################################# }}}1 ##########
+############################################################## }}}1 ##########
 
-# use the steem.rb file from the radiator gem. This is only needed if you have
+# use the "steem.rb" file from the steem-ruby gem. This is only needed if you have
 # both steem-api and radiator installed.
 
-gem "radiator", :require => "steem"
+gem "steem-ruby", :require => "steem"
 
 require 'pp'
 require 'colorize'
-require 'radiator'
+require 'steem'
 
 if ARGV.length == 0 then
    puts """
-Steem-Print-Accounts — Print account infos from Steem database
+Steem-Dump-Accounts — Dump account infos from Steem database
 
 Usage:
-   Steem-Print-Accounts accountname …
+   Steem-Dump-Accounts account_name …
 
 """
 else
@@ -40,21 +40,23 @@ else
 
    # create instance to the steem database API
 
-   Database_Api = Radiator::DatabaseApi.new
+   Database_Api = Steem::DatabaseApi.new
 
-   # request account informations from the steem database and print out
+   # request account information from the Steem database and print out
    # the accounts found using pretty print (pp) or print out error
-   # informations when an error occurred.
+   # information when an error occurred.
 
-   Result = Database_Api.get_accounts(Account_Names)
+   Database_Api.find_accounts(accounts: Account_Names) do |result|
+      Accounts = result.accounts
 
-   if Result.key?('error') then
+      if Accounts.length == 0 then
+         puts "No accounts found.".yellow
+      else
+         pp Accounts
+      end
+   rescue => error
       puts "Error reading accounts:".red
-      pp Result.error
-   elsif Result.result.length == 0 then
-      puts "No accounts found.".yellow
-   else
-      pp Result.result
+      pp error
    end
 end
 
