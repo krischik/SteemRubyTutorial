@@ -32,7 +32,7 @@ begin
 
    Condenser_Api = Steem::CondenserApi.new
 
-   # read the global properties. Yes. it's as simple as
+   # read the global properties. Yes, it's as simple as
    # this.
 
    Global_Properties = Condenser_Api.get_dynamic_global_properties

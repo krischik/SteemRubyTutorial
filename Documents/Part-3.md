@@ -1,18 +1,29 @@
 # Using Steem-API with Ruby Part 3
+
 utopian-io tutorials ruby steem-api programming
 
 ![Steemit_Ruby.jpg](https://steemitimages.com/500x270/http://ipfs.busy.org/ipfs/Qmb2hiQCAWohe59NoRHxZXE4X5ok29ZRmNETGHE8qZdwQR)
 
-## Repository
+## Repositories
+### SteemRubyTutorial
+
+You can find all examples from this tutorial as fully functional scripts on GitHub:
+
+* [SteemRubyTutorial](https://github.com/krischik/SteemRubyTutorial)
+
 ### steem-ruby
 
 * Project Name: Steem Ruby
 * Repository: [https://github.com/steemit/steem-ruby](https://github.com/steemit/steem-ruby)
+* Official Documentation: [https://github.com/steemit/steem-ruby](https://github.com/steemit/steem-ruby) 
+* Official Tutorial: N/A
 
 ### radiator
 
 * Project Name: Radiator
 * Repository: [https://github.com/inertia186/radiator](https://github.com/inertia186/radiator)
+* Official Documentation: [https://www.rubydoc.info/gems/radiator](https://www.rubydoc.info/gems/radiator)
+* Official Tutorial: [https://developers.steem.io/tutorials-ruby/getting_started](https://developers.steem.io/tutorials-ruby/getting_started)
 
 ## What Will I Learn?
 
@@ -23,13 +34,11 @@ This tutorial shows how to interact with the Steem blockchain and Steem database
 
 Since both APIs have advantages and disadvantages I have provided sample code for both APIs so you can decide which is more suitable for you.
 
-In this 2nd part you learn the use of the classes `Steem::Type::Amount` and `Radiator::Type::Amount` and how to handle account balaces using them.
+In this 3nd part you learn the request the get the dynamic global properties. This properties can, for example, be used VESTS balances into the more common STEEM balances. How this is done we show in the next tutorial.
 
 ## Requirements
 
-You should have basic knowledge of Ruby programming and have an up to date ruby installed on your computer. If there is anything not clear you can ask in the comments.
-
-In order to use the provided sample you need to install at least Ruby 2.5 and the following ruby gems:
+You should have basic knowledge of Ruby programming you need to install at least Ruby 2.5 as well as the following ruby gems:
 
 ```sh
 gem install bundler
@@ -37,6 +46,8 @@ gem install colorize
 gem install steem-ruby
 gem install radiator
 ```
+
+If there is anything not clear you can ask in the comments.
 
 **Note:** Both steem-ruby and radiator provide a file called `steem.rb`. This means that:
 
@@ -49,50 +60,120 @@ Provided you have some programming experience this tutorial is **basic level**.
 
 ## Tutorial Contents
 
-In this second part of the tutorial I demonstrate how to print out account balances from a list of accounts passed on command line. The data will be formatted and a simple calculation is performed to show how you can use arithmetic on account balances.
+The easiest way to get the dynamic global properties is the use of `Steem::CondenserApi` or `Radiator::CondenserApi`. On the surface both work the same. Underneath there is a slight difference:
 
-As mentioned there will be two examples showing the differences. Both `…::Amount` classes have there weaknesses which I compensate by introducing an extended `Amount` class making the rest of the code identical.
+* steem-ruby only checks https://api.steemit.com for the data.
+* Radiator has a list of 12 fall back server to check.
+
+This makes radiator calls slightly more reliable.
+
+**Note:** Starting with this tutorial I won't copy paste the whole script any more as this would just be repetitive. Just the part needed to understand the lesson. The fully commented and fully functional scripts are still available on [Github](https://github.com/krischik/SteemRubyTutorial/tree/master/Scripts).
 
 ## Implementation using steem-ruby
 
-Check out the comments in the sample code for more details. 
+[Steem-Dump-Global-Properties.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Global-Properties.rb):
+-----
 
-Hint: opening  [Steem-Dump-Balances.rb on GitHub](https://github.com/krischik/SteemRubyTutorial/blob/feature/Part2/Scripts/Steem-Dump-Balances.rb) will give you a nice display with syntax highlight.
+Errors are handled via exceptions.
 
 ```ruby
+begin
 ```
+
+Create instance to the steem condenser API which will give us access to
+
+```ruby
+   Condenser_Api = Steem::CondenserApi.new
+```
+
+Read the global properties. Yes, it's as simple as this.
+
+```ruby
+   Global_Properties = Condenser_Api.get_dynamic_global_properties
+rescue => error
+```
+
+I am using Kernel::abort so the code snipped including error handler can be copy pasted into other scripts
+
+```ruby
+   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+end
+```
+
+Pretty print the result. It might look strange to do so outside the begin / rescue but the value is now available in constant for the rest of the script. Do note that using constant is only suitable for short running script.  Long running scripts would need to re-read the value on a regular basis.
+
+```ruby
+pp Global_Properties
+```
+
+-----
+
+**Hint:** Follow this link to Github for the complete script with syntax highlighting: [Steem-Dump-Global-Properties.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Global-Properties.rb).
 
 The output of the command (for the steem account) looks like this:
 
-## Steem-Print-Accounts.rb using radiator
+## Implementation using radiator
 
-[Steem-Print-Balances.rb on GitHub](https://github.com/krischik/SteemRubyTutorial/blob/feature/Part2/Scripts/Steem-Print-Balances.rb)
+[Steem-Print-Global-Properties.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Global-Properties.rb)
 
-Check out the comments in the sample code for more details.
+-----
 
-Hint: opening  [Steem-Print-Balances.rb on GitHub](https://github.com/krischik/SteemRubyTutorial/blob/feature/Part2/Scripts/Steem-Print-Balances.rb) will give you a nice display with syntax highlight.
+Errors are handled via exceptions.
 
 ```ruby
+begin
 ```
 
-The output of the command (for the steem account) looks like this:
+Create instance to the steem condenser API which will give us access to
+
+```ruby
+   Condenser_Api = Radiator::CondenserApi.new
+```
+
+Read the global properties. Yes, it's as simple as this.
+
+```ruby
+   Global_Properties = Condenser_Api.get_dynamic_global_properties
+rescue => error
+```
+
+I am using Kernel::abort so the code snipped including error handler can be copy pasted into other scripts
+
+```ruby
+   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+end
+```
+
+Pretty print the result. It might look strange to do so outside the begin / rescue but the value is now available in constant for the rest of the script. Do note that using constant is only suitable for short running script.  Long running scripts would need to re-read the value on a regular basis.
+
+```ruby
+pp Global_Properties
+```
+
+**Hint:** Follow this link to Github for the complete script with syntax highlighting: [Steem-Print-Global-Properties.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Global-Properties.rb).
+
+-----
+
+The output of the command (for the steem account) look identical to the previous output:
+
+![Screenshot at Jan 27 17-44-59.png](https://ipfs.busy.org/ipfs/Qma1erQisKUvvKqAPLKFJTuNYGjjRkckzZK1DVgXbQD3AU)
 
 # Curriculum
 ## First tutorial
 
-* [Using Steem-API with Ruby Part 1](https://busy.org/@krischik/using-steem-api-with-ruby-part-1)
+* [Using Steem-API with Ruby Part 1](https://steemit.com/@krischik/using-steem-api-with-ruby-part-1)
 
 ## Previous tutorial
 
-* [Using Steem-API with Ruby Part 2](https://busy.org/@krischik/using-steem-api-with-ruby-part-1)
+* [Using Steem-API with Ruby Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2)
 
 ## Next tutorial
 
-* [Using Steem-API with Ruby Part 4](https://busy.org/@krischik/using-steem-api-with-ruby-part-4)
+* [Using Steem-API with Ruby Part 4](https://steemit.com/@krischik/using-steem-api-with-ruby-part-4)
 
 ## Proof of Work
 
-* [SteemRubyTutorial on GitHub](https://github.com/krischik/SteemRubyTutorial)
+* [SteemRubyTutorial Issue #4](https://github.com/krischik/SteemRubyTutorial/issues/4)
 
 ![image.png](https://ipfs.busy.org/ipfs/Qmb3WV6M4fDUxnnrLjkNXqAV7rd6rh2haRdriYQsbZT1Pr)
 
