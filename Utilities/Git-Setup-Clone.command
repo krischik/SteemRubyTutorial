@@ -24,8 +24,9 @@ git config "user.email"         "krischik@users.sourceforge.net"
 git config "credential.helper"  "store"
 git config "push.default"       "current"
 
-git branch --set-upstream-to="remotes/origin/master"    "master"
-git branch --set-upstream-to="remotes/origin/develop"   "develop"
+git branch --set-upstream-to="remotes/origin/master"            "master"
+git branch --set-upstream-to="remotes/origin/develop"           "develop"
+git branch --set-upstream-to="remotes/origin/feature/Part3"     "feature/Part3"
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 expandtab :

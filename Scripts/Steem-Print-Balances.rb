@@ -9,7 +9,7 @@
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or ENDIFFTNESS FOR A PARTICULAR PURPOSE.  See the
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
@@ -153,8 +153,7 @@ else
    Result = Database_Api.get_accounts(Account_Names)
 
    if Result.key?('error') then
-      puts "Error reading accounts:".red
-      pp Result.error
+      Kernel::abort("Error reading accounts:\n".red + error.to_s)
    elsif Result.result.length == 0 then
       puts "No accounts found.".yellow
    else
