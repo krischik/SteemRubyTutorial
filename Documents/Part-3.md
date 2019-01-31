@@ -15,7 +15,7 @@ You can find all examples from this tutorial as fully functional scripts on GitH
 
 * Project Name: Steem Ruby
 * Repository: [https://github.com/steemit/steem-ruby](https://github.com/steemit/steem-ruby)
-* Official Documentation: [https://github.com/steemit/steem-ruby](https://github.com/steemit/steem-ruby) 
+* Official Documentation: [https://github.com/steemit/steem-ruby](https://github.com/steemit/steem-ruby)
 * Official Tutorial: N/A
 
 ### radiator
