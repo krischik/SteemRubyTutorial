@@ -2,7 +2,7 @@
 
 utopian-io tutorials ruby steem-api programming
 
-![Steemit_Ruby.jpg](https://steemitimages.com/500x270/http://ipfs.busy.org/ipfs/Qmb2hiQCAWohe59NoRHxZXE4X5ok29ZRmNETGHE8qZdwQR)
+![Steemit_Ruby.png](https://steemitimages.com/500x270/https://ipfs.busy.org/ipfs/QmSDiHZ9ng7BfYFMkvwYtNVPrw3nvbzKBA1gEj3y9vU6qN)
 
 ## Repositories
 ### SteemRubyTutorial
@@ -34,7 +34,11 @@ This tutorial shows how to interact with the Steem blockchain and Steem database
 
 Since both APIs have advantages and disadvantages I have provided sample code for both APIs so you can decide which is more suitable for you.
 
-In this 3nd part you learn the request the get the dynamic global properties. This properties can, for example, be used VESTS balances into the more common STEEM balances. How this is done we show in the next tutorial.
+In this 3nd part you learn the request the get the dynamic global properties. This properties can, for example, be used  to convert VESTS balances into the more common STEEM balances. You use that with this formula:
+
+![steem = vest \frac{total\_vesting\_fund\_steem}{total\_vesting\_shares}](https://ipfs.busy.org/ipfs/QmfH95PyxxyTpc9N9GcXoxaPA9WAyVJ39WPs7x2r3Kbho8)
+
+In the next tutorial we will upgrade `Steem-Dump-Balances.rb` and `Steem-Print-Balances.rb` to show steem and vest balances side by side.
 
 ## Requirements
 
@@ -72,6 +76,7 @@ This makes radiator calls slightly more reliable.
 ## Implementation using steem-ruby
 
 [Steem-Dump-Global-Properties.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Global-Properties.rb):
+
 -----
 
 Errors are handled via exceptions.
@@ -93,7 +98,7 @@ Read the global properties. Yes, it's as simple as this.
 rescue => error
 ```
 
-I am using Kernel::abort so the code snipped including error handler can be copy pasted into other scripts
+I am using Kernel::abort so the code snipped including error handler can be copy pasted into other scripts. You certainly don't want to continue the script when the global properties are not available.
 
 ```ruby
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
@@ -111,6 +116,8 @@ pp Global_Properties
 **Hint:** Follow this link to Github for the complete script with syntax highlighting: [Steem-Dump-Global-Properties.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Global-Properties.rb).
 
 The output of the command (for the steem account) looks like this:
+
+![Screenshot at Jan 30 11-34-40.png](https://ipfs.busy.org/ipfs/QmPXJVJFML22ixcWXzd7LP5hmkqefv68majDT1eCVj1Qyi)
 
 ## Implementation using radiator
 
@@ -137,7 +144,7 @@ Read the global properties. Yes, it's as simple as this.
 rescue => error
 ```
 
-I am using Kernel::abort so the code snipped including error handler can be copy pasted into other scripts
+I am using Kernel::abort so the code snipped including error handler can be copy pasted into other scripts. You certainly don't want to continue the script when the global properties are not available.
 
 ```ruby
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
@@ -150,13 +157,13 @@ Pretty print the result. It might look strange to do so outside the begin / resc
 pp Global_Properties
 ```
 
-**Hint:** Follow this link to Github for the complete script with syntax highlighting: [Steem-Print-Global-Properties.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Global-Properties.rb).
-
 -----
 
-The output of the command (for the steem account) look identical to the previous output:
+**Hint:** Follow this link to Github for the complete script with syntax highlighting: [Steem-Print-Global-Properties.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Global-Properties.rb).
 
-![Screenshot at Jan 27 17-44-59.png](https://ipfs.busy.org/ipfs/Qma1erQisKUvvKqAPLKFJTuNYGjjRkckzZK1DVgXbQD3AU)
+The output of the command (for the steem account) looks identical to the previous output:
+
+![Screenshot at Jan 30 11-35-37.png](https://ipfs.busy.org/ipfs/Qmcw3372Me1RskQ9HLZuubj1BEyFXK3uYGdfHRfYMv4rLD)
 
 # Curriculum
 ## First tutorial
@@ -175,7 +182,7 @@ The output of the command (for the steem account) look identical to the previous
 
 * [SteemRubyTutorial Issue #4](https://github.com/krischik/SteemRubyTutorial/issues/4)
 
-![image.png](https://ipfs.busy.org/ipfs/Qmb3WV6M4fDUxnnrLjkNXqAV7rd6rh2haRdriYQsbZT1Pr)
+![image.png](https://files.steempeak.com/file/steempeak/krischik/2j20UjyR-image.png)
 
 <center> ![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png) </center>
 
