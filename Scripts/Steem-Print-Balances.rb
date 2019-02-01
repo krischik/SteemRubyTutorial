@@ -28,7 +28,7 @@ require 'radiator'
 
 ##
 # steem-ruby comes with a helpful Radiator::Type::Amount
-# class to handle account balances. However 
+# class to handle account balances. However
 # Radiator::Type::Amount won't let you access any
 # attributes which makes using the class quite cumbersome.
 #
@@ -57,7 +57,7 @@ class Amount < Radiator::Type::Amount
    # @param [Numeric|Amount]
    #     amount to add
    # @return [Float]
-   #     result of addition        
+   #     result of addition
    #
    def +(right)
       return (if right.is_a?(Numeric) then
@@ -74,7 +74,7 @@ class Amount < Radiator::Type::Amount
    # @param [Numeric|Amount]
    #     amount to subtract
    # @return [Float]
-   #     result of subtraction        
+   #     result of subtraction
    #
    def -(right)
       return (if right.is_a?(Numeric) then
@@ -110,7 +110,7 @@ def print_account_balances (accounts)
       _actual_vesting            = _vesting_shares - (_delegated_vesting_shares + _received_vesting_shares)
 
       # pretty print out the balances. Note that for a
-      # quick printout Radiator::Type::Amount provides a 
+      # quick printout Radiator::Type::Amount provides a
       # simple to_s method. But this method won't align the
       # decimal point
 
