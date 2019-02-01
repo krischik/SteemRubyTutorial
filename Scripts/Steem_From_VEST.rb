@@ -24,7 +24,7 @@ gem "steem-ruby", :require => "steem"
 
 require 'pp'
 require 'colorize'
-require 'radiator'
+require 'steem'
 
 ##
 # steem-ruby comes with a helpful Radiator::Type::Amount
@@ -35,12 +35,7 @@ require 'radiator'
 # This class expands Radiator::Type::Amount to add the missing functions
 # making it super convenient.
 #
-class Amount < Radiator::Type::Amount
-   ##
-   # add the missing attribute reader.
-   #
-   attr_reader :amount, :precision, :asset, :value
-
+class Amount < Steem::Type::Amount
    ##
    # return amount as float to be used for calculations
    #
@@ -106,7 +101,7 @@ begin
    # create instance to the steem condenser API which
    # will give us access to
 
-   Condenser_Api = Radiator::CondenserApi.new
+   Condenser_Api = Steem::CondenserApi.new
 
    # read the global properties. Yes, it's as simple as
    # this. Note the use of result at the end.
