@@ -27,13 +27,8 @@ require 'colorize'
 require 'steem'
 
 ##
-# steem-ruby comes with a helpful Radiator::Type::Amount
-# class to handle account balances. However
-# Radiator::Type::Amount won't let you access any
-# attributes which makes using the class quite cumbersome.
-#
-# This class expands Radiator::Type::Amount to add the missing functions
-# making it super convenient.
+# steem-ruby comes with a helpful Steem::Type::Amount
+# class to handle account balances.
 #
 class Amount < Steem::Type::Amount
    ##
@@ -115,6 +110,8 @@ rescue => error
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
 
+# shows usage help if the no values are given to convert.
+
 if ARGV.length == 0 then
    puts """
 Steem_From_VEST — Print convert list of VESTS value to Steem values
@@ -128,13 +125,20 @@ else
 
    Values = ARGV
 
-   # Calculate the Convestion Rate
+   # Calculate the conversion Rate. We use the Amount class
+   # from Part 2 to convert the sting values into amounts.
 
    _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
    _total_vesting_shares     = Amount.new Global_Properties.total_vesting_shares
    _convesion_rate           = _total_vesting_fund_steem / _total_vesting_shares
 
+   # iterate over the valued passed in the command line
+
    Values.each do |value|
+
+      # convert the value to steem by multiplying with the
+      # conversion rate and display the value
+
       _steem = value.to_f * _convesion_rate
       puts "%1$18.6f VESTS = %2$15.3f STEEM" % [value, _steem]
    end

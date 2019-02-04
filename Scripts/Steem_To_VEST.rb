@@ -32,8 +32,8 @@ require 'radiator'
 # Radiator::Type::Amount won't let you access any
 # attributes which makes using the class quite cumbersome.
 #
-# This class expands Radiator::Type::Amount to add the missing functions
-# making it super convenient.
+# This class expands Radiator::Type::Amount to add the
+# missing functions making it super convenient.
 #
 class Amount < Radiator::Type::Amount
    ##
@@ -120,6 +120,8 @@ rescue => error
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
 
+# shows usage help if the no values are given to convert.
+
 if ARGV.length == 0 then
    puts """
 Steem_To_VEST — Print convert list of Steem value to VESTS values
@@ -133,15 +135,22 @@ else
 
    Values = ARGV
 
-   # Calculate the Convestion Rate
+   # Calculate the conversion Rate. We use the Amount class
+   # from Part 2 to convert the sting values into amounts.
 
    _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
    _total_vesting_shares     = Amount.new Global_Properties.total_vesting_shares
-   _convesion_rate           = _total_vesting_shares / _total_vesting_fund_steem
+   _convesion_rate           = _total_vesting_fund_steem / _total_vesting_shares
+
+   # iterate over the valued passed in the command line
 
    Values.each do |value|
-      _steem = value.to_f * _convesion_rate
-      puts "%1$15.3f STEEM = %2$18.6f VEST" % [value, _steem]
+
+      # convert the value to steem by dividing with the
+      # conversion rate and display the value
+
+      _vest = value.to_f / _convesion_rate
+      puts "%1$15.3f STEEM = %2$18.6f VEST" % [value, _vest]
    end
 end
 
