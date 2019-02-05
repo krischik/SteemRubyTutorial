@@ -1,4 +1,4 @@
-# Using Steem-API with Ruby Part 3
+# Using Steem-API with Ruby Part 4
 
 utopian-io tutorials ruby steem-api programming
 
@@ -65,9 +65,9 @@ Provided you have some programming experience this tutorial is **basic level**.
 
 When you take a look at your account wallet you find three values: Steem, Steem Power and Steem Dollar.
 
-![Screenshot at Feb 04 14-29-10.png]()
+![Screenshot at Feb 04 142910.png](https://files.steempeak.com/file/steempeak/krischik/wacyfyC6-Screenshot20at20Feb20042014-29-10.png)
 
-With both Steem and Steem Power measured in Steem and Steem Dollar in  (SBD). However, if you look at the output of [Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) you will see that there is no Steem Power — just a few ridiculous large values called vesting measured in VESTS:
+With both Steem and Steem Power measured in Steem and Steem Dollar in SBD os just a $ sign. However, if you look at the output of [Tutorial Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) you will see that there is no Steem Power — just a few ridiculous large values called vesting measured in VESTS:
 
 ![Screenshot at Jan 27 17-44-14.png](https://ipfs.busy.org/ipfs/QmS3Cd7342izfri5EXGTcGYTCvNzUEWELASy8z4hFuSMso)
 
@@ -77,20 +77,20 @@ This vesting is the Steem Power. However since VESTS values are ridiculous large
 
 Note that `total_vesting_fund_steem` and `total_vesting_shares` aren't constant and this is the reason why it seems that your Steem power is slowly increasing for no apparent reason: VESTS are constantly getting more expensive and the user interface is showing the amount of Steem you would get if you sell your VESTS today.
 
-After all this theory let's get to the practical part. I made a VESTS to Steem script using `steem-ruby` and a Steem to VESTS script using `radiator` which I then use to convert the Steem Power of the various user level:
+After all this theory let's get to the practical part. I made a VESTS to Steem script using `steem-ruby` and a Steem to VESTS script using `radiator`. In example calls I convert the Steem Power of the various user level:
 
 <table>
   <thead>
     <tr>
-      <td>Logo</td>
-      <td>Level</td>
-      <td>Your SP in VESTS</td>
-      <td>Your SP in Steem</td>
+      <th>Logo</th>
+      <th>Level</th>
+      <th>Your Steem Power in VESTS</th>
+      <th>Your Steem Power in Steem</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><img src="https://steemitimages.com/0x0/https://img.esteem.ws/ph3r1fyc8f.png"></td>
+      <td><img src="https://img.esteem.ws/ph3r1fyc8f.png"></td>
       <td>Plankton</td>
       <td>0 to 999'999 VESTS</td>
       <td>0 to ≈500 Steem</td>
@@ -126,9 +126,7 @@ After all this theory let's get to the practical part. I made a VESTS to Steem s
 
 ## Implementation using steem-ruby
 
-The first script converts VESTS to Steem.
-
-[Steem_From_VEST.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem_From_VEST.rb):
+The first script [Steem_From_VEST.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem_From_VEST.rb) converts VESTS to Steem:
 
 -----
 
@@ -152,7 +150,7 @@ read arguments from command line
    Values = ARGV
 ```
 
-Calculate the conversion Rate. We use the Amount class from [Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) to convert the sting values into amounts.
+Calculate the conversion Rate. We use the Amount class from [Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) to convert the string values into amounts.
 
 ```ruby
    _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
@@ -180,6 +178,10 @@ end
 **Hint:** Follow this link to Github for the complete script with syntax highlighting: [Steem_From_VEST.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem_From_VEST.rb).
 
 The output of the command (for the steem account) looks like this:
+
+![Screenshot at Feb 04 165002.png](https://files.steempeak.com/file/steempeak/krischik/jLeQPYTY-Screenshot20at20Feb20042016-50-02.png)
+
+As you can see the Steem values of the user levels are slightly below 500, 5000, … I beliv   s
 
 ## Implementation using radiator
 
@@ -240,6 +242,7 @@ end
 
 The output of the command (for the steem account) looks identical to the previous output:
 
+![Screenshot at Feb 05 141113.png](https://files.steempeak.com/file/steempeak/krischik/Vj96MH4f-Screenshot20at20Feb20052014-11-13.png)
 
 # Curriculum
 ## First tutorial
@@ -258,7 +261,7 @@ The output of the command (for the steem account) looks identical to the previou
 
 * [SteemRubyTutorial Issue #5](https://github.com/krischik/SteemRubyTutorial/issues/5)
 
-![image.png](https://files.steempeak.com/file/steempeak/krischik/2j20UjyR-image.png)
+![image.png](https://files.steempeak.com/file/steempeak/krischik/OJZDys0B-image.png)
 
 <center> ![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png) </center>
 
