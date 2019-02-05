@@ -52,7 +52,7 @@ class Amount < Steem::Type::Amount
    # @param [Numeric|Amount]
    #     amount to add
    # @return [Float]
-   #     result of addition        
+   #     result of addition
    #
    def +(right)
       return (if right.is_a?(Numeric) then
@@ -69,7 +69,7 @@ class Amount < Steem::Type::Amount
    # @param [Numeric|Amount]
    #     amount to subtract
    # @return [Float]
-   #     result of subtraction        
+   #     result of subtraction
    #
    def -(right)
       return (if right.is_a?(Numeric) then

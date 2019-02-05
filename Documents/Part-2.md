@@ -100,7 +100,7 @@ Return amount as float to be used for calculations
      return @amount.to_f
    end # to_f
 ```
-  
+
 Operator to add two balances for the users convenience
 
 ```ruby
