@@ -16,11 +16,11 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the steem-ruby gem. This is
+# use the "steem.rb" file from the radiator gem. This is
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "steem-ruby", :require => "steem"
+gem "radiator", :require => "steem"
 
 require 'pp'
 require 'colorize'
