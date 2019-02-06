@@ -155,7 +155,7 @@ Calculate the conversion Rate. We use the Amount class from [Part 2](https://ste
 ```ruby
    _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
    _total_vesting_shares     = Amount.new Global_Properties.total_vesting_shares
-   _convesion_rate           = _total_vesting_fund_steem / _total_vesting_shares
+   _conversion_rate          = _total_vesting_fund_steem / _total_vesting_shares
 ```
 
 iterate over the valued passed in the command line
@@ -167,7 +167,7 @@ iterate over the valued passed in the command line
 convert the value to steem by multiplying with the conversion rate and display the value
 
 ```ruby
-      _steem = value.to_f * _convesion_rate
+      _steem = value.to_f * _conversion_rate
       puts "%1$18.6f VESTS = %2$15.3f STEEM" % [value, _steem]
    end
 end
@@ -181,19 +181,15 @@ The output of the command (for the steem account) looks like this:
 
 ![Screenshot at Feb 04 165002.png](https://files.steempeak.com/file/steempeak/krischik/jLeQPYTY-Screenshot20at20Feb20042016-50-02.png)
 
-As you can see the Steem values of the user levels are slightly below 500, 5000, … I beliv   s
+As you can see the Steem values of the user levels are slightly below 500, 5000, … . 
 
 ## Implementation using radiator
 
-The second script converts VESTS to Steem.
-
-[Steem_To_VEST.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem_To_VEST.rb)
+The second script [Steem_To_VEST.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem_To_VEST.rb) converts VESTS to Steem. Apart from printout there is only one character difference.
 
 -----
 
-Errors are handled via exceptions.
-
-shows usage help if the no values are given to convert.
+Shows usage help if the no values are given to convert.
 
 ```ruby
 if ARGV.length == 0 then
@@ -213,12 +209,12 @@ read arguments from command line
    Values = ARGV
 ```
 
-Calculate the conversion Rate. We use the Amount class from [Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) to convert the string values into amounts.
+Calculate the conversion Rate. We use the Amount class from [Part 2 of the tutorial](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) to convert the string values into amounts.
 
 ```ruby
    _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
    _total_vesting_shares     = Amount.new Global_Properties.total_vesting_shares
-   _convesion_rate           = _total_vesting_fund_steem / _total_vesting_shares
+   _conversion_rate          = _total_vesting_fund_steem / _total_vesting_shares
 ```
 
 iterate over the valued passed in the command line
@@ -227,10 +223,10 @@ iterate over the valued passed in the command line
    Values.each do |value|
 ```
 
-convert the value to steem by dividing with the conversion rate and display the value
+convert the value to steem by dividing with the conversion rate and display the value. Here is the actual difference: A division instead of a multiplication.
 
 ```ruby
-      _vest = value.to_f / _convesion_rate
+      _vest = value.to_f / _conversion_rate
       puts "%1$15.3f STEEM = %2$18.6f VEST" % [value, _vest]
    end
 end
@@ -243,6 +239,8 @@ end
 The output of the command (for the steem account) looks identical to the previous output:
 
 ![Screenshot at Feb 05 141113.png](https://files.steempeak.com/file/steempeak/krischik/Vj96MH4f-Screenshot20at20Feb20052014-11-13.png)
+
+And coming form the other way, converting 500, 5000 … we now get slightly larger VESTS then 1 million, 10 million … . Remember, by the time you read this VEST will
 
 # Curriculum
 ## First tutorial
