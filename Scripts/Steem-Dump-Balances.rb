@@ -46,7 +46,7 @@ class Amount < Steem::Type::Amount
       # @return [Amount]
       #     the value as amount
       def self.to_amount (value, asset)
-         return Amount.new (value.to_s + " " + asset)
+         return Amount.new(value.to_s + " " + asset)
       end
 
    public
@@ -90,29 +90,12 @@ class Amount < Steem::Type::Amount
       ##
       # convert Vests to steem
       #
-      # @param [Amount] value
-      #     value to convert
-      # @return [Amount] steem value
-      #
-      def self.to_steem (value)
-         return (
-         Amount.new ((
-         if value.is_a?(Numeric) then
-            value * Conversion_rate
-         else
-            value.to_f * Conversion_rate
-         end).to_s + " STEEM"))
-      end
-
-      ##
-      # convert Vests to steem
-      #
-      # @return [Amount] steem value
+      # @return [Amount] a value in VESTS value
       #
       def to_steem ()
          raise ArgumentError, 'asset types must be VESTS' if @asset != "VESTS"
 
-         return Amount.to_steem (self)
+         return Amount.to_amount(@amount.to_f * Conversion_rate, "STEEM")
       end
 
       ##
