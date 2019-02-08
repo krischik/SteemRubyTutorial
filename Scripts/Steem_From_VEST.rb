@@ -130,7 +130,7 @@ else
 
    _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
    _total_vesting_shares     = Amount.new Global_Properties.total_vesting_shares
-   _convesion_rate           = _total_vesting_fund_steem / _total_vesting_shares
+   _conversion_rate          = _total_vesting_fund_steem / _total_vesting_shares
 
    # iterate over the valued passed in the command line
 
@@ -139,7 +139,7 @@ else
       # convert the value to steem by multiplying with the
       # conversion rate and display the value
 
-      _steem = value.to_f * _convesion_rate
+      _steem = value.to_f * _conversion_rate
       puts "%1$18.6f VESTS = %2$15.3f STEEM" % [value, _steem]
    end
 end

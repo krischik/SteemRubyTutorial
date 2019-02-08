@@ -26,13 +26,13 @@ require 'colorize'
 require 'radiator'
 
 if ARGV.length == 0 then
-   puts """
+   puts "
 Steem-Print-Accounts — Print account infos from Steem database
 
 Usage:
    Steem-Print-Accounts account_name …
 
-"""
+"
 else
    # read arguments from command line
 
