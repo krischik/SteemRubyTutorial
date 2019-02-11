@@ -69,9 +69,8 @@ class Amount < Radiator::Type::Amount
       ##
       # convert Vests to level
       #
-      # @param [Amount] value
-      #     value to convert
-      # @return [Number] steem value
+      # @return [String]
+      #     one of Whale, Orca, Dolphin, Minnow
       #
       def to_level ()
          _value = @amount.to_f
@@ -93,14 +92,94 @@ class Amount < Radiator::Type::Amount
       end
 
       ##
+      # convert Amount to steem backed dollar
+      #
+      # @return [Amount]
+      #     the amount represented as steem backed dollar
+      #
+      def to_sbd ()
+         return (
+         case @asset
+            when "SBD"
+               self.clone
+            when "STEEM"
+               Amount.to_amount(@amount.to_f * Conversion_Rate_Steem, "SBD")
+            when "VESTS"
+               self.to_steem.to_sbd
+            else
+               raise ArgumentError, 'unknown asset type types'
+         end)
+      end
+
+      ##
       # convert Vests to steem
       #
       # @return [Amount] a value in VESTS value
       #
       def to_steem ()
-         raise ArgumentError, 'asset types must be VESTS' if @asset != "VESTS"
+         return (
+         case @asset
+            when "SBD"
+               Amount.to_amount(@amount.to_f / Conversion_Rate_Steem, "STEEM")
+            when "STEEM"
+               self.clone
+            when "VESTS"
+               Amount.to_amount(@amount.to_f * Conversion_Rate_Vests, "STEEM")
+            else
+               raise ArgumentError, 'unknown asset type types'
+         end)
+      end
 
-         return Amount.to_amount(@amount.to_f * Conversion_rate, "STEEM")
+      ##
+      # convert Vests to steem
+      #
+      # @return [Amount] a value in VESTS value
+      #
+      def to_vests ()
+         return (
+         case @asset
+            when "SBD"
+               self.to_steem.to_vests
+            when "STEEM"
+               Amount.to_amount(@amount.to_f / Conversion_Rate_Vests, "VESTS")
+            when "VESTS"
+               self.clone
+            else
+               raise ArgumentError, 'unknown asset type types'
+         end)
+      end
+
+      def to_ansi_s ()
+         _sbd   = to_sbd
+         _steem = to_steem
+         _vests = to_vests
+
+         return sprintf(
+            "%1$15.3f %2$s".colorize(
+               if @asset == "SBD" then
+                  :blue
+               else
+                  :white
+               end
+            ) + " " + "%3$15.3f %4$s".colorize(
+               if @asset == "STEEM" then
+                  :blue
+               else
+                  :white
+               end
+            ) + " " + "%5$18.6f %6$s".colorize(
+               if @asset == "VESTS" then
+                  :blue
+               else
+                  :white
+               end
+            ),
+            _sbd.to_f,
+            _sbd.asset,
+            _steem.to_f,
+            _steem.asset,
+            _vests.to_f,
+            _vests.asset)
       end
 
       ##
@@ -169,17 +248,27 @@ begin
 
    Condenser_Api = Radiator::CondenserApi.new
 
-   # read the global properties. Yes, it's as simple as
-   # this. Note the use of result at the end.
+   # read the global properties and median history valuse.
+   # Yes, it's as simple as this. Note the use of result at the end.
 
-   Global_Properties = Condenser_Api.get_dynamic_global_properties.result
+   Global_Properties    = Condenser_Api.get_dynamic_global_properties.result
+   Median_History_Price = Condenser_Api.get_current_median_history_price.result
 
-   # Calculate the conversion Rate. We use the Amount class
-   # from Part 2 to convert the string values into amounts.
+   # Calculate the conversion Rate for Vests to steem
+   # backed dollar. We use the Amount class from Part 2 to
+   # convert the string values into amounts.
 
-   Total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
-   Total_vesting_shares = Amount.new Global_Properties.total_vesting_shares
-   Conversion_rate = Total_vesting_fund_steem.to_f / Total_vesting_shares.to_f
+   _base                 = Median_History_Price.base
+   _quote                = Median_History_Price.quote
+   Conversion_Rate_Steem = _base.to_f / _quote.to_f
+
+   # Calculate the conversion Rate for VESTS to steem. We
+   # use the Amount class from Part 2 to convert the string
+   #  values into amounts.
+
+   _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
+   _total_vesting_shares     = Amount.new Global_Properties.total_vesting_shares
+   Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 rescue => error
    # I am using Kernel::abort so the code snipped
    # including error handler can be copy pasted into other
@@ -187,7 +276,6 @@ rescue => error
 
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
-
 
 ##
 # print account information for an array of accounts
@@ -200,57 +288,42 @@ def print_account_balances (accounts)
       # create an amount instances for each balance to be
       # used for further processing
 
-      _balance = Amount.new account.balance
-      _savings_balance = Amount.new account.savings_balance
-      _sbd_balance = Amount.new account.sbd_balance
-      _savings_sbd_balance = Amount.new account.savings_sbd_balance
-      _vesting_shares = Amount.new account.vesting_shares
+      _balance                  = Amount.new account.balance
+      _savings_balance          = Amount.new account.savings_balance
+      _sbd_balance              = Amount.new account.sbd_balance
+      _savings_sbd_balance      = Amount.new account.savings_sbd_balance
+      _vesting_shares           = Amount.new account.vesting_shares
       _delegated_vesting_shares = Amount.new account.delegated_vesting_shares
-      _received_vesting_shares = Amount.new account.received_vesting_shares
+      _received_vesting_shares  = Amount.new account.received_vesting_shares
 
       # calculate actual vesting by adding and subtracting delegation.
 
       _actual_vesting = _vesting_shares - _delegated_vesting_shares + _received_vesting_shares
+
+      _account_value =
+         _balance.to_sbd +
+            _savings_balance.to_sbd +
+            _sbd_balance.to_sbd +
+            _savings_sbd_balance.to_sbd +
+            _vesting_shares.to_sbd
 
       # pretty print out the balances. Note that for a
       # quick printout Radiator::Type::Amount provides a
       # simple to_s method. But this method won't align the
       # decimal point
 
-      puts ("Account: " + account.name).colorize(:blue)
-      puts "  Steem           = %1$15.3f %2$s" % [
-         _balance.to_f,
-         _balance.asset]
-      puts "  Steem Savings   = %1$15.3f %2$s" % [
-         _savings_balance.to_f,
-         _savings_balance.asset]
-      puts "  SBD             = %1$15.3f %2$s" % [
-         _sbd_balance.to_f,
-         _sbd_balance.asset]
-      puts "  SBD Savings     = %1$15.3f %2$s" % [
-         _savings_sbd_balance.to_f,
-         _savings_sbd_balance.asset]
-      puts ("  Steem Power     = %1$15.3f %2$s %3$18.6f %4$s " + "(%5$s)".green) % [
-         _vesting_shares.to_steem.to_f,
-         _vesting_shares.to_steem.asset,
-         _vesting_shares.to_f,
-         _vesting_shares.asset,
-         _vesting_shares.to_level]
-      puts "  Delegated Power = %1$15.3f %2$s %3$18.6f %4$s" % [
-         _delegated_vesting_shares.to_steem.to_f,
-         _delegated_vesting_shares.to_steem.asset,
-         _delegated_vesting_shares.to_f,
-         _delegated_vesting_shares.asset]
-      puts "  Received Power  = %1$15.3f %2$s %3$18.6f %4$s" % [
-         _received_vesting_shares.to_steem.to_f,
-         _received_vesting_shares.to_steem.asset,
-         _received_vesting_shares.to_f,
-         _received_vesting_shares.asset]
-      puts "  Actual Power    = %1$15.3f %2$s %3$18.6f %4$s" % [
-         _actual_vesting.to_steem.to_f,
-         _actual_vesting.to_steem.asset,
-         _actual_vesting.to_f,
-         _actual_vesting.asset]
+      puts ("Account: %1$s".blue + +" " + "(%2$s)".green) % [account.name, _vesting_shares.to_level]
+      puts ("  SBD             = " + _sbd_balance.to_ansi_s)
+      puts ("  SBD Savings     = " + _savings_sbd_balance.to_ansi_s)
+      puts ("  Steem           = " + _balance.to_ansi_s)
+      puts ("  Steem Savings   = " + _savings_balance.to_ansi_s)
+      puts ("  Steem Power     = " + _vesting_shares.to_ansi_s)
+      puts ("  Delegated Power = " + _delegated_vesting_shares.to_ansi_s)
+      puts ("  Received Power  = " + _received_vesting_shares.to_ansi_s)
+      puts ("  Actual Power    = " + _actual_vesting.to_ansi_s)
+      puts ("  Account Value   = %1$15.3f %2$s") % [
+         _account_value.to_f,
+         _account_value.asset]
    end
 
    return
