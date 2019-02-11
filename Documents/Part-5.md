@@ -34,6 +34,8 @@ This tutorial shows how to interact with the Steem blockchain and Steem database
 
 Since both APIs have advantages and disadvantages I have provided sample code for both APIs so you can decide which is more suitable for you.
 
+In this installment of the tutorial you learn how to convert Steem and Steem Backed Dollars in order to calculate the account value
+
 ## Requirements
 
 You should have basic knowledge of Ruby programming you need to install at least Ruby 2.5 as well as the following ruby gems:
@@ -50,8 +52,6 @@ gem install radiator
 1. When you install both APIs you need to tell ruby which one to use.
 2. You can't use both APIs in the same script.
 
-You should also have read [Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) and [Part 3](https://steemit.com/@krischik/using-steem-api-with-ruby-part-4) of the tutorial as this part build on them.
-
 If there is anything not clear you can ask in the comments.
 
 ## Difficulty
@@ -60,48 +60,20 @@ Provided you have some programming experience this tutorial is **basic level**.
 
 ## Tutorial Contents
 
-<table>
-  <thead>
-    <tr>
-      <th>Logo</th>
-      <th>Level</th>
-      <th>Your Steem Power in VESTS</th>
-      <th>Your Steem Power in Steem</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><img src="https://steemitimages.com/100x100/https://files.steempeak.com/file/steempeak/krischik/3VLfwgNG-level-1.png"></td>
-      <td>Plankton</td>
-      <td>0 to 999'999 VESTS</td>
-      <td>0 to ≈500 Steem</td>
-    </tr>
-    <tr>
-      <td><img src="https://steemitimages.com/100x100/https://files.steempeak.com/file/steempeak/krischik/qPcjmq8w-level-2.png"></td>
-      <td>Minnow</td>
-      <td>1'000'000 to 9'999'999 VESTS</td>
-      <td>≈500 to ≈5'000 Steem</td>
-    </tr>
-    <tr>
-      <td><img src="https://steemitimages.com/100x100/https://files.steempeak.com/file/steempeak/krischik/PiSDad7z-level-3.png"></td>
-      <td>Dolphin</td>
-      <td>10'000'000 to 99'999'999 VESTS</td>
-      <td>≈5'000 to ≈50'000 Steem</td>
-    </tr>
-    <tr>
-      <td><img src="https://steemitimages.com/100x100/https://files.steempeak.com/file/steempeak/krischik/S524LYrT-level-4.png"></td>
-      <td>Ocra</td>
-      <td>100'000'000 to 999'999'999 VESTS</td>
-      <td>≈50'000 to ≈500'000 Steem</td>
-    </tr>
-    <tr>
-      <td><img src="https://steemitimages.com/100x100/https://files.steempeak.com/file/steempeak/krischik/AnEJ7qNO-level-5.png"></td>
-      <td>Whale</td>
-      <td>more than 1'000'000'000 VESTS</td>
-      <td>more than ≈500'000 Steem</td>
-    </tr>
-  </tbody>
-</table>
+In the last part of the tutorial we took a look at the account wallet where we noted that steem power is shoen on Steem and not VESTS. In the last row you will also notice the estimated account value in $:
+
+![Screenshot at Feb 04 142910.png](https://files.steempeak.com/file/steempeak/krischik/wacyfyC6-Screenshot20at20Feb20042014-29-10.png)
+
+It is important to know that this is not the account value in US$ but the account value in Steem Backed Dollars (SBD). This leaves us with the question: How are the SBD values for Steem calculated?
+
+Sadly this is not as well documented in the official API documentation and tutorials as it was the case for the VESTS to Steem conversion. So a little reverse engineering is needed to figure this out.
+
+The value needed to convert Steem value into SDB values is called `get_current_median_history_price` and can be read using call to the `Condenser_Api`. Only it's not one but two values and they are both ridiculously large:
+
+SCREENSHOT.
+
+
+
 
 **Note:** I don't copy paste the whole scripts any more as this would just be repetitive. Just the part needed to understand the lesson. The fully commented and fully functional scripts are available on [Github](https://github.com/krischik/SteemRubyTutorial/tree/master/Scripts).
 
