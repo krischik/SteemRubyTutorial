@@ -24,6 +24,7 @@ gem "radiator", :require => "steem"
 
 require 'pp'
 require 'colorize'
+require 'contracts'
 require 'radiator'
 
 ##
@@ -36,6 +37,8 @@ require 'radiator'
 # making it super convenient.
 #
 class Amount < Radiator::Type::Amount
+   include Contracts::Core
+
    ##
    # add the missing attribute reader.
    #
@@ -44,12 +47,15 @@ class Amount < Radiator::Type::Amount
    private
 
       ##
-      # @param [Number] value
+      # Create a new Amount from an value and asset.
+      #
+      # @param [Float] value
       #     the numeric value to create an amount from
       # @param [String] asset
       #     the asset type which should be "STEEM", "SBD" or "VESTS"
       # @return [Amount]
       #     the value as amount
+      Contract Float, String => Amount
       def self.to_amount (value, asset)
          return Amount.new(value.to_s + " " + asset)
       end
@@ -62,17 +68,20 @@ class Amount < Radiator::Type::Amount
       # @return [Float]
       #     actual amount as float
       #
+      Contract self => Float
       def to_f
          return @amount.to_f
       end
 
       ##
-      # convert Vests to level
+      # convert VESTS to level or "N/A" when the value
+      # isn't a VEST value.
       #
       # @return [String]
-      #     one of Whale, Orca, Dolphin, Minnow
+      #     one of Whale, Orca, Dolphin, Minnow, Plankton or "N/A"
       #
-      def to_level ()
+      Contract self => String
+      def to_level
          _value = @amount.to_f
 
          return (
@@ -92,12 +101,15 @@ class Amount < Radiator::Type::Amount
       end
 
       ##
-      # convert Amount to steem backed dollar
+      # Convert Amount to steem backed dollar
       #
       # @return [Amount]
       #     the amount represented as steem backed dollar
+      # @raise [ArgumentError]
+      #     not a SBD, STEEM or VESTS value
       #
-      def to_sbd ()
+      Contract self => Amount
+      def to_sbd
          return (
          case @asset
             when "SBD"
@@ -114,9 +126,13 @@ class Amount < Radiator::Type::Amount
       ##
       # convert Vests to steem
       #
-      # @return [Amount] a value in VESTS value
+      # @return [Amount]
+      #    a value in VESTS value
+      # @raise [ArgumentError]
+      #    not a SBD, STEEM or VESTS value
       #
-      def to_steem ()
+      Contract self => Amount
+      def to_steem
          return (
          case @asset
             when "SBD"
@@ -133,9 +149,13 @@ class Amount < Radiator::Type::Amount
       ##
       # convert Vests to steem
       #
-      # @return [Amount] a value in VESTS value
+      # @return [Amount]
+      #    a value in VESTS value
+      # @raise [ArgumentError]
+      #    not a SBD, STEEM or VESTS value
       #
-      def to_vests ()
+      Contract self => Amount
+      def to_vests
          return (
          case @asset
             when "SBD"
@@ -149,7 +169,17 @@ class Amount < Radiator::Type::Amount
          end)
       end
 
-      def to_ansi_s ()
+      ##
+      # create colorize string showing the amount in SDB,
+      # STEEM and VESTS. The actual value is colorized in
+      # blue while the converted values are colorized in
+      # grey (aka dark white).
+      #
+      # @return [String]
+      #    formatted value
+      #
+      Contract self => String
+      def to_ansi_s
          _sbd   = to_sbd
          _steem = to_steem
          _vests = to_vests
@@ -189,7 +219,10 @@ class Amount < Radiator::Type::Amount
       #     amount to add
       # @return [Float]
       #     result of addition
+      # @raise [ArgumentError]
+      #    values of different asset type
       #
+      Contract self, Amount => Amount
       def +(right)
          raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -204,7 +237,10 @@ class Amount < Radiator::Type::Amount
       #     amount to subtract
       # @return [Float]
       #     result of subtraction
+      # @raise [ArgumentError]
+      #    values of different asset type
       #
+      Contract self, Amount => Amount
       def -(right)
          raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -219,7 +255,10 @@ class Amount < Radiator::Type::Amount
       #     amount to divert
       # @return [Float]
       #     result of division
+      # @raise [ArgumentError]
+      #    values of different asset type
       #
+      Contract self, Amount => Amount
       def *(right)
          raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -234,7 +273,10 @@ class Amount < Radiator::Type::Amount
       #     amount to divert
       # @return [Float]
       #     result of division
+      # @raise [ArgumentError]
+      #    values of different asset type
       #
+      Contract self, Amount => Amount
       def /(right)
          raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -244,12 +286,12 @@ end # Amount
 
 begin
    # create instance to the steem condenser API which
-   # will give us access to
+   # will give us access to to the global properties and
+   # median history
 
    Condenser_Api = Radiator::CondenserApi.new
 
    # read the global properties and median history valuse.
-   # Yes, it's as simple as this. Note the use of result at the end.
 
    Global_Properties    = Condenser_Api.get_dynamic_global_properties.result
    Median_History_Price = Condenser_Api.get_current_median_history_price.result
@@ -264,7 +306,7 @@ begin
 
    # Calculate the conversion Rate for VESTS to steem. We
    # use the Amount class from Part 2 to convert the string
-   #  values into amounts.
+   # values into amounts.
 
    _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
    _total_vesting_shares     = Amount.new Global_Properties.total_vesting_shares
@@ -300,6 +342,8 @@ def print_account_balances (accounts)
 
       _actual_vesting = _vesting_shares - _delegated_vesting_shares + _received_vesting_shares
 
+      # calculate the account value by adding all balances in SBD
+
       _account_value =
          _balance.to_sbd +
             _savings_balance.to_sbd +
@@ -321,7 +365,7 @@ def print_account_balances (accounts)
       puts ("  Delegated Power = " + _delegated_vesting_shares.to_ansi_s)
       puts ("  Received Power  = " + _received_vesting_shares.to_ansi_s)
       puts ("  Actual Power    = " + _actual_vesting.to_ansi_s)
-      puts ("  Account Value   = %1$15.3f %2$s") % [
+      puts ("  Account Value   = " + "%1$15.3f %2$s".green) % [
          _account_value.to_f,
          _account_value.asset]
    end
