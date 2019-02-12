@@ -1,4 +1,4 @@
-# Using Steem-API with Ruby Part 1
+# Using Steem-API with Ruby Part 1 — Print Account Info
 
 utopian-io tutorials ruby steem-api programming
 

@@ -38,8 +38,10 @@ class Amount < Steem::Type::Amount
    #     actual amount as float
    #
    def to_f
-     return @amount.to_f
-   end # to_f
+      return @amount.to_f
+   end
+
+   # to_f
 
    ##
    # operator to add two balances for the users convenience
@@ -50,7 +52,8 @@ class Amount < Steem::Type::Amount
    #     result of addition
    #
    def +(right)
-      return (if right.is_a?(Numeric) then
+      return (
+      if right.is_a?(Numeric) then
          @amount.to_f + right
       else
          @amount.to_f + right.to_f
@@ -67,7 +70,8 @@ class Amount < Steem::Type::Amount
    #     result of subtraction
    #
    def -(right)
-      return (if right.is_a?(Numeric) then
+      return (
+      if right.is_a?(Numeric) then
          @amount.to_f - right
       else
          @amount.to_f - right.to_f
@@ -84,7 +88,8 @@ class Amount < Steem::Type::Amount
    #     result of division
    #
    def /(right)
-      return (if right.is_a?(Numeric) then
+      return (
+      if right.is_a?(Numeric) then
          @amount.to_f / right
       else
          @amount.to_f / right.to_f
@@ -113,13 +118,13 @@ end
 # shows usage help if the no values are given to convert.
 
 if ARGV.length == 0 then
-   puts """
+   puts "
 Steem_From_VEST — Print convert list of VESTS value to Steem values
 
 Usage:
    Steem-Print-Balances values …
 
-"""
+"
 else
    # read arguments from command line
 
@@ -129,8 +134,8 @@ else
    # from Part 2 to convert the sting values into amounts.
 
    _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
-   _total_vesting_shares     = Amount.new Global_Properties.total_vesting_shares
-   _convesion_rate           = _total_vesting_fund_steem / _total_vesting_shares
+   _total_vesting_shares = Amount.new Global_Properties.total_vesting_shares
+   _conversion_rate = _total_vesting_fund_steem / _total_vesting_shares
 
    # iterate over the valued passed in the command line
 
@@ -139,7 +144,7 @@ else
       # convert the value to steem by multiplying with the
       # conversion rate and display the value
 
-      _steem = value.to_f * _convesion_rate
+      _steem = value.to_f * _conversion_rate
       puts "%1$18.6f VESTS = %2$15.3f STEEM" % [value, _steem]
    end
 end

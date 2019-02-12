@@ -41,101 +41,302 @@ class Amount < Radiator::Type::Amount
    #
    attr_reader :amount, :precision, :asset, :value
 
-   ##
-   # return amount as float to be used for calculations
-   #
-   # @return [Float]
-   #     actual amount as float
-   #
-   def to_f
-     return @amount.to_f
-   end # to_f
+   private
 
-   ##
-   # operator to add two balances for the users convenience
-   #
-   # @param [Numeric|Amount]
-   #     amount to add
-   # @return [Float]
-   #     result of addition
-   #
-   def +(right)
-      return (if right.is_a?(Numeric) then
-         @amount.to_f + right
-      else
-         @amount.to_f + right.to_f
-      end)
-   end
+      ##
+      # @param [Number] value
+      #     the numeric value to create an amount from
+      # @param [String] asset
+      #     the asset type which should be "STEEM", "SBD" or "VESTS"
+      # @return [Amount]
+      #     the value as amount
+      def self.to_amount (value, asset)
+         return Amount.new(value.to_s + " " + asset)
+      end
 
-   ##
-   # operator to subtract two balances for the users
-   # convenience
-   #
-   # @param [Numeric|Amount]
-   #     amount to subtract
-   # @return [Float]
-   #     result of subtraction
-   #
-   def -(right)
-      return (if right.is_a?(Numeric) then
-         @amount.to_f - right
-      else
-         @amount.to_f - right.to_f
-      end)
-   end
+   public
+
+      ##
+      # return amount as float to be used for calculations
+      #
+      # @return [Float]
+      #     actual amount as float
+      #
+      def to_f
+         return @amount.to_f
+      end
+
+      ##
+      # convert Vests to level
+      #
+      # @return [String]
+      #     one of Whale, Orca, Dolphin, Minnow
+      #
+      def to_level ()
+         _value = @amount.to_f
+
+         return (
+         if @asset != 'VESTS' then
+            "N/A"
+         elsif _value > 1.0e9 then
+            "Whale"
+         elsif _value > 1.0e8 then
+            "Ocra"
+         elsif _value > 1.0e7 then
+            "Dolphin"
+         elsif _value > 1.0e6 then
+            "Minnow"
+         else
+            "Plankton"
+         end)
+      end
+
+      ##
+      # convert Amount to steem backed dollar
+      #
+      # @return [Amount]
+      #     the amount represented as steem backed dollar
+      #
+      def to_sbd ()
+         return (
+         case @asset
+            when "SBD"
+               self.clone
+            when "STEEM"
+               Amount.to_amount(@amount.to_f * Conversion_Rate_Steem, "SBD")
+            when "VESTS"
+               self.to_steem.to_sbd
+            else
+               raise ArgumentError, 'unknown asset type types'
+         end)
+      end
+
+      ##
+      # convert Vests to steem
+      #
+      # @return [Amount] a value in VESTS value
+      #
+      def to_steem ()
+         return (
+         case @asset
+            when "SBD"
+               Amount.to_amount(@amount.to_f / Conversion_Rate_Steem, "STEEM")
+            when "STEEM"
+               self.clone
+            when "VESTS"
+               Amount.to_amount(@amount.to_f * Conversion_Rate_Vests, "STEEM")
+            else
+               raise ArgumentError, 'unknown asset type types'
+         end)
+      end
+
+      ##
+      # convert Vests to steem
+      #
+      # @return [Amount] a value in VESTS value
+      #
+      def to_vests ()
+         return (
+         case @asset
+            when "SBD"
+               self.to_steem.to_vests
+            when "STEEM"
+               Amount.to_amount(@amount.to_f / Conversion_Rate_Vests, "VESTS")
+            when "VESTS"
+               self.clone
+            else
+               raise ArgumentError, 'unknown asset type types'
+         end)
+      end
+
+      def to_ansi_s ()
+         _sbd   = to_sbd
+         _steem = to_steem
+         _vests = to_vests
+
+         return sprintf(
+            "%1$15.3f %2$s".colorize(
+               if @asset == "SBD" then
+                  :blue
+               else
+                  :white
+               end
+            ) + " " + "%3$15.3f %4$s".colorize(
+               if @asset == "STEEM" then
+                  :blue
+               else
+                  :white
+               end
+            ) + " " + "%5$18.6f %6$s".colorize(
+               if @asset == "VESTS" then
+                  :blue
+               else
+                  :white
+               end
+            ),
+            _sbd.to_f,
+            _sbd.asset,
+            _steem.to_f,
+            _steem.asset,
+            _vests.to_f,
+            _vests.asset)
+      end
+
+      ##
+      # operator to add two balances for the users convenience
+      #
+      # @param [Numeric|Amount]
+      #     amount to add
+      # @return [Float]
+      #     result of addition
+      #
+      def +(right)
+         raise ArgumentError, 'asset types differ' if @asset != right.asset
+
+         return Amount.to_amount(@amount.to_f + right.to_f, @asset)
+      end
+
+      ##
+      # operator to subtract two balances for the users
+      # convenience
+      #
+      # @param [Numeric|Amount]
+      #     amount to subtract
+      # @return [Float]
+      #     result of subtraction
+      #
+      def -(right)
+         raise ArgumentError, 'asset types differ' if @asset != right.asset
+
+         return Amount.to_amount(@amount.to_f - right.to_f, @asset)
+      end
+
+      ##
+      # operator to divert two balances for the users
+      # convenience
+      #
+      # @param [Numeric|Amount]
+      #     amount to divert
+      # @return [Float]
+      #     result of division
+      #
+      def *(right)
+         raise ArgumentError, 'asset types differ' if @asset != right.asset
+
+         return Amount.to_amount(@amount.to_f * right.to_f, @asset)
+      end
+
+      ##
+      # operator to divert two balances for the users
+      # convenience
+      #
+      # @param [Numeric|Amount]
+      #     amount to divert
+      # @return [Float]
+      #     result of division
+      #
+      def /(right)
+         raise ArgumentError, 'asset types differ' if @asset != right.asset
+
+         return Amount.to_amount(@amount.to_f / right.to_f, @asset)
+      end
 end # Amount
+
+begin
+   # create instance to the steem condenser API which
+   # will give us access to
+
+   Condenser_Api = Radiator::CondenserApi.new
+
+   # read the global properties and median history valuse.
+   # Yes, it's as simple as this. Note the use of result at the end.
+
+   Global_Properties    = Condenser_Api.get_dynamic_global_properties.result
+   Median_History_Price = Condenser_Api.get_current_median_history_price.result
+
+   # Calculate the conversion Rate for Vests to steem
+   # backed dollar. We use the Amount class from Part 2 to
+   # convert the string values into amounts.
+
+   _base                 = Median_History_Price.base
+   _quote                = Median_History_Price.quote
+   Conversion_Rate_Steem = _base.to_f / _quote.to_f
+
+   # Calculate the conversion Rate for VESTS to steem. We
+   # use the Amount class from Part 2 to convert the string
+   #  values into amounts.
+
+   _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
+   _total_vesting_shares     = Amount.new Global_Properties.total_vesting_shares
+   Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
+rescue => error
+   # I am using Kernel::abort so the code snipped
+   # including error handler can be copy pasted into other
+   # scripts
+
+   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+end
 
 ##
 # print account information for an array of accounts
 #
 # @param [Array<Object>] accounts
-#     the accounts to print#
+#     the accounts to print
 #
 def print_account_balances (accounts)
    accounts.each do |account|
       # create an amount instances for each balance to be
       # used for further processing
 
-      _balance                   = Amount.new account.balance
-      _savings_balance           = Amount.new account.savings_balance
-      _sbd_balance               = Amount.new account.sbd_balance
-      _savings_sbd_balance       = Amount.new account.savings_sbd_balance
-      _vesting_shares            = Amount.new account.vesting_shares
-      _delegated_vesting_shares  = Amount.new account.delegated_vesting_shares
-      _received_vesting_shares   = Amount.new account.received_vesting_shares
+      _balance                  = Amount.new account.balance
+      _savings_balance          = Amount.new account.savings_balance
+      _sbd_balance              = Amount.new account.sbd_balance
+      _savings_sbd_balance      = Amount.new account.savings_sbd_balance
+      _vesting_shares           = Amount.new account.vesting_shares
+      _delegated_vesting_shares = Amount.new account.delegated_vesting_shares
+      _received_vesting_shares  = Amount.new account.received_vesting_shares
 
-      # calculate actual vesting by adding and subtracting
-      # delegation.
+      # calculate actual vesting by adding and subtracting delegation.
 
-      _actual_vesting            = _vesting_shares - (_delegated_vesting_shares + _received_vesting_shares)
+      _actual_vesting = _vesting_shares - _delegated_vesting_shares + _received_vesting_shares
+
+      _account_value =
+         _balance.to_sbd +
+            _savings_balance.to_sbd +
+            _sbd_balance.to_sbd +
+            _savings_sbd_balance.to_sbd +
+            _vesting_shares.to_sbd
 
       # pretty print out the balances. Note that for a
       # quick printout Radiator::Type::Amount provides a
       # simple to_s method. But this method won't align the
       # decimal point
 
-      puts ("Account: " + account.name).colorize(:blue)
-      puts "  Steem           = %1$15.3f %2$s" % [_balance.to_f,                  _balance.asset]
-      puts "  Steem Savings   = %1$15.3f %2$s" % [_savings_balance.to_f,          _savings_balance.asset]
-      puts "  SBD             = %1$15.3f %2$s" % [_sbd_balance.to_f,              _sbd_balance.asset]
-      puts "  SBD Savings     = %1$15.3f %2$s" % [_savings_sbd_balance.to_f,      _savings_sbd_balance.asset]
-      puts "  Steem Power     = %1$18.6f %2$s" % [_vesting_shares.to_f,           _vesting_shares.asset]
-      puts "  Delegated Steem = %1$18.6f %2$s" % [_delegated_vesting_shares.to_f, _delegated_vesting_shares.asset]
-      puts "  Received Steem  = %1$18.6f %2$s" % [_received_vesting_shares.to_f,  _received_vesting_shares.asset]
-      puts "  Actual Power    = %1$18.6f VESTS" % _actual_vesting
+      puts ("Account: %1$s".blue + +" " + "(%2$s)".green) % [account.name, _vesting_shares.to_level]
+      puts ("  SBD             = " + _sbd_balance.to_ansi_s)
+      puts ("  SBD Savings     = " + _savings_sbd_balance.to_ansi_s)
+      puts ("  Steem           = " + _balance.to_ansi_s)
+      puts ("  Steem Savings   = " + _savings_balance.to_ansi_s)
+      puts ("  Steem Power     = " + _vesting_shares.to_ansi_s)
+      puts ("  Delegated Power = " + _delegated_vesting_shares.to_ansi_s)
+      puts ("  Received Power  = " + _received_vesting_shares.to_ansi_s)
+      puts ("  Actual Power    = " + _actual_vesting.to_ansi_s)
+      puts ("  Account Value   = %1$15.3f %2$s") % [
+         _account_value.to_f,
+         _account_value.asset]
    end
 
    return
-end # Print_Account_Balances
+end
 
 if ARGV.length == 0 then
-   puts """
+   puts "
 Steem-Print-Balances — Print account balances.
 
 Usage:
    Steem-Print-Balances account_name …
 
-"""
+"
 else
    # read arguments from command line
 
@@ -153,7 +354,7 @@ else
    Result = Database_Api.get_accounts(Account_Names)
 
    if Result.key?('error') then
-      Kernel::abort("Error reading accounts:\n".red + error.to_s)
+      Kernel::abort("Error reading accounts:\n".red + Result.error.to_s)
    elsif Result.result.length == 0 then
       puts "No accounts found.".yellow
    else
