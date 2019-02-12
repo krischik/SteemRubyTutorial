@@ -16,48 +16,44 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the steem.rb file from the radiator gem. This is only needed if you have
-# both steem-api and radiator installed.
+# use the "steem.rb" file from the steem-ruby gem. This is
+# only needed if you have both steem-api and radiator
+# installed.
 
-gem "radiator", :require => "steem"
+gem "steem-ruby", :require => "steem"
 
 require 'pp'
 require 'colorize'
-require 'radiator'
+require 'steem'
 
-if ARGV.length == 0 then
-   puts "
-Steem-Print-Accounts — Print account infos from Steem database
+begin
+   # create instance to the steem condenser API which
+   # will give us access to the median history price
 
-Usage:
-   Steem-Print-Accounts account_name …
+   Condenser_Api = Steem::CondenserApi.new
 
-"
-else
-   # read arguments from command line
+   # read the global properties. Yes, it's as simple as 
+   # this.
 
-   Account_Names = ARGV
+   Median_History_Price = Condenser_Api.get_current_median_history_price
+rescue => error
+   # I am using Kernel::abort so the code snipped
+   # including error handler can be copy pasted into other
+   # scripts
 
-   # create instance to the steem database API
-
-   Database_Api = Radiator::DatabaseApi.new
-
-   # request account information from the steem database and print out
-   # the accounts found using pretty print (pp) or print out error
-   # information when an error occurred.
-
-   Result = Database_Api.get_accounts(Account_Names)
-
-   if Result.key?('error') then
-      Kernel::abort("Error reading accounts:\n".red + error.to_s)
-   elsif Result.result.length == 0 then
-      puts "No accounts found.".yellow
-   else
-      pp Result.result
-   end
+   Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
+
+# pretty print the result. It might look strange to do so
+# outside the begin / rescue but the value is now available
+# in constant for the rest of the script. Do note that
+# using constant is only suitable for short running script.
+# Long running scripts would need to re-read the value
+# on a regular basis.
+
+pp Median_History_Price
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
 # vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
-# vim: spell spelllang=en_gb fileencoding=utf-8 :
+# vim: set spell spelllang=en_gb fileencoding=utf-8 :

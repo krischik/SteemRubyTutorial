@@ -1,4 +1,4 @@
-# Using Steem-API with Ruby Part 3
+# Using Steem-API with Ruby Part 3 — Print Dynamic Global Properties
 
 utopian-io tutorials ruby steem-api programming
 

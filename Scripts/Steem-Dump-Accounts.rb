@@ -26,13 +26,13 @@ require 'colorize'
 require 'steem'
 
 if ARGV.length == 0 then
-   puts """
+   puts "
 Steem-Dump-Accounts — Dump account infos from Steem database
 
 Usage:
    Steem-Dump-Accounts account_name …
 
-"""
+"
 else
    # read arguments from command line
 
