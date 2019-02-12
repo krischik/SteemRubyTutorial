@@ -1,4 +1,4 @@
-# Using Steem-API with Ruby Part 4
+# Using Steem-API with Ruby Part 4 — Convert VESTS ⇔ Steem
 
 utopian-io tutorials ruby steem-api programming
 

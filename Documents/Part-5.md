@@ -1,8 +1,8 @@
-# Using Steem-API with Ruby Part 4
+# Using Steem-API with Ruby Part 5 — Print Current Median History Price
 
 utopian-io tutorials ruby steem-api programming
 
-![Steemit_Ruby.png](https://steemitimages.com/500x270/https://ipfs.busy.org/ipfs/QmSDiHZ9ng7BfYFMkvwYtNVPrw3nvbzKBA1gEj3y9vU6qN)
+<center>![Steemit_Ruby.png](https://steemitimages.com/500x270/https://ipfs.busy.org/ipfs/QmSDiHZ9ng7BfYFMkvwYtNVPrw3nvbzKBA1gEj3y9vU6qN)</center>
 
 ## Repositories
 ### SteemRubyTutorial
@@ -34,7 +34,7 @@ This tutorial shows how to interact with the Steem blockchain and Steem database
 
 Since both APIs have advantages and disadvantages I have provided sample code for both APIs so you can decide which is more suitable for you.
 
-In this installment of the tutorial you learn how to convert Steem and Steem Backed Dollars in order to calculate the account value
+In this instalment of the tutorial you learn how to convert STEEM and Steem Backed Dollars (SBD) in order to calculate the account value.
 
 ## Requirements
 
@@ -60,48 +60,109 @@ Provided you have some programming experience this tutorial is **basic level**.
 
 ## Tutorial Contents
 
-In the last part of the tutorial we took a look at the account wallet where we noted that steem power is shoen on Steem and not VESTS. In the last row you will also notice the estimated account value in $:
+In the last part of the tutorial we took a look at the account wallet where we noted that steem power is shown on STEEM and not VESTS. If you look at the screen shot again you will notice that in the last row the estimated account value in '$':
 
-![Screenshot at Feb 04 142910.png](https://files.steempeak.com/file/steempeak/krischik/wacyfyC6-Screenshot20at20Feb20042014-29-10.png)
+<center>![Screenshot at Feb 04 142910.png](https://files.steempeak.com/file/steempeak/krischik/wacyfyC6-Screenshot20at20Feb20042014-29-10.png)</center>
 
-It is important to know that this is not the account value in US$ but the account value in Steem Backed Dollars (SBD). This leaves us with the question: How are the SBD values for Steem calculated?
+It is important to know that this is not the account value in US$ but the account value in Steem Backed Dollars (SBD) which is supposed to be about one US$ but this can vary. This leaves us with the question: How are the SBD values for STEEM and by extension VESTS are calculated?
 
-Sadly this is not as well documented in the official API documentation and tutorials as it was the case for the VESTS to Steem conversion. So a little reverse engineering is needed to figure this out.
+Sadly this isn't as well documented in the official API documentation or the official tutorials as it was the case for the VESTS to STEEM conversion. So a little reverse engineering is needed to figure this out.
 
-The value needed to convert Steem value into SDB values is called `get_current_median_history_price` and can be read using call to the `Condenser_Api`. Only it's not one but two values and they are both ridiculously large:
+What you find in the official ducumentation is that the value needed to convert STEEM value into SDB values is called `get_current_median_history_price` which is a rolling median price for SBD and is provided by the Witnesses. Being a rolling median it's smother (has less ups and downs) then the actual price but for this it's also a little behind the actual price. 
 
-SCREENSHOT.
+The `get_current_median_history_price` can be read using call to the `Condenser_Api`. As you can see it's not one but two values called `base` and `quote` and they are both ridiculously large:
 
+<center>![Screenshot at Feb 12 081252.png](https://files.steempeak.com/file/steempeak/krischik/wCoppn7g-Screenshot20at20Feb20122008-12-52.png)</center>
 
+As I mentioned: How they are used is not documented but it's possible to deduct the usage from the types: `base` is in SDB and `quote` in STEEM so a division is the way to go:
 
+<center>![sbd=steem\frac{base}{quote}](https://files.steempeak.com/file/steempeak/krischik/UOoLKias-Steem_to_SBD.png)</center>
 
-**Note:** I don't copy paste the whole scripts any more as this would just be repetitive. Just the part needed to understand the lesson. The fully commented and fully functional scripts are available on [Github](https://github.com/krischik/SteemRubyTutorial/tree/master/Scripts).
+Reading the `get_current_median_history_price` is pretty straight forward and similar to what you have learned [Part 3](https://steemit.com/@krischik/using-steem-api-with-ruby-part-3)
 
 ## Implementation using steem-ruby
 
 -----
 
 ```ruby
+begin
+```
+
+Create instance to the steem condenser API which will give us access to the median history price.
+
+```ruby
+   Condenser_Api = Steem::CondenserApi.new
+```
+
+Read the median history. Yes, it's as simple as this.
+
+```ruby
+   Median_History_Price = Condenser_Api.get_current_median_history_price
+rescue => error
+```
+
+I am using `Kernel::abort` so the code snipped including error handler can be copy pasted into other scripts.
+
+```ruby
+   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+end
+```
+
+Pretty print the result. It might look strange to do so outside the begin / rescue but the value is now available in constant for the rest of the script. Do note that using a constant is only suitable for short running script. Long running scripts would need to re-read the value on a regular basis.
+
+```ruby
+pp Median_History_Price
 ```
 
 -----
 
-**Hint:** Follow this link to Github for the complete script with syntax highlighting: [Steem_From_VEST.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem_From_VEST.rb).
+**Hint:** Follow this link to Github for the complete script with syntax highlighting: [Steem-Dump-Median-History-Price.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Median-History-Price.rb).
 
 The output of the command (for the steem account) looks like this:
+
+<center>![Screenshot at Feb 12 081252.png](https://files.steempeak.com/file/steempeak/krischik/NJPyw50I-Screenshot20at20Feb20122008-12-52.png)</center>
 
 ## Implementation using radiator
 
 -----
 
 ```ruby
+begin
+```
+
+Create instance to the steem condenser API which will give us access to the median history price.
+
+```ruby
+   Condenser_Api = Radiator::CondenserApi.new
+```
+
+Read the median history. Yes, it's as simple as this.
+
+```ruby
+   Median_History_Price = Condenser_Api.get_current_median_history_price
+rescue => error
+```
+
+I am using `Kernel::abort` so the code snipped including error handler can be copy pasted into other scripts.
+
+```ruby
+   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+end
+```
+
+Pretty print the result. It might look strange to do so outside the begin / rescue but the value is now available in constant for the rest of the script. Do note that using constant is only suitable for short running script. Long running scripts would need to re-read the value on a regular basis.
+
+```ruby
+pp Median_History_Price
 ```
 
 -----
 
-**Hint:** Follow this link to Github for the complete script with syntax highlighting: [Steem_To_VEST.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem_To_VEST.rb).
+**Hint:** Follow this link to Github for the complete script with syntax highlighting: [Steem-Print-Median-History-Price.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Median-History-Price.rb).
 
 The output of the command (for the steem account) looks identical to the previous output:
+
+<center>![Screenshot at Feb 12 081512.png](https://files.steempeak.com/file/steempeak/krischik/Ww5w9IHw-Screenshot20at20Feb20122008-15-12.png)</center>
 
 # Curriculum
 ## First tutorial
@@ -110,7 +171,7 @@ The output of the command (for the steem account) looks identical to the previou
 
 ## Previous tutorial
 
-* [Using Steem-API with Ruby Part 3](https://steemit.com/@krischik/using-steem-api-with-ruby-part-4)
+* [Using Steem-API with Ruby Part 4](https://steemit.com/@krischik/using-steem-api-with-ruby-part-4)
 
 ## Next tutorial
 
@@ -118,19 +179,18 @@ The output of the command (for the steem account) looks identical to the previou
 
 ## Proof of Work
 
-* [SteemRubyTutorial Issue #5](https://github.com/krischik/SteemRubyTutorial/issues/5)
+* [SteemRubyTutorial Issue #6](https://github.com/krischik/SteemRubyTutorial/issues/6)
 
 ## Image Source
 
 * Ruby symbol: [Wikimedia](https://commons.wikimedia.org/wiki/File:Ruby_logo.svg), CC BY-SA 2.5.
 * Steemit logo [Wikimedia](https://commons.wikimedia.org/wiki/File:Steemit_New_Logo.png), CC BY-SA 4.0.
-* Steem Power logos: [SteemitBoard](http://steemitboard.com), @captaink
 * Screenshots: @krischik, CC BY-NC-SA 4.0
 
 ## Beneficiary
 
-<center> ![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png) </center>
+<center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png)</center>
 
 <!-- vim: set wrap tabstop=8 shiftwidth=3 softtabstop=3 noexpandtab : -->
 <!-- vim: set textwidth=0 filetype=markdown foldmethod=marker nospell : -->
-<!-- vim: set spell spelllang=en_gb fileencoding=utf-8 : -->:
+<!-- vim: set spell spelllang=en_gb fileencoding=utf-8 : -->::

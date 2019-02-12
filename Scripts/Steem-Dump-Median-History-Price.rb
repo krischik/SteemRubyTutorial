@@ -32,7 +32,7 @@ begin
 
    Condenser_Api = Steem::CondenserApi.new
 
-   # read the global properties. Yes, it's as simple as
+   # read the global properties. Yes, it's as simple as 
    # this.
 
    Median_History_Price = Condenser_Api.get_current_median_history_price
