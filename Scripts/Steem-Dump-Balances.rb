@@ -414,7 +414,7 @@ else
          print_account_balances Accounts
       end
    rescue => error
-         Kernel::abort("Error reading accounts:\n".red + error.to_s)
+      Kernel::abort("Error reading accounts:\n".red + error.to_s)
    end
 end
 
