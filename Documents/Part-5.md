@@ -68,7 +68,7 @@ It is important to know that this is not the account value in US$ but the accoun
 
 Sadly this isn't as well documented in the official API documentation or the official tutorials as it was the case for the VESTS to STEEM conversion. So a little reverse engineering is needed to figure this out.
 
-What you find in the official ducumentation is that the value needed to convert STEEM value into SDB values is called `get_current_median_history_price` which is a rolling median price for SBD and is provided by the Witnesses. Being a rolling median it's smother (has less ups and downs) then the actual price but for this it's also a little behind the actual price. 
+What you find in the official ducumentation is that the value needed to convert STEEM value into SDB values is called `get_current_median_history_price` which is a rolling median price for SBD and is provided by the Witnesses. Being a rolling median it's smother (has less ups and downs) then the actual price but for this it's also a little behind the actual price.
 
 The `get_current_median_history_price` can be read using call to the `Condenser_Api`. As you can see it's not one but two values called `base` and `quote` and they are both ridiculously large:
 
@@ -114,13 +114,20 @@ Pretty print the result. It might look strange to do so outside the begin / resc
 pp Median_History_Price
 ```
 
+Show actual conversion rate:
+
+```ruby
+puts ("1.000 STEEM = %1$15.3f SBD")   % (1.0 * Conversion_Rate_Steem)
+puts ("1.000 SBD   = %1$15.3f STEEM") % (1.0 / Conversion_Rate_Steem)
+```
+
 -----
 
 **Hint:** Follow this link to Github for the complete script with syntax highlighting: [Steem-Dump-Median-History-Price.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Median-History-Price.rb).
 
 The output of the command (for the steem account) looks like this:
 
-<center>![Screenshot at Feb 12 081252.png](https://files.steempeak.com/file/steempeak/krischik/NJPyw50I-Screenshot20at20Feb20122008-12-52.png)</center>
+<center>![Screenshot at Feb 12 143024.png](https://files.steempeak.com/file/steempeak/krischik/j1lLcMQK-Screenshot20at20Feb20122014-30-24.png)</center>
 
 ## Implementation using radiator
 
@@ -156,13 +163,20 @@ Pretty print the result. It might look strange to do so outside the begin / resc
 pp Median_History_Price
 ```
 
+Show actual conversion rate:
+
+```ruby
+puts ("1.000 STEEM = %1$15.3f SBD")   % (1.0 * Conversion_Rate_Steem)
+puts ("1.000 SBD   = %1$15.3f STEEM") % (1.0 / Conversion_Rate_Steem)
+```
+
 -----
 
 **Hint:** Follow this link to Github for the complete script with syntax highlighting: [Steem-Print-Median-History-Price.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Median-History-Price.rb).
 
 The output of the command (for the steem account) looks identical to the previous output:
 
-<center>![Screenshot at Feb 12 081512.png](https://files.steempeak.com/file/steempeak/krischik/Ww5w9IHw-Screenshot20at20Feb20122008-15-12.png)</center>
+<center>![Screenshot at Feb 12 143118.png](https://files.steempeak.com/file/steempeak/krischik/4lqTXfUp-Screenshot20at20Feb20122014-31-18.png)</center>
 
 # Curriculum
 ## First tutorial
@@ -188,6 +202,8 @@ The output of the command (for the steem account) looks identical to the previou
 * Screenshots: @krischik, CC BY-NC-SA 4.0
 
 ## Beneficiary
+
+![image.png](https://files.steempeak.com/file/steempeak/krischik/n389ribv-image.png)
 
 <center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png)</center>
 
