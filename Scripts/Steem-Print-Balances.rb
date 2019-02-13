@@ -44,23 +44,22 @@ class Amount < Radiator::Type::Amount
    #
    attr_reader :amount, :precision, :asset, :value
 
-   private
+   public
 
       ##
-      # Create a new Amount from an value and asset.
+      # Asset string for VESTS
       #
-      # @param [Float] value
-      #     the numeric value to create an amount from
-      # @param [String] asset
-      #     the asset type which should be "STEEM", "SBD" or "VESTS"
-      # @return [Amount]
-      #     the value as amount
-      Contract Float, String => Amount
-      def self.to_amount (value, asset)
-         return Amount.new(value.to_s + " " + asset)
-      end
+      VESTS = "VESTS"
 
-   public
+      ##
+      # Asset string for STEEM
+      #
+      STEEM = "STEEM"
+
+      ##
+      # Asset string for Steem Backed Dollar
+      #
+      SBD = "SBD"
 
       ##
       # return amount as float to be used for calculations
@@ -85,7 +84,7 @@ class Amount < Radiator::Type::Amount
          _value = @amount.to_f
 
          return (
-         if @asset != 'VESTS' then
+         if @asset != VESTS then
             "N/A"
          elsif _value > 1.0e9 then
             "Whale"
@@ -112,11 +111,11 @@ class Amount < Radiator::Type::Amount
       def to_sbd
          return (
          case @asset
-            when "SBD"
+            when SBD
                self.clone
-            when "STEEM"
-               Amount.to_amount(@amount.to_f * Conversion_Rate_Steem, "SBD")
-            when "VESTS"
+            when STEEM
+               Amount.to_amount(@amount.to_f * Conversion_Rate_Steem, SBD)
+            when VESTS
                self.to_steem.to_sbd
             else
                raise ArgumentError, 'unknown asset type types'
@@ -135,12 +134,12 @@ class Amount < Radiator::Type::Amount
       def to_steem
          return (
          case @asset
-            when "SBD"
-               Amount.to_amount(@amount.to_f / Conversion_Rate_Steem, "STEEM")
-            when "STEEM"
+            when SBD
+               Amount.to_amount(@amount.to_f / Conversion_Rate_Steem, STEEM)
+            when STEEM
                self.clone
-            when "VESTS"
-               Amount.to_amount(@amount.to_f * Conversion_Rate_Vests, "STEEM")
+            when VESTS
+               Amount.to_amount(@amount.to_f * Conversion_Rate_Vests, STEEM)
             else
                raise ArgumentError, 'unknown asset type types'
          end)
@@ -158,11 +157,11 @@ class Amount < Radiator::Type::Amount
       def to_vests
          return (
          case @asset
-            when "SBD"
+            when SBD
                self.to_steem.to_vests
-            when "STEEM"
-               Amount.to_amount(@amount.to_f / Conversion_Rate_Vests, "VESTS")
-            when "VESTS"
+            when STEEM
+               Amount.to_amount(@amount.to_f / Conversion_Rate_Vests, VESTS)
+            when VESTS
                self.clone
             else
                raise ArgumentError, 'unknown asset type types'
@@ -170,9 +169,9 @@ class Amount < Radiator::Type::Amount
       end
 
       ##
-      # create colorize string showing the amount in SDB,
-      # STEEM and VESTS. The actual value is colorized in
-      # blue while the converted values are colorized in
+      # create a colorized string showing the amount in
+      # SDB, STEEM and VESTS. The actual value is colorized
+      # in blue while the converted values are colorized in
       # grey (aka dark white).
       #
       # @return [String]
@@ -184,45 +183,45 @@ class Amount < Radiator::Type::Amount
          _steem = to_steem
          _vests = to_vests
 
-         return sprintf(
-            "%1$15.3f %2$s".colorize(
-               if @asset == "SBD" then
-                  :blue
-               else
-                  :white
-               end
-            ) + " " + "%3$15.3f %4$s".colorize(
-               if @asset == "STEEM" then
-                  :blue
-               else
-                  :white
-               end
-            ) + " " + "%5$18.6f %6$s".colorize(
-               if @asset == "VESTS" then
-                  :blue
-               else
-                  :white
-               end
-            ),
+         return (
+         "%1$15.3f %2$s".colorize(
+            if @asset == SBD then
+               :blue
+            else
+               :white
+            end
+         ) + " " + "%3$15.3f %4$s".colorize(
+            if @asset == STEEM then
+               :blue
+            else
+               :white
+            end
+         ) + " " + "%5$18.6f %6$s".colorize(
+            if @asset == VESTS then
+               :blue
+            else
+               :white
+            end
+         )) % [
             _sbd.to_f,
             _sbd.asset,
             _steem.to_f,
             _steem.asset,
             _vests.to_f,
-            _vests.asset)
+            _vests.asset]
       end
 
       ##
-      # operator to add two balances for the users convenience
+      # operator to add two balances
       #
-      # @param [Numeric|Amount]
+      # @param [Amount]
       #     amount to add
       # @return [Float]
       #     result of addition
       # @raise [ArgumentError]
       #    values of different asset type
       #
-      Contract self, Amount => Amount
+      Contract Amount => Amount
       def +(right)
          raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -230,17 +229,16 @@ class Amount < Radiator::Type::Amount
       end
 
       ##
-      # operator to subtract two balances for the users
-      # convenience
+      # operator to subtract two balances
       #
-      # @param [Numeric|Amount]
+      # @param [Amount]
       #     amount to subtract
       # @return [Float]
       #     result of subtraction
       # @raise [ArgumentError]
       #    values of different asset type
       #
-      Contract self, Amount => Amount
+      Contract Amount => Amount
       def -(right)
          raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -248,17 +246,16 @@ class Amount < Radiator::Type::Amount
       end
 
       ##
-      # operator to divert two balances for the users
-      # convenience
+      # operator to divert two balances
       #
-      # @param [Numeric|Amount]
+      # @param [Amount]
       #     amount to divert
       # @return [Float]
       #     result of division
       # @raise [ArgumentError]
       #    values of different asset type
       #
-      Contract self, Amount => Amount
+      Contract Amount => Amount
       def *(right)
          raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -266,21 +263,37 @@ class Amount < Radiator::Type::Amount
       end
 
       ##
-      # operator to divert two balances for the users
-      # convenience
+      # operator to divert two balances
       #
-      # @param [Numeric|Amount]
+      # @param [Amount]
       #     amount to divert
       # @return [Float]
       #     result of division
       # @raise [ArgumentError]
       #    values of different asset type
       #
-      Contract self, Amount => Amount
+      Contract Amount => Amount
       def /(right)
          raise ArgumentError, 'asset types differ' if @asset != right.asset
 
          return Amount.to_amount(@amount.to_f / right.to_f, @asset)
+      end
+
+   private
+
+      ##
+      # Helper factory method to create a new Amount from
+      # an value and asset type.
+      #
+      # @param [Float] value
+      #     the numeric value to create an amount from
+      # @param [String] asset
+      #     the asset type which should be STEEM, SBD or VESTS
+      # @return [Amount]
+      #     the value as amount
+      Contract Float, String => Amount
+      def self.to_amount(value, asset)
+         return Amount.new(value.to_s + " " + asset)
       end
 end # Amount
 
@@ -300,8 +313,8 @@ begin
    # backed dollar. We use the Amount class from Part 2 to
    # convert the string values into amounts.
 
-   _base                 = Median_History_Price.base
-   _quote                = Median_History_Price.quote
+   _base                 = Amount.new Median_History_Price.base
+   _quote                = Amount.new Median_History_Price.quote
    Conversion_Rate_Steem = _base.to_f / _quote.to_f
 
    # Calculate the conversion Rate for VESTS to steem. We
@@ -325,7 +338,7 @@ end
 # @param [Array<Object>] accounts
 #     the accounts to print
 #
-def print_account_balances (accounts)
+def print_account_balances(accounts)
    accounts.each do |account|
       # create an amount instances for each balance to be
       # used for further processing

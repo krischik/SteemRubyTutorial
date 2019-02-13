@@ -1,7 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="RUBY_MODULE" version="4">
   <component name="ModuleRunConfigurationManager">
-    <shared />
+    <shared>
+      <configuration default="false" name="Steem-Dump-Balances" type="RubyRunConfigurationType" factoryName="Ruby">
+        <module name="SteemRubyTutorial" />
+        <RUBY_RUN_CONFIG NAME="RUBY_ARGS" VALUE="" />
+        <RUBY_RUN_CONFIG NAME="WORK DIR" VALUE="$MODULE_DIR$/Scripts" />
+        <RUBY_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
+        <RUBY_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
+        <RUBY_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
+        <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+        <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+        <EXTENSION ID="RubyCoverageRunConfigurationExtension" track_test_folders="true" runner="rcov">
+          <COVERAGE_PATTERN ENABLED="true">
+            <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+          </COVERAGE_PATTERN>
+        </EXTENSION>
+        <RUBY_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$MODULE_DIR$/Scripts/Steem-Dump-Balances.rb" />
+        <RUBY_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="steem" />
+        <method v="2" />
+      </configuration>
+      <configuration default="false" name="Steem-Print-Balances" type="RubyRunConfigurationType" factoryName="Ruby">
+        <module name="SteemRubyTutorial" />
+        <RUBY_RUN_CONFIG NAME="RUBY_ARGS" VALUE="" />
+        <RUBY_RUN_CONFIG NAME="WORK DIR" VALUE="$MODULE_DIR$/Scripts" />
+        <RUBY_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
+        <RUBY_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
+        <RUBY_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
+        <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+        <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+        <EXTENSION ID="RubyCoverageRunConfigurationExtension" track_test_folders="true" runner="rcov">
+          <COVERAGE_PATTERN ENABLED="true">
+            <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+          </COVERAGE_PATTERN>
+        </EXTENSION>
+        <RUBY_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$MODULE_DIR$/Scripts/Steem-Print-Balances.rb" />
+        <RUBY_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="steem" />
+        <method v="2" />
+      </configuration>
+    </shared>
   </component>
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
