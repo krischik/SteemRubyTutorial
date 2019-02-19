@@ -4,7 +4,6 @@ utopian-io tutorials ruby steem-api programming
 
 <center>![Steemit_Ruby.png](https://steemitimages.com/500x270/https://ipfs.busy.org/ipfs/QmSDiHZ9ng7BfYFMkvwYtNVPrw3nvbzKBA1gEj3y9vU6qN)</center>
 
-
 ## Repositories
 ### SteemRubyTutorial
 
@@ -111,7 +110,7 @@ Return amount as float to be used by the various calculations.
       end
 ```
 
-Convert VESTS to level, which is one of _"Whale"_, _"Orca"_, _"Dolphin"_, _"Minnow"_, _"Plankton"_ or _"N/A"_ when the value isn't a VEST value. Here ths 
+Convert VESTS to level, which is one of _"Whale"_, _"Orca"_, _"Dolphin"_, _"Minnow"_, _"Plankton"_ or _"N/A"_ when the value isn't a VEST value.
 
 <table>
   <thead>
@@ -227,9 +226,11 @@ Converting the amount to a desired asset type. If the amount is already in the n
       end
 ```
 
-Create a colorized string showing the amount in SDB, STEEM and VESTS. The value of the actual asset type is colorized in blue while the converted values are colorized in grey (aka dark white).
+Create a colorised string showing the amount in SDB, STEEM and VESTS. The value of the actual asset type is colorised in blue while the converted values are colorised in grey (aka dark white).
 
-The magic all happens in the `%` operator which calles `sprintf` to create the formated string. 
+<center>![to_ansi_s.png](https://files.steempeak.com/file/steempeak/krischik/L8s0kvyr-to_ansi_s.png)</center>
+
+The magic all happens in the `%` operator which called `sprintf` to create the formatted string. 
 
 ```ruby
       Contract nil => String
@@ -270,10 +271,10 @@ The magic all happens in the `%` operator which calles `sprintf` to create the f
 The arithmetic operators have changed slightly since [Using Steem-API with Ruby Part 2 — Print Account Balances](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2).
 
 1. There is now an operator for all four base functions. 
-2. We now check both amounts are of the same asset type (which is mathematicaly correct)
-3. We now return a new `Amount` with the same asset type  (which also is mathematicaly correct)
+2. We now check both amounts are of the same asset type (which is mathematically correct)
+3. We now return a new `Amount` with the same asset type (which also is mathematically correct)
 
-In addiditon to beeing mathematicaly correct this makes the methods more simple. 
+In addition to being mathematically correct this makes the methods more simple. 
 
 ```ruby
       Contract Amount => Amount
@@ -325,11 +326,11 @@ Since the implementations for steem-api and radiator are almost identical I expl
 
 The output of the command (for the steem account) looks like this:
 
-<center>![Screenshot at Feb 12 081252.png](https://files.steempeak.com/file/steempeak/krischik/NJPyw50I-Screenshot20at20Feb20122008-12-52.png)</center>
+<center>![Screenshot at Feb 13 145331.png](https://files.steempeak.com/file/steempeak/krischik/bj5gfctG-Screenshot20at20Feb20132014-53-31.png)</center>
 
 ## Implementation using radiator
 
-First we need to calculate the two conversison values for converting VESTS⇔STEEM and STEEM⇔SBD. For this we need global properties and the median history.
+First we need to calculate the two conversion values for converting VESTS⇔STEEM and STEEM⇔SBD. For this we need global properties and the median history.
 
 ```ruby
 begin
@@ -408,7 +409,7 @@ Calculate the account value by adding all balances in SBD. Apart from the delega
             _vesting_shares.to_sbd
 ```
 
-Pretty print out the balances. Note that for a quick printout `Radiator::Type::Amount` provides a simple `to_s` method. But this method won't align the decimal point resuting in a hard to read output. The new `to_ansi_s` will format the values perfectly in columns.
+Pretty print out the balances. Note that for a quick printout `Radiator::Type::Amount` provides a simple `to_s` method. But this method won't align the decimal point resulting in a hard to read output. The new `to_ansi_s` will format the values perfectly in columns.
 
 ```ruby
       puts ("Account: %1$s".blue + +" " + "(%2$s)".green) % [account.name, _vesting_shares.to_level]
@@ -459,11 +460,11 @@ end
 
 -----
 
-**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Median-History-Price.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Median-History-Price.rb).
+**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Global-Properties.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Global-Properties.rb).
 
 The output of the command (for the steem account) looks identical to the previous output:
 
-<center>![Screenshot at Feb 12 081512.png](https://files.steempeak.com/file/steempeak/krischik/Ww5w9IHw-Screenshot20at20Feb20122008-15-12.png)</center>
+<center>![Screenshot at Feb 13 145420.png](https://files.steempeak.com/file/steempeak/krischik/3dURm96L-Screenshot20at20Feb20132014-54-20.png)</center>
 
 # Curriculum
 ## First tutorial
@@ -486,9 +487,12 @@ The output of the command (for the steem account) looks identical to the previou
 
 * Ruby symbol: [Wikimedia](https://commons.wikimedia.org/wiki/File:Ruby_logo.svg), CC BY-SA 2.5.
 * Steemit logo [Wikimedia](https://commons.wikimedia.org/wiki/File:Steemit_New_Logo.png), CC BY-SA 4.0.
+* Steem Power logos: [SteemitBoard](http://steemitboard.com), @captaink
 * Screenshots: @krischik, CC BY-NC-SA 4.0
 
 ## Beneficiary
+
+![Beneficiary.png](https://cdn.steemitimages.com/DQmYnQfCi8Z12jkaNqADKc37gZ89RKdvdLzp7uXRjbo1AHy/image.png)
 
 <center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png)</center>
 
