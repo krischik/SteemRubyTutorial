@@ -1,4 +1,4 @@
-# Using Steem-API with Ruby Part 4
+# Using Steem-API with Ruby Part 4 — Convert VESTS ⇔ Steem
 
 utopian-io tutorials ruby steem-api programming
 
@@ -67,7 +67,7 @@ When you take a look at your account wallet you find three values: Steem, Steem 
 
 ![Screenshot at Feb 04 142910.png](https://files.steempeak.com/file/steempeak/krischik/wacyfyC6-Screenshot20at20Feb20042014-29-10.png)
 
-With both Steem and Steem Power measured in Steem and Steem Dollar in SBD os just a $ sign. However, if you look at the output of [Tutorial Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) you will see that there is no Steem Power — just a few ridiculous large values called vesting measured in VESTS:
+With both Steem and Steem Power measured in Steem and Steem Dollar in SBD or just a $ sign. However, if you look at the output of [Tutorial Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) you will see that there is no Steem Power — just a few ridiculous large values called vesting measured in VESTS:
 
 ![Screenshot at Jan 27 17-44-14.png](https://ipfs.busy.org/ipfs/QmS3Cd7342izfri5EXGTcGYTCvNzUEWELASy8z4hFuSMso)
 
@@ -90,31 +90,31 @@ After all this theory let's get to the practical part. I made a VESTS to Steem s
   </thead>
   <tbody>
     <tr>
-      <td><img src="https://img.esteem.ws/ph3r1fyc8f.png"></td>
+      <td><img src="https://steemitimages.com/100x100/https://files.steempeak.com/file/steempeak/krischik/3VLfwgNG-level-1.png"></td>
       <td>Plankton</td>
       <td>0 to 999'999 VESTS</td>
       <td>0 to ≈500 Steem</td>
     </tr>
     <tr>
-      <td><img src="https://steemitimages.com/0x0/https://img.esteem.ws/h3oygwjq8x.png"></td>
+      <td><img src="https://steemitimages.com/100x100/https://files.steempeak.com/file/steempeak/krischik/qPcjmq8w-level-2.png"></td>
       <td>Minnow</td>
       <td>1'000'000 to 9'999'999 VESTS</td>
       <td>≈500 to ≈5'000 Steem</td>
     </tr>
     <tr>
-      <td><img src="https://steemitimages.com/0x0/https://img.esteem.ws/m3joaelsa7.png"></td>
+      <td><img src="https://steemitimages.com/100x100/https://files.steempeak.com/file/steempeak/krischik/PiSDad7z-level-3.png"></td>
       <td>Dolphin</td>
       <td>10'000'000 to 99'999'999 VESTS</td>
       <td>≈5'000 to ≈50'000 Steem</td>
     </tr>
     <tr>
-      <td><img src="https://steemitimages.com/0x0/https://img.esteem.ws/ngf0rg6mqy.png"></td>
+      <td><img src="https://steemitimages.com/100x100/https://files.steempeak.com/file/steempeak/krischik/S524LYrT-level-4.png"></td>
       <td>Ocra</td>
       <td>100'000'000 to 999'999'999 VESTS</td>
       <td>≈50'000 to ≈500'000 Steem</td>
     </tr>
     <tr>
-      <td><img src="https://steemitimages.com/0x0/https://img.esteem.ws/msa89atwso.png"></td>
+      <td><img src="https://steemitimages.com/100x100/https://files.steempeak.com/file/steempeak/krischik/AnEJ7qNO-level-5.png"></td>
       <td>Whale</td>
       <td>more than 1'000'000'000 VESTS</td>
       <td>more than ≈500'000 Steem</td>
@@ -181,7 +181,7 @@ The output of the command (for the steem account) looks like this:
 
 ![Screenshot at Feb 04 165002.png](https://files.steempeak.com/file/steempeak/krischik/jLeQPYTY-Screenshot20at20Feb20042016-50-02.png)
 
-As you can see the Steem values of the user levels are slightly below 500, 5000, … . 
+As you can see the Steem values of the user levels are slightly below 500, 5000, … . Remember that VESTS get more expensive so one million VESTS will eventually cost more then 500 Steem.
 
 ## Implementation using radiator
 
@@ -240,7 +240,7 @@ The output of the command (for the steem account) looks identical to the previou
 
 ![Screenshot at Feb 05 141113.png](https://files.steempeak.com/file/steempeak/krischik/Vj96MH4f-Screenshot20at20Feb20052014-11-13.png)
 
-And coming form the other way, converting 500, 5000 … we now get slightly larger VESTS then 1 million, 10 million … . Remember, by the time you read this VEST will
+As you see buying Steem Power for 500, 5000 … Steem will get you slightly more VESTS then 1 million, 10 million … putting you will within the the respective user level. But remember, by the time you read this you will get less VEST then displayed.
 
 # Curriculum
 ## First tutorial
@@ -258,6 +258,15 @@ And coming form the other way, converting 500, 5000 … we now get slightly larg
 ## Proof of Work
 
 * [SteemRubyTutorial Issue #5](https://github.com/krischik/SteemRubyTutorial/issues/5)
+
+## Image Source
+
+* Ruby symbol: [Wikimedia](https://commons.wikimedia.org/wiki/File:Ruby_logo.svg), CC BY-SA 2.5.
+* Steemit logo [Wikimedia](https://commons.wikimedia.org/wiki/File:Steemit_New_Logo.png), CC BY-SA 4.0.
+* Steem Power logos: [SteemitBoard](http://steemitboard.com), @captaink
+* Screenshots: @krischik, CC BY-NC-SA 4.0
+
+## Beneficiary
 
 ![image.png](https://files.steempeak.com/file/steempeak/krischik/OJZDys0B-image.png)
 
