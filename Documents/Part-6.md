@@ -1,4 +1,4 @@
-# Using Steem-API with Ruby Part 6
+# Using Steem-API with Ruby Part 6 — Print Account Balances improved
 
 utopian-io tutorials ruby steem-api programming
 
@@ -44,6 +44,7 @@ You should have basic knowledge of Ruby programming you need to install at least
 ```sh
 gem install bundler
 gem install colorize
+gem install contracts
 gem install steem-ruby
 gem install radiator
 ```
@@ -74,13 +75,15 @@ In [Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) of t
 
 However the values where not the way they are usually displayed:
 
-<center>![Screenshot at Jan 27 17-44-14.png](https://ipfs.busy.org/ipfs/QmS3Cd7342izfri5EXGTcGYTCvNzUEWELASy8z4hFuSMso)</center>
+<center>![Screenshot at Feb 04 142910.png](https://files.steempeak.com/file/steempeak/krischik/wacyfyC6-Screenshot20at20Feb20042014-29-10.png)</center>
 
 The steem power is printed in VESTS which are incredibly large number and the estimated account was missing from the output.
 
 In this part of the tutorial we return the `Steem-Dump-Balances.rb` and `Steem-Print-Balances.rb` to improve the output and give us more informations. For this we will use a greatly improved `Amount`class. Since we already have all the theoretical knowledge we delve right into the code.
 
 ## Implementation using steem-ruby
+
+Let's first have a look at the improved Amount class which you can use in your own projects as well.
 
 -----
 
@@ -108,7 +111,7 @@ Return amount as float to be used by the various calculations.
       end
 ```
 
-Convert VESTS to level, which is one of "Whale", "Orca", "Dolphin", "Minnow", "Plankton" or "N/A" when the value isn't a VEST value.
+Convert VESTS to level, which is one of _"Whale"_, _"Orca"_, _"Dolphin"_, _"Minnow"_, _"Plankton"_ or _"N/A"_ when the value isn't a VEST value. Here ths 
 
 <table>
   <thead>
@@ -121,34 +124,34 @@ Convert VESTS to level, which is one of "Whale", "Orca", "Dolphin", "Minnow", "P
   </thead>
   <tbody>
     <tr>
-      <td><img src="https://steemitimages.com/100x100/https://files.steempeak.com/file/steempeak/krischik/3VLfwgNG-level-1.png"></td>
-      <td>Plankton</td>
-      <td>0 to 999'999 VESTS</td>
-      <td>0 to ≈500 Steem</td>
-    </tr>
-    <tr>
-      <td><img src="https://steemitimages.com/100x100/https://files.steempeak.com/file/steempeak/krischik/qPcjmq8w-level-2.png"></td>
-      <td>Minnow</td>
-      <td>1'000'000 to 9'999'999 VESTS</td>
-      <td>≈500 to ≈5'000 Steem</td>
-    </tr>
-    <tr>
-      <td><img src="https://steemitimages.com/100x100/https://files.steempeak.com/file/steempeak/krischik/PiSDad7z-level-3.png"></td>
-      <td>Dolphin</td>
-      <td>10'000'000 to 99'999'999 VESTS</td>
-      <td>≈5'000 to ≈50'000 Steem</td>
-    </tr>
-    <tr>
-      <td><img src="https://steemitimages.com/100x100/https://files.steempeak.com/file/steempeak/krischik/S524LYrT-level-4.png"></td>
-      <td>Ocra</td>
-      <td>100'000'000 to 999'999'999 VESTS</td>
-      <td>≈50'000 to ≈500'000 Steem</td>
-    </tr>
-    <tr>
-      <td><img src="https://steemitimages.com/100x100/https://files.steempeak.com/file/steempeak/krischik/AnEJ7qNO-level-5.png"></td>
+      <td><img src="https://steemitimages.com/50x50/https://files.steempeak.com/file/steempeak/krischik/AnEJ7qNO-level-5.png"></td>
       <td>Whale</td>
-      <td>more than 1'000'000'000 VESTS</td>
+      <td>more than 10⁹ VESTS</td>
       <td>more than ≈500'000 Steem</td>
+    </tr>
+    <tr>
+      <td><img src="https://steemitimages.com/50x50/https://files.steempeak.com/file/steempeak/krischik/S524LYrT-level-4.png"></td>
+      <td>Ocra</td>
+      <td>[10⁸ … 10⁹) VESTS</td>
+      <td>≈50'000 … ≈500'000 Steem</td>
+    </tr>
+    <tr>
+      <td><img src="https://steemitimages.com/50x50/https://files.steempeak.com/file/steempeak/krischik/PiSDad7z-level-3.png"></td>
+      <td>Dolphin</td>
+      <td>[10⁷ … 10⁸) VESTS</td>
+      <td>≈5'000 … ≈50'000 Steem</td>
+    </tr>
+    <tr>
+      <td><img src="https://steemitimages.com/50x50/https://files.steempeak.com/file/steempeak/krischik/qPcjmq8w-level-2.png"></td>
+      <td>Minnow</td>
+      <td>[10⁶ … 10⁷) VESTS</td>
+      <td>≈500 … ≈5'000 Steem</td>
+    </tr>
+    <tr>
+      <td><img src="https://steemitimages.com/50x50/https://files.steempeak.com/file/steempeak/krischik/3VLfwgNG-level-1.png"></td>
+      <td>Plankton</td>
+      <td>[0 … 10⁶) VESTS</td>
+      <td>0 … ≈500 Steem</td>
     </tr>
   </tbody>
 </table>
@@ -175,7 +178,7 @@ Convert VESTS to level, which is one of "Whale", "Orca", "Dolphin", "Minnow", "P
       end
 ```
 
-Converting the amount to a desired asset type. If the amount is already in the needed asset type the value is just clonebnd. Since we only have conversions for VESTS⇔STEEM and STEEM⇔SBD the conversion between VESTS⇔SBD are done in two steps with one recursive call.
+Converting the amount to a desired asset type. If the amount is already in the needed asset type the value is cloned. Since we only have conversions for VESTS⇔STEEM and STEEM⇔SBD the conversion between VESTS⇔SBD are done in two steps with one recursive call.
 
 ```ruby
       Contract nil => Amount
@@ -266,9 +269,11 @@ The magic all happens in the `%` operator which calles `sprintf` to create the f
 
 The arithmetic operators have changed slightly since [Using Steem-API with Ruby Part 2 — Print Account Balances](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2).
 
-1. There is now an operator for all 4 base functions. 
+1. There is now an operator for all four base functions. 
 2. We now check both amounts are of the same asset type (which is mathematicaly correct)
-3. We now return a new `Amount` with the same asset type  (which is alse mathematicaly correct)
+3. We now return a new `Amount` with the same asset type  (which also is mathematicaly correct)
+
+In addiditon to beeing mathematicaly correct this makes the methods more simple. 
 
 ```ruby
       Contract Amount => Amount
@@ -300,7 +305,7 @@ The arithmetic operators have changed slightly since [Using Steem-API with Ruby 
       end
 ```
 
-Helper factory method to create a new Amount from an value and asset type.
+Helper factory method to create a new Amount from an value and asset type. Used by the arithmetic operators. Made private as it's not needed outside the class.
 
 ```ruby
    private
@@ -316,7 +321,7 @@ end
 
 Since the implementations for steem-api and radiator are almost identical I explain the rest of the functionality in the radiator part.
 
-**Hint:** Follow this link to Github for the complete script with syntax highlighting: [Steem-Dump-Median-History-Price.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Median-History-Price.rb).
+**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting: [Steem-Dump-Median-History-Price.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Median-History-Price.rb).
 
 The output of the command (for the steem account) looks like this:
 
@@ -324,9 +329,7 @@ The output of the command (for the steem account) looks like this:
 
 ## Implementation using radiator
 
------
-
-First we need to calculate the two conversison values for converting VESTS⇔STEEM and STEEM⇔SBD. for this we need global properties and the median history.
+First we need to calculate the two conversison values for converting VESTS⇔STEEM and STEEM⇔SBD. For this we need global properties and the median history.
 
 ```ruby
 begin
@@ -338,14 +341,14 @@ Create instance to the steem condenser API which will give us access to to the g
    _condenser_api = Radiator::CondenserApi.new
 ```
 
-Read the global properties and median history values.
+Read the global properties and median history values. Note the use of `result` at the end. It stripps some additional JSON boilerplate which we don't need and makes using the data more useable.
 
 ```ruby
    _global_properties    = _condenser_api.get_dynamic_global_properties.result
    _median_history_price = _condenser_api.get_current_median_history_price.result
 ```
 
-Calculate the conversion Rate for Vests to steem backed dollar. We use the Amount class to convert the string values into amounts.
+Calculate the conversion Rate for STEEM to SBD. We use the Amount class to convert the string values into amounts.
 
 ```ruby
    _base                 = Amount.new _median_history_price.base
@@ -353,29 +356,11 @@ Calculate the conversion Rate for Vests to steem backed dollar. We use the Amoun
    Conversion_Rate_Steem = _base.to_f / _quote.to_f
 ```
 
-Calculate the conversion Rate for VESTS to steem. We use the Amount class to convert the string values into amounts.
+Calculate the conversion Rate for VESTS to STEEM. Here too we use the Amount class to convert the string values into amounts.
 
 ```ruby
    _total_vesting_fund_steem = Amount.new _global_properties.total_vesting_fund_steem
    _total_vesting_shares     = Amount.new _global_properties.total_vesting_shares
-   Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
-   Global_Properties    = Condenser_Api.get_dynamic_global_properties.result
-   Median_History_Price = Condenser_Api.get_current_median_history_price.result
-```
-
-Calculate the conversion Rate for Vests to steem backed dollar. We use the Amount class to convert the string values into amounts.
-
-```ruby
-   _base                 = Amount.new Median_History_Price.base
-   _quote                = Amount.new Median_History_Price.quote
-   Conversion_Rate_Steem = _base.to_f / _quote.to_f
-```
-
-Calculate the conversion Rate for VESTS to steem. We use the Amount class to convert the string values into amounts.
-
-```ruby
-   _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
-   _total_vesting_shares     = Amount.new Global_Properties.total_vesting_shares
    Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 rescue => error
 ```
@@ -387,14 +372,14 @@ I am using Kernel::abort so the code snipped including error handler can be copy
 end
 ```
 
-print account information for an array of accounts
+Print account information for an array of accounts.
 
 ```ruby
 def print_account_balances(accounts)
    accounts.each do |account|
 ```
 
-create an amount instances for each balance to be used for further processing
+Create an amount instances for each balance to be used for further processing.
 
 ```ruby
       _balance                  = Amount.new account.balance
@@ -406,13 +391,13 @@ create an amount instances for each balance to be used for further processing
       _received_vesting_shares  = Amount.new account.received_vesting_shares
 ```
 
-calculate actual vesting by adding and subtracting delegation.
+Calculate actual vesting by subtracting and adding delegation done by the user (`_delegated_vesting_shares`) and done to the user (`_received_vesting_shares`).
 
 ```ruby
       _actual_vesting = _vesting_shares - _delegated_vesting_shares + _received_vesting_shares
 ```
 
-calculate the account value by adding all balances in SBD
+Calculate the account value by adding all balances in SBD. Apart from the delegation. Delegation does not add or subract from the account value.
 
 ```ruby
       _account_value =
@@ -423,7 +408,7 @@ calculate the account value by adding all balances in SBD
             _vesting_shares.to_sbd
 ```
 
-pretty print out the balances. Note that for a quick printout Radiator::Type::Amount provides a simple to_s method. But this method won't align the decimal point
+Pretty print out the balances. Note that for a quick printout `Radiator::Type::Amount` provides a simple `to_s` method. But this method won't align the decimal point resuting in a hard to read output. The new `to_ansi_s` will format the values perfectly in columns.
 
 ```ruby
       puts ("Account: %1$s".blue + +" " + "(%2$s)".green) % [account.name, _vesting_shares.to_level]
@@ -452,17 +437,8 @@ Usage:
 
 "
 else
-```
-
-read arguments from command line
-
-```ruby
    Account_Names = ARGV
-```
 
-create instance to the steem database API
-
-```ruby
    Database_Api = Radiator::DatabaseApi.new
 ```
 
@@ -483,7 +459,7 @@ end
 
 -----
 
-**Hint:** Follow this link to Github for the complete script with syntax highlighting: [Steem-Print-Median-History-Price.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Median-History-Price.rb).
+**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Median-History-Price.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Median-History-Price.rb).
 
 The output of the command (for the steem account) looks identical to the previous output:
 
