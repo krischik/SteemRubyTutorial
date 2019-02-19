@@ -62,7 +62,7 @@ class Amount < Steem::Type::Amount
       # @return [Float]
       #     actual amount as float
       #
-      Contract self => Float
+      Contract nil => Float
       def to_f
          return @amount.to_f
       end
@@ -72,9 +72,9 @@ class Amount < Steem::Type::Amount
       # isn't a VEST value.
       #
       # @return [String]
-      #     one of Whale, Orca, Dolphin, Minnow, Plankton or "N/A"
+      #     one of "Whale", "Orca", "Dolphin", "Minnow", "Plankton" or "N/A"
       #
-      Contract self => String
+      Contract nil => String
       def to_level
          _value = @amount.to_f
 
@@ -102,7 +102,7 @@ class Amount < Steem::Type::Amount
       # @raise [ArgumentError]
       #     not a SBD, STEEM or VESTS value
       #
-      Contract self => Amount
+      Contract nil => Amount
       def to_sbd
          return (
          case @asset
@@ -125,7 +125,7 @@ class Amount < Steem::Type::Amount
       # @raise [ArgumentError]
       #    not a SBD, STEEM or VESTS value
       #
-      Contract self => Amount
+      Contract nil => Amount
       def to_steem
          return (
          case @asset
@@ -148,7 +148,7 @@ class Amount < Steem::Type::Amount
       # @raise [ArgumentError]
       #    not a SBD, STEEM or VESTS value
       #
-      Contract self => Amount
+      Contract nil => Amount
       def to_vests
          return (
          case @asset
@@ -172,7 +172,7 @@ class Amount < Steem::Type::Amount
       # @return [String]
       #    formatted value
       #
-      Contract self => String
+      Contract nil => String
       def to_ansi_s
          _sbd   = to_sbd
          _steem = to_steem
@@ -297,27 +297,27 @@ begin
    # will give us access to to the global properties and
    # median history
 
-   Condenser_Api = Steem::CondenserApi.new
+   _condenser_api = Steem::CondenserApi.new
 
-   # read the global properties and median history valuse.
+   # read the global properties and median history values.
 
-   Global_Properties    = Condenser_Api.get_dynamic_global_properties.result
-   Median_History_Price = Condenser_Api.get_current_median_history_price.result
+   _global_properties    = _condenser_api.get_dynamic_global_properties.result
+   _median_history_price = _condenser_api.get_current_median_history_price.result
 
    # Calculate the conversion Rate for Vests to steem
    # backed dollar. We use the Amount class from Part 2 to
    # convert the string values into amounts.
 
-   _base                 = Amount.new Median_History_Price.base
-   _quote                = Amount.new Median_History_Price.quote
+   _base                 = Amount.new _median_history_price.base
+   _quote                = Amount.new _median_history_price.quote
    Conversion_Rate_Steem = _base.to_f / _quote.to_f
 
    # Calculate the conversion Rate for VESTS to steem. We
    # use the Amount class from Part 2 to convert the string
    # values into amounts.
 
-   _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
-   _total_vesting_shares     = Amount.new Global_Properties.total_vesting_shares
+   _total_vesting_fund_steem = Amount.new _global_properties.total_vesting_fund_steem
+   _total_vesting_shares     = Amount.new _global_properties.total_vesting_shares
    Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 rescue => error
    # I am using Kernel::abort so the code snipped
