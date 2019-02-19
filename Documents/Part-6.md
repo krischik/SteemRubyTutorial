@@ -10,6 +10,8 @@ utopian-io tutorials ruby steem-api programming
 You can find all examples from this tutorial as fully functional scripts on GitHub:
 
 * [SteemRubyTutorial](https://github.com/krischik/SteemRubyTutorial)
+* steem-api sample code: [Steem-Dump-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Balances.rb)
+* radiator sample code: [Steem-Print-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb).
 
 ### steem-ruby
 
@@ -322,7 +324,7 @@ end
 
 Since the implementations for steem-api and radiator are almost identical I explain the rest of the functionality in the radiator part.
 
-**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting: [Steem-Dump-Median-History-Price.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Median-History-Price.rb).
+**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting: [Steem-Dump-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Balances.rb).
 
 The output of the command (for the steem account) looks like this:
 
@@ -460,7 +462,7 @@ end
 
 -----
 
-**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Global-Properties.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Global-Properties.rb).
+**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb).
 
 The output of the command (for the steem account) looks identical to the previous output:
 
