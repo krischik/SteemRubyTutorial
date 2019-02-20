@@ -34,7 +34,7 @@ This tutorial shows how to interact with the Steem blockchain and Steem database
 
 Since both APIs have advantages and disadvantages I have provided sample code for both APIs so you can decide which is more suitable for you.
 
-In this instalment of the tutorial you learn how to convert STEEM and Steem Backed Dollars (SBD) in order to calculate the account value.
+In this instalment of the tutorial you learn how to access the conversion rate of STEEM and Steem Backed Dollars (SBD).
 
 ## Requirements
 
@@ -60,27 +60,27 @@ Provided you have some programming experience this tutorial is **basic level**.
 
 ## Tutorial Contents
 
-In the last part of the tutorial we took a look at the account wallet where we noted that steem power is shown on STEEM and not VESTS. If you look at the screen shot again you will notice that in the last row the estimated account value in '$':
+In the last part of the tutorial we took a look at the account wallet where we noted that steem power is shown on STEEM and not VESTS. If you look at the screen shot again you will notice that in the last row the estimated account value is quoted in '$':
 
 <center>![Screenshot at Feb 04 142910.png](https://files.steempeak.com/file/steempeak/krischik/wacyfyC6-Screenshot20at20Feb20042014-29-10.png)</center>
 
-It is important to know that this is not the account value in US$ but the account value in Steem Backed Dollars (SBD) which is supposed to be about one US$ but this can vary. This leaves us with the question: How are the SBD values for STEEM and by extension VESTS are calculated?
+It is important to know that this is not the account value in US$. Instead it's the account value in Steem Backed Dollars (SBD). One SBD is supposed to be about one US$ but this can vary. Which leads to the question: What is the exchange rate between SBD and STEEM?
 
-Sadly this isn't as well documented in the official API documentation or the official tutorials as it was the case for the VESTS to STEEM conversion. So a little reverse engineering is needed to figure this out.
+This isn't documented in the official API documentation or the official tutorials. Unlike VESTS to STEEM conversion which is well documented.
 
-What you find in the official ducumentation is that the value needed to convert STEEM value into SDB values is called `get_current_median_history_price` which is a rolling median price for SBD and is provided by the Witnesses. Being a rolling median it's smother (has less ups and downs) then the actual price but for this it's also a little behind the actual price.
+What is documented is `get_current_median_history_price`. This value is a rolling median price for SBD and is provided by the Witnesses. Being a rolling median it's smother but also a little behind the actual price.
 
-The `get_current_median_history_price` can be read using call to the `Condenser_Api`. As you can see it's not one but two values called `base` and `quote` and they are both ridiculously large:
+The `get_current_median_history_price` can be read using call to the `Condenser_Api` API. As you can see it returns not one but two values called `base` and `quote` and they are both ridiculously large:
 
 <center>![Screenshot at Feb 12 081252.png](https://files.steempeak.com/file/steempeak/krischik/wCoppn7g-Screenshot20at20Feb20122008-12-52.png)</center>
 
-As I mentioned: How they are used is not documented but it's possible to deduct the usage from the types: `base` is in SDB and `quote` in STEEM so a division is the way to go:
+How they are used isn't documented but it's possible to deduct the usage from the types: `base` is in SDB and `quote` in STEEM so a division is the way to go:
 
 <center>![sbd=steem\frac{base}{quote}](https://files.steempeak.com/file/steempeak/krischik/UOoLKias-Steem_to_SBD.png)</center>
 
-Reading the `get_current_median_history_price` is pretty straight forward and similar to what you have learned [Part 3](https://steemit.com/@krischik/using-steem-api-with-ruby-part-3)
-
 ## Implementation using steem-ruby
+
+Reading the `get_current_median_history_price` is pretty straight forward and similar to what you have learned [Part 3](https://steemit.com/@krischik/using-steem-api-with-ruby-part-3). The actual code samples are rather short after this much theory.
 
 -----
 
@@ -88,7 +88,7 @@ Reading the `get_current_median_history_price` is pretty straight forward and si
 begin
 ```
 
-Create instance to the steem condenser API which will give us access to the median history price.
+Create instance to the steem condenser API which will give us, among other things, access to the median history price.
 
 ```ruby
    Condenser_Api = Steem::CondenserApi.new
@@ -98,23 +98,32 @@ Read the median history. Yes, it's as simple as this.
 
 ```ruby
    Median_History_Price = Condenser_Api.get_current_median_history_price
+```
+
+Calculate the conversion Rate for STEEM to SBD. We use a trick here: `to_f` ignores the text after the space which simplifies the code.
+
+```ruby
+   _base                 = Median_History_Price.result.base
+   _quote                = Median_History_Price.result.quote
+   Conversion_Rate_Steem = _base.to_f / _quote.to_f
 rescue => error
 ```
 
 I am using `Kernel::abort` so the code snipped including error handler can be copy pasted into other scripts.
 
 ```ruby
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+   Kernel::abort("Error reading global properties:
+".red + error.to_s)
 end
 ```
 
-Pretty print the result. It might look strange to do so outside the begin / rescue but the value is now available in constant for the rest of the script. Do note that using a constant is only suitable for short running script. Long running scripts would need to re-read the value on a regular basis.
+Pretty print the result. It might look strange to do so outside the begin / rescue but the value is now available in a constant for the rest of the script. Do note that using a constant is only suitable for short running script. Long running scripts would need to re-read the value on a regular basis.
 
 ```ruby
 pp Median_History_Price
 ```
 
-Show actual conversion rate:
+Show some actual sample conversion rates:
 
 ```ruby
 puts ("1.000 STEEM = %1$15.3f SBD")   % (1.0 * Conversion_Rate_Steem)
@@ -130,6 +139,8 @@ The output of the command (for the steem account) looks like this:
 <center>![Screenshot at Feb 12 143024.png](https://files.steempeak.com/file/steempeak/krischik/j1lLcMQK-Screenshot20at20Feb20122014-30-24.png)</center>
 
 ## Implementation using radiator
+
+It's pretty much indentical to the radiator implementaiton.
 
 -----
 
@@ -147,23 +158,32 @@ Read the median history. Yes, it's as simple as this.
 
 ```ruby
    Median_History_Price = Condenser_Api.get_current_median_history_price
+```
+
+Calculate the conversion Rate for STEEM to SBD. We use a trick here: `to_f` ignores the text after the space which simplifies the code.
+
+```ruby
+   _base                 = Median_History_Price.result.base
+   _quote                = Median_History_Price.result.quote
+   Conversion_Rate_Steem = _base.to_f / _quote.to_f
 rescue => error
 ```
 
 I am using `Kernel::abort` so the code snipped including error handler can be copy pasted into other scripts.
 
 ```ruby
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+   Kernel::abort("Error reading global properties:
+".red + error.to_s)
 end
 ```
 
-Pretty print the result. It might look strange to do so outside the begin / rescue but the value is now available in constant for the rest of the script. Do note that using constant is only suitable for short running script. Long running scripts would need to re-read the value on a regular basis.
+Pretty print the result. It might look strange to do so outside the begin / rescue but the value is now available in a constant for the rest of the script. Do note that using constant is only suitable for short running script. Long running scripts would need to re-read the value on a regular basis.
 
 ```ruby
 pp Median_History_Price
 ```
 
-Show actual conversion rate:
+Show some actual sample conversion rates:
 
 ```ruby
 puts ("1.000 STEEM = %1$15.3f SBD")   % (1.0 * Conversion_Rate_Steem)
@@ -179,6 +199,7 @@ The output of the command (for the steem account) looks identical to the previou
 <center>![Screenshot at Feb 12 143118.png](https://files.steempeak.com/file/steempeak/krischik/4lqTXfUp-Screenshot20at20Feb20122014-31-18.png)</center>
 
 # Curriculum
+
 ## First tutorial
 
 * [Using Steem-API with Ruby Part 1](https://steemit.com/@krischik/using-steem-api-with-ruby-part-1)
@@ -189,7 +210,7 @@ The output of the command (for the steem account) looks identical to the previou
 
 ## Next tutorial
 
-* [Using Steem-API with Ruby Part 5](https://steemit.com/@krischik/using-steem-api-with-ruby-part-6)
+* [Using Steem-API with Ruby Part 6](https://steemit.com/@krischik/using-steem-api-with-ruby-part-6)
 
 ## Proof of Work
 
