@@ -7,7 +7,7 @@ utopian-io tutorials ruby steem-api programming
 ## Repositories
 ### SteemRubyTutorial
 
-You can find all examples from this tutorial as fully functional scripts on GitHub:
+All examples from this tutorial can be found as fully functional scripts on GitHub:
 
 * [SteemRubyTutorial](https://github.com/krischik/SteemRubyTutorial)
 * steem-api sample code: [Steem-Dump-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb)
@@ -34,13 +34,13 @@ This tutorial shows how to interact with the Steem blockchain and Steem database
 * **steem-api** uses closures and exceptions and provides low level computer readable data.
 * **radiator** uses classic function return values and provides high level human readable data.
 
-Since both APIs have advantages and disadvantages I have provided sample code for both APIs so you can decide which is more suitable for you.
+Since both APIs have advantages and disadvantages sample code for both APIs will be provided so the reader ca decide which is more suitable.
 
-In this part of the tutorial we revise the `Steem-Dump-Balances.rb` and `Steem-Print-Balances.rb` to print convert all values into each other and calculate the account value.
+In this part of the tutorial the `Steem-Dump-Balances.rb` and `Steem-Print-Balances.rb` will be revised to convert all values into each other and calculate the account value.
 
 ## Requirements
 
-You should have basic knowledge of Ruby programming you need to install at least Ruby 2.5 as well as the following ruby gems:
+Basic knowledge of Ruby programming is needed. It is necessary to install at least Ruby 2.5 as well as the following ruby gems:
 
 ```sh
 gem install bundler
@@ -52,10 +52,10 @@ gem install radiator
 
 **Note:** Both steem-ruby and radiator provide a file called `steem.rb`. This means that:
 
-1. When you install both APIs you need to tell ruby which one to use.
-2. You can't use both APIs in the same script.
+1. When both APIs are installed ruby must be told which one to use.
+2. Both APIs can't be used in the same script.
 
-This part of the tutorial builds on several previous parts and you should read those first:
+This part of the tutorial builds on several previous parts:
 
 * [Using Steem-API with Ruby Part 2 — Print Account Balances](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2)
 * [Using Steem-API with Ruby Part 3 — Print Dynamic Global Properties](https://steemit.com/@krischik/using-steem-api-with-ruby-part-3)
@@ -66,25 +66,25 @@ If there is anything not clear you can ask in the comments.
 
 ## Difficulty
 
-Provided you have some programming experience this tutorial is **basic level**.
+For reader with programming experience this tutorial is **basic level**.
 
 ## Tutorial Contents
 
-In [Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) of the tutorial we printed out the account balances:
+In [Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) of the tutorial the account balances where printed out the following way:
 
 <center>![Screenshot at Jan 27 17-44-59.png](https://ipfs.busy.org/ipfs/Qma1erQisKUvvKqAPLKFJTuNYGjjRkckzZK1DVgXbQD3AU)</center>
 
-However the values where not the way they are usually displayed:
+However the values where not the way they are usually displayed on the website:
 
 <center>![Screenshot at Feb 04 142910.png](https://files.steempeak.com/file/steempeak/krischik/wacyfyC6-Screenshot20at20Feb20042014-29-10.png)</center>
 
 The steem power is printed in VESTS which are incredibly large number and the estimated account was missing from the output.
 
-In this part of the tutorial we return the `Steem-Dump-Balances.rb` and `Steem-Print-Balances.rb` to improve the output and give us more informations. For this we will use a greatly improved `Amount`class. Since we already have all the theoretical knowledge we delve right into the code.
+In this part of the tutorial the `Steem-Dump-Balances.rb` and `Steem-Print-Balances.rb` will be improve the output to the user more informations. For this a greatly improved `Amount` class will be used. All the theoretical knowledge has been part of previous tutorials so this tutorial will delve right into the code.
 
 ## Implementation using steem-ruby
 
-Let's first have a look at the improved Amount class which you can use in your own projects as well.
+The central part of the improved script is the improved `Amount` class which can be used in other projects as well.
 
 -----
 
@@ -95,7 +95,7 @@ class Amount < Steem::Type::Amount
    public
 ```
 
-First we defined a constants for the three currencies / tokens on on the Steem blockchain. This reduces the risk of typing mistakes.
+Defining constants for the three currencies / tokens on on the Steem blockchain. This reduces the risk of typing mistakes.
 
 ```ruby
       VESTS = "VESTS"
@@ -103,7 +103,7 @@ First we defined a constants for the three currencies / tokens on on the Steem b
       SBD = "SBD"
 ```
 
-Return amount as float to be used by the various calculations.
+Return the actual amount as float to be used by the various calculations.
 
 ```ruby
       Contract nil => Float
@@ -228,11 +228,11 @@ Converting the amount to a desired asset type. If the amount is already in the n
       end
 ```
 
-Create a colorised string showing the amount in SDB, STEEM and VESTS. The value of the actual asset type is colorised in blue while the converted values are colorised in grey (aka dark white).
+Create a colorised string showing the amount in SDB, STEEM and VESTS. The value of the actual asset type is colorised in blue while the converted values are colorised in grey (aka dark white). Here an example:
 
 <center>![to_ansi_s.png](https://files.steempeak.com/file/steempeak/krischik/L8s0kvyr-to_ansi_s.png)</center>
 
-The magic all happens in the `%` operator which called `sprintf` to create the formatted string.
+The magic all happens in the `%` operator which calls `sprintf` to create the formatted string.
 
 ```ruby
       Contract nil => String
@@ -270,11 +270,11 @@ The magic all happens in the `%` operator which called `sprintf` to create the f
       end
 ```
 
-The arithmetic operators have changed slightly since [Using Steem-API with Ruby Part 2 — Print Account Balances](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2).
+The arithmetic operators have changed slightly since [Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2).
 
-1. There is now an operator for all four base functions.
-2. We now check both amounts are of the same asset type (which is mathematically correct)
-3. We now return a new `Amount` with the same asset type (which also is mathematically correct)
+1. There is now an operator method for all four base functions.
+2. Both amounts are checked that if they have the same asset type (which is mathematically correct).
+3. A new `Amount` is returned with is of the same asset type (which also is mathematically correct).
 
 In addition to being mathematically correct this makes the methods more simple.
 
@@ -308,7 +308,7 @@ In addition to being mathematically correct this makes the methods more simple.
       end
 ```
 
-Helper factory method to create a new Amount from an value and asset type. Used by the arithmetic operators. Made private as it's not needed outside the class.
+Helper factory method to create a new Amount from an value and asset type. Used by the arithmetic operators amd made private as it's not needed outside the class.
 
 ```ruby
    private
@@ -322,7 +322,7 @@ end
 
 -----
 
-Since the implementations for steem-api and radiator are almost identical I explain the rest of the functionality in the radiator part.
+Since the implementations for steem-api and radiator are almost identical The rest of the functionality is explained in the radiator part.
 
 **Hint:** Follow this link to Github for the complete script with comments and syntax highlighting: [Steem-Dump-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Balances.rb).
 
@@ -332,7 +332,7 @@ The output of the command (for the steem account) looks like this:
 
 ## Implementation using radiator
 
-First we need to calculate the two conversion values for converting VESTS⇔STEEM and STEEM⇔SBD. For this we need global properties and the median history.
+First the two conversion for converting VESTS⇔STEEM and STEEM⇔SBD values need to be calculate. This is done using the global properties and the median history.
 
 ```ruby
 begin
@@ -344,14 +344,14 @@ Create instance to the steem condenser API which will give us access to to the g
    _condenser_api = Radiator::CondenserApi.new
 ```
 
-Read the global properties and median history values. Note the use of `result` at the end. It stripps some additional JSON boilerplate which we don't need and makes using the data more useable.
+Read the global properties and median history values. Note the use of `result` at the end. It stripps some additional JSON boilerplate which isn't needed and makes the data more useable.
 
 ```ruby
    _global_properties    = _condenser_api.get_dynamic_global_properties.result
    _median_history_price = _condenser_api.get_current_median_history_price.result
 ```
 
-Calculate the conversion Rate for STEEM to SBD. We use the Amount class to convert the string values into amounts.
+Calculate the conversion Rate for STEEM to SBD. Uses the Amount class to convert the string values into amounts.
 
 ```ruby
    _base                 = Amount.new _median_history_price.base
@@ -359,7 +359,7 @@ Calculate the conversion Rate for STEEM to SBD. We use the Amount class to conve
    Conversion_Rate_Steem = _base.to_f / _quote.to_f
 ```
 
-Calculate the conversion Rate for VESTS to STEEM. Here too we use the Amount class to convert the string values into amounts.
+Calculate the conversion Rate for VESTS to STEEM. Here too the Amount class is used to convert the string values into amounts.
 
 ```ruby
    _total_vesting_fund_steem = Amount.new _global_properties.total_vesting_fund_steem
@@ -368,7 +368,7 @@ Calculate the conversion Rate for VESTS to STEEM. Here too we use the Amount cla
 rescue => error
 ```
 
-I am using Kernel::abort so the code snipped including error handler can be copy pasted into other scripts
+The Kernel::abort is used so the script aborts when an the important conversion values could not be calculated.
 
 ```ruby
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
@@ -400,7 +400,7 @@ Calculate actual vesting by subtracting and adding delegation done by the user (
       _actual_vesting = _vesting_shares - _delegated_vesting_shares + _received_vesting_shares
 ```
 
-Calculate the account value by adding all balances in SBD. Apart from the delegation. Delegation does not add or subract from the account value.
+Calculate the account value by adding all balances in SBD. Apart from the delegation. Delegation does not add or subtract from the account value as it can be reverted at any time.
 
 ```ruby
       _account_value =
@@ -445,7 +445,7 @@ else
    Database_Api = Radiator::DatabaseApi.new
 ```
 
-request account information from the Steem database and print out the accounts balances found using a new function or print out error information when an error occurred.
+Request account information from the Steem database and print out the accounts balances found using a new function or print out error information when an error occurred.
 
 ```ruby
    Result = Database_Api.get_accounts(Account_Names)
@@ -483,7 +483,7 @@ The output of the command (for the steem account) looks identical to the previou
 
 ## Proof of Work
 
-* [SteemRubyTutorial Issue #7](https://github.com/krischik/SteemRubyTutorial/issues/7)
+* GitHub: [SteemRubyTutorial Issue #7](https://github.com/krischik/SteemRubyTutorial/issues/7)
 
 ## Image Source
 
@@ -500,4 +500,4 @@ The output of the command (for the steem account) looks identical to the previou
 
 <!-- vim: set wrap tabstop=8 shiftwidth=3 softtabstop=3 noexpandtab : -->
 <!-- vim: set textwidth=0 filetype=markdown foldmethod=marker nospell : -->
-<!-- vim: set spell spelllang=en_gb fileencoding=utf-8 : -->::
+<!-- vim: set spell spelllang=en_gb fileencoding=utf-8 : -->
