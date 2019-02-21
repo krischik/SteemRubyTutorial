@@ -10,8 +10,8 @@ utopian-io tutorials ruby steem-api programming
 You can find all examples from this tutorial as fully functional scripts on GitHub:
 
 * [SteemRubyTutorial](https://github.com/krischik/SteemRubyTutorial)
-* steem-api sample code: [Steem-Dump-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Balances.rb)
-* radiator sample code: [Steem-Print-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb).
+* steem-api sample code: [Steem-Dump-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb)
+* radiator sample code: [Steem-Print.Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Balances.rb).
 
 ### steem-ruby
 
@@ -232,7 +232,7 @@ Create a colorised string showing the amount in SDB, STEEM and VESTS. The value 
 
 <center>![to_ansi_s.png](https://files.steempeak.com/file/steempeak/krischik/L8s0kvyr-to_ansi_s.png)</center>
 
-The magic all happens in the `%` operator which called `sprintf` to create the formatted string. 
+The magic all happens in the `%` operator which called `sprintf` to create the formatted string.
 
 ```ruby
       Contract nil => String
@@ -272,11 +272,11 @@ The magic all happens in the `%` operator which called `sprintf` to create the f
 
 The arithmetic operators have changed slightly since [Using Steem-API with Ruby Part 2 — Print Account Balances](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2).
 
-1. There is now an operator for all four base functions. 
+1. There is now an operator for all four base functions.
 2. We now check both amounts are of the same asset type (which is mathematically correct)
 3. We now return a new `Amount` with the same asset type (which also is mathematically correct)
 
-In addition to being mathematically correct this makes the methods more simple. 
+In addition to being mathematically correct this makes the methods more simple.
 
 ```ruby
       Contract Amount => Amount
@@ -317,7 +317,7 @@ Helper factory method to create a new Amount from an value and asset type. Used 
       def self.to_amount(value, asset)
          return Amount.new(value.to_s + " " + asset)
       end
-end 
+end
 ```
 
 -----
@@ -483,7 +483,7 @@ The output of the command (for the steem account) looks identical to the previou
 
 ## Proof of Work
 
-* [SteemRubyTutorial Issue #6](https://github.com/krischik/SteemRubyTutorial/issues/6)
+* [SteemRubyTutorial Issue #7](https://github.com/krischik/SteemRubyTutorial/issues/7)
 
 ## Image Source
 
