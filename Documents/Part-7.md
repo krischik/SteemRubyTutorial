@@ -1,4 +1,4 @@
-# Using Steem-API with Ruby Part 6 — Print Account Balances improved
+# Using Steem-API with Ruby Part 7 — Print Posting Votes
 
 utopian-io tutorials ruby steem-api programming
 
@@ -37,6 +37,8 @@ This tutorial shows how to interact with the Steem blockchain and Steem database
 
 Since both APIs have advantages and disadvantages sample code for both APIs will be provided so the reader ca decide which is more suitable.
 
+This chapter teaches you how to display all up and downvotes in persent on any posting. The next part will teach how to calcultate the value of each post.
+
 ## Requirements
 
 Basic knowledge of Ruby programming is needed. It is necessary to install at least Ruby 2.5 as well as the following ruby gems:
@@ -61,6 +63,8 @@ If there is anything not clear you can ask in the comments.
 For reader with programming experience this tutorial is **basic level**.
 
 ## Tutorial Contents
+
+Informations on the 
 
 ## Implementation using steem-ruby
 

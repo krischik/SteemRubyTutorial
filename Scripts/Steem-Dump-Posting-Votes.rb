@@ -27,13 +27,23 @@ require 'colorize'
 require 'contracts'
 require 'steem'
 
+##
+# Class to handle vote values from postings.
+#
 class Vote < Steem::Type::BaseType
    include Contracts::Core
    include Contracts::Builtin
 
    attr_reader :voter, :percent, :weight, :rshares, :reputation, :time
 
-   Contract HashOf[String => Or[String,Num]] => nil
+   ##
+   # Create a new instance from the data returned from
+   # get_active_votes
+   #
+   # @param [Hash] value
+   #     the data hash from the get_active_votes
+   #
+   Contract HashOf[String => Or[String, Num]] => nil
    def initialize(value)
       super(:voter, value)
 
@@ -72,7 +82,13 @@ class Vote < Steem::Type::BaseType
          @percent]
    end
 
-   Contract ArrayOf[Any] => nil
+   ##
+   # print a list a vote values
+   #
+   # @param [Array<Hash>] votes
+   #     list of votes
+   #
+   Contract ArrayOf[HashOf[String => Or[String, Num]] ] => nil
    def self.print_list (votes)
       votes.each do |vote|
          _vote = Vote.new vote
@@ -83,9 +99,15 @@ class Vote < Steem::Type::BaseType
       return
    end
 
+   ##
+   # print the votes from an posting
+   #
+   # @param [String] url
+   #     URL of the posting.
+   #
    Contract String => nil
    def self.print_url (url)
-      _slug = url.split('@').last
+      _slug              = url.split('@').last
       _author, _permlink = _slug.split('/')
 
       puts ("Post Author      : " + "%1$s".blue) % _author
@@ -112,7 +134,6 @@ begin
    # median history
 
    Condenser_Api = Steem::CondenserApi.new
-
 rescue => error
    # I am using Kernel::abort so the code snipped
    # including error handler can be copy pasted into other

@@ -46,7 +46,7 @@ class Amount < Steem::Type::Amount
    ##
    # operator to add two balances for the users convenience
    #
-   # @param [Numeric|Amount]
+   # @param [Numeric|Amount] right
    #     amount to add
    # @return [Float]
    #     result of addition
@@ -64,7 +64,7 @@ class Amount < Steem::Type::Amount
    # operator to subtract two balances for the users
    # convenience
    #
-   # @param [Numeric|Amount]
+   # @param [Numeric|Amount] right
    #     amount to subtract
    # @return [Float]
    #     result of subtraction
@@ -82,7 +82,7 @@ class Amount < Steem::Type::Amount
    # operator to divert two balances for the users
    # convenience
    #
-   # @param [Numeric|Amount]
+   # @param [Numeric|Amount] right
    #     amount to divert
    # @return [Float]
    #     result of division

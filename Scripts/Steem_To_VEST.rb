@@ -56,7 +56,7 @@ class Amount < Radiator::Type::Amount
    ##
    # operator to add two balances for the users convenience
    #
-   # @param [Numeric|Amount]
+   # @param [Numeric|Amount] right
    #     amount to add
    # @return [Float]
    #     result of addition
@@ -74,7 +74,7 @@ class Amount < Radiator::Type::Amount
    # operator to subtract two balances for the users
    # convenience
    #
-   # @param [Numeric|Amount]
+   # @param [Numeric|Amount] right
    #     amount to subtract
    # @return [Float]
    #     result of subtraction
@@ -92,7 +92,7 @@ class Amount < Radiator::Type::Amount
    # operator to divert two balances for the users
    # convenience
    #
-   # @param [Numeric|Amount]
+   # @param [Numeric|Amount] right
    #     amount to divert
    # @return [Float]
    #     result of division
@@ -144,8 +144,8 @@ else
    # from Part 2 to convert the sting values into amounts.
 
    _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
-   _total_vesting_shares = Amount.new Global_Properties.total_vesting_shares
-   _conversion_rate = _total_vesting_fund_steem / _total_vesting_shares
+   _total_vesting_shares     = Amount.new Global_Properties.total_vesting_shares
+   _conversion_rate          = _total_vesting_fund_steem / _total_vesting_shares
 
    # iterate over the valued passed in the command line
 
