@@ -37,7 +37,7 @@ This tutorial shows how to interact with the Steem blockchain and Steem database
 
 Since both APIs have advantages and disadvantages sample code for both APIs will be provided so the reader ca decide which is more suitable.
 
-This chapter teaches you how to display all up and downvotes in persent on any posting. The next part will teach how to calcultate the value of each post.
+This chapter teaches how to display all up and downvotes in persent on any posting. The next part will teach how to calcultate the value of each post.
 
 ## Requirements
 
@@ -64,7 +64,22 @@ For reader with programming experience this tutorial is **basic level**.
 
 ## Tutorial Contents
 
-Informations on the 
+Information on the postings are accessed via the `get_active_votes` method of the `CondenserApi`. The method takes two paramter: the authors name and the id of the posting. Both can be extracted from the URL of the posting. As Result you get an array of voting resutls:
+
+<center></center>
+
+| Name      | Desciption                                         |
+|-----------|----------------------------------------------------|
+|voter      |Name of the voter                                   |
+|percent    |percentage of vote (times 10000 / 100%)             |
+|weight     |Used to calculator the vote value                   |
+|rshares    |Used to calculator the vote value                   |
+|reputation |Voters reputation. not used any more and always 0.  |
+|time       |Time and date of the actual vote                    |
+
+**A little reminder:** A % sign behind the number usually means that the number was multiplied by 100. So 1% equals 0.01 and 100% equals 1.0. However Steem itself however doesn't use floating-point numbers and multiplies the percentage with 10000 instead to make them integers while still allowing for a 0.0001 / 0.01% precision.
+
+The correct use if `weight` and `rshares` is rather complex and will be described in an separate tutorial.
 
 ## Implementation using steem-ruby
 

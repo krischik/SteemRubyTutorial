@@ -22,7 +22,6 @@
 
 gem "steem-ruby", :require => "steem"
 
-require 'pp'
 require 'colorize'
 require 'contracts'
 require 'steem'
@@ -38,48 +37,53 @@ class Vote < Steem::Type::BaseType
 
    ##
    # Create a new instance from the data returned from
-   # get_active_votes
+   # get_active_votes.
    #
    # @param [Hash] value
    #     the data hash from the get_active_votes
    #
    Contract HashOf[String => Or[String, Num]] => nil
    def initialize(value)
-      super(:voter, value)
+      super(:vote, value)
 
       @voter      = value.voter
-      @percent    = value.percent / 100.0
+      @percent    = value.percent / 10000.0
       @weight     = value.weight
       @rshares    = value.rshares
       @reputation = value.reputation
-      @time       = Date.parse value.time
+      @time       = Time.strptime(value.time + "Z" , "%Y-%m-%dT%H:%M:%S")
 
       return
    end
 
    ##
-   # create a colorized string showing the amount in
-   # SDB, STEEM and VESTS. The actual value is colorized
-   # in blue while the converted values are colorized in
-   # grey (aka dark white).
+   # create a colorized string showing the vote
+   # percentages. positive values are printed in green,
+   # negative values in red and zero votes (yes they
+   # exist) are shown in grey.
    #
    # @return [String]
    #    formatted value
    #
    Contract None => String
    def to_ansi_s
+      _percent = @percent * 100.0
+
       return (
-      "%1$-16s : " + "%2$3.2f%%".colorize(
-         if @percent > 0 then
+      "%1$-16s : " + "%2$7.2f%%".colorize(
+         if _percent > 0 then
             :green
-         elsif @percent < 0 then
+         elsif _percent < 0 then
             :red
          else
             :white
          end
-      )) % [
+      ) + "%3$12d" + "%4$15d" + "%5$20s") % [
          @voter,
-         @percent]
+         _percent,
+         @weight,
+         @rshares,
+         @time.strftime("%Y-%m-%d %H:%M:%S")]
    end
 
    ##
@@ -112,12 +116,12 @@ class Vote < Steem::Type::BaseType
 
       puts ("Post Author      : " + "%1$s".blue) % _author
       puts ("Post ID          : " + "%1$s".blue) % _permlink
+      puts ("Voter name       :  percent      weight        rshares    vote date & time")
 
       Condenser_Api.get_active_votes(_author, _permlink) do |votes|
          if votes.length == 0 then
             puts "No votes found.".yellow
          else
-            pp votes
             Vote.print_list votes
          end
       rescue => error
