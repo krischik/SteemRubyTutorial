@@ -37,7 +37,7 @@ class Vote < Radiator::Type::Serializer
 
    ##
    # Create a new instance from the data returned from
-   # get_active_votes
+   # get_active_votes.
    #
    # @param [Hash] value
    #     the data hash from the get_active_votes
@@ -87,7 +87,7 @@ class Vote < Radiator::Type::Serializer
    end
 
    ##
-   # print a list a vote values
+   # print a list a vote values.
    #
    # @param [Array<Hash>] votes
    #     list of votes
@@ -104,7 +104,7 @@ class Vote < Radiator::Type::Serializer
    end
 
    ##
-   # print the votes from an posting
+   # print the votes from a posting.
    #
    # @param [String] url
    #     URL of the posting.

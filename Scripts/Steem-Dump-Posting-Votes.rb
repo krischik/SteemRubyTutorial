@@ -87,7 +87,7 @@ class Vote < Steem::Type::BaseType
    end
 
    ##
-   # print a list a vote values
+   # print a list a vote values.
    #
    # @param [Array<Hash>] votes
    #     list of votes
@@ -104,7 +104,7 @@ class Vote < Steem::Type::BaseType
    end
 
    ##
-   # print the votes from an posting
+   # print the votes from a posting.
    #
    # @param [String] url
    #     URL of the posting.

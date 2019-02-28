@@ -77,15 +77,118 @@ Information on the postings are accessed via the `get_active_votes` method of th
 |reputation |Voters reputation. not used any more and always 0.  |
 |time       |Time and date of the actual vote                    |
 
-**A little reminder:** A % sign behind the number usually means that the number was multiplied by 100. So 1% equals 0.01 and 100% equals 1.0. However Steem itself however doesn't use floating-point numbers and multiplies the percentage with 10000 instead to make them integers while still allowing for a 0.0001 / 0.01% precision.
+**A little reminder:** A % sign behind the number usually means that the number was multiplied by 100. So 1% equals 0.01 and 100% equals 1.0. Steem itself however doesn't use floating-point numbers and multiplies the percentage with 10000 instead to make them integers while still allowing for a 0.0001 / 0.01% precision.
 
 The correct use if `weight` and `rshares` is rather complex and will be described in an separate tutorial.
 
 ## Implementation using steem-ruby
 
+To ease the use of the voting values we defined a value class which does all the a parsing and converts the integer values into floating points das time stamps. Note that floating point values are not as precise but easier to use.
+
 -----
 
+Class to handle vote values from postings.
+
 ```ruby
+class Vote < Steem::Type::BaseType
+   include Contracts::Core
+   include Contracts::Builtin
+
+   attr_reader :voter, :percent, :weight, :rshares, :reputation, :time
+```
+
+Create a new instance from the data returned from get_active_votes. The percent is devided by 10000 to make the value mathematicaly correct.
+
+```ruby
+   Contract HashOf[String => Or[String, Num]] => nil
+   def initialize(value)
+      super(:vote, value)
+
+      @voter      = value.voter
+      @percent    = value.percent / 10000.0
+      @weight     = value.weight
+      @rshares    = value.rshares
+      @reputation = value.reputation
+      @time       = Time.strptime(value.time + "Z" , "%Y-%m-%dT%H:%M:%S")
+
+      return
+   end
+```
+
+Create a colorized string from the instance. The vote percentages are multiplied with 100 and are coloized, positive values are printed in green, negative values in red and zero votes (yes they exist) are shown in grey, for improved human readability.
+
+```ruby
+   Contract None => String
+   def to_ansi_s
+      _percent = @percent * 100.0
+
+      return (
+      "%1$-16s : " + "%2$7.2f%%".colorize(
+         if _percent > 0 then
+            :green
+         elsif _percent < 0 then
+            :red
+         else
+            :white
+         end
+      ) + "%3$12d" + "%4$15d" + "%5$20s") % [
+         @voter,
+         _percent,
+         @weight,
+         @rshares,
+         @time.strftime("%Y-%m-%d %H:%M:%S")]
+   end
+```
+
+Print a list a vote values:
+
+1. Loop over all votes
+2. convert the vote JSON object into a ruby class instance
+3. print as ansi strings
+
+```ruby
+   Contract ArrayOf[HashOf[String => Or[String, Num]] ] => nil
+   def self.print_list (votes)
+      votes.each do |vote|
+         _vote = Vote.new vote
+
+         puts _vote.to_ansi_s
+      end
+
+      return
+   end
+```
+
+Print the votes from a posting given as URL:
+
+1. Extract the posting ID and author name from the URL with standart string operations. 
+2. Print a short header
+3. Request the list of votes from `Condenser_Api` using `get_active_votes`
+4. print the votes.
+
+```ruby
+   Contract String => nil
+   def self.print_url (url)
+      _slug              = url.split('@').last
+      _author, _permlink = _slug.split('/')
+
+      puts ("Post Author      : " + "%1$s".blue) % _author
+      puts ("Post ID          : " + "%1$s".blue) % _permlink
+      puts ("Voter name       :  percent      weight        rshares    vote date & time")
+
+      Condenser_Api.get_active_votes(_author, _permlink) do |votes|
+         if votes.length == 0 then
+            puts "No votes found.".yellow
+         else
+            Vote.print_list votes
+         end
+      rescue => error
+         Kernel::abort(("Error reading posting “%1$s”:\n".red + "%2$s") % [_permlink, error.to_s])
+      end
+
+      return
+   end
+end
 ```
 
 -----
@@ -101,6 +204,36 @@ The output of the command (for the steem account) looks like this:
 -----
 
 ```ruby
+begin
+```
+   # create instance to the steem condenser API which
+   # will give us access to to the global properties and
+   # median history
+
+```ruby
+   Condenser_Api = Radiator::CondenserApi.new
+rescue => error
+```
+   # I am using Kernel::abort so the code snipped
+   # including error handler can be copy pasted into other
+   # scripts
+
+```ruby
+   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+end
+
+if ARGV.length == 0 then
+   puts "
+Steem-Print-Posting-Votes — Print voting on account.
+
+Usage:
+   Steem-Print-Posting-Votes URL
+"
+else
+   ARGV.each do |_url|
+      Vote.print_url _url
+   end
+end
 ```
 
 -----
@@ -119,11 +252,11 @@ The output of the command (for the steem account) looks identical to the previou
 
 ## Previous tutorial
 
-* [Using Steem-API with Ruby Part 5](https://steemit.com/@krischik/using-steem-api-with-ruby-part-5)
+* [Using Steem-API with Ruby Part 6](https://steemit.com/@krischik/using-steem-api-with-ruby-part-6)
 
 ## Next tutorial
 
-* [Using Steem-API with Ruby Part 7](https://steemit.com/@krischik/using-steem-api-with-ruby-part-7)
+* [Using Steem-API with Ruby Part 8](https://steemit.com/@krischik/using-steem-api-with-ruby-part-8)
 
 ## Proof of Work
 
