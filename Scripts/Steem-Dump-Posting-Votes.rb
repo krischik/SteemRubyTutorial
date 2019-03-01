@@ -94,8 +94,8 @@ class Vote < Steem::Type::BaseType
    #
    Contract ArrayOf[HashOf[String => Or[String, Num]] ] => nil
    def self.print_list (votes)
-      votes.each do |vote|
-         _vote = Vote.new vote
+      votes.each do |_vote|
+         _vote = Vote.new _vote
 
          puts _vote.to_ansi_s
       end
@@ -134,14 +134,12 @@ end
 
 begin
    # create instance to the steem condenser API which
-   # will give us access to to the global properties and
-   # median history
+   # will give us access to the active votes.
 
    Condenser_Api = Steem::CondenserApi.new
 rescue => error
-   # I am using Kernel::abort so the code snipped
-   # including error handler can be copy pasted into other
-   # scripts
+   # I am using `Kernel::abort` so the script ends when
+   # data can't be loaded
 
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
@@ -151,7 +149,7 @@ if ARGV.length == 0 then
 Steem-Print-Posting-Votes — Print voting on account.
 
 Usage:
-   Steem-Print-Posting-Votes URL
+   Steem-Print-Posting-Votes URL …
 "
 else
    ARGV.each do |_url|
@@ -163,4 +161,3 @@ end
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
 # vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :
-

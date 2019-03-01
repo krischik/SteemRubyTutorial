@@ -11,8 +11,8 @@ utopian-io tutorials ruby steem-api programming
 All examples from this tutorial can be found as fully functional scripts on GitHub:
 
 * [SteemRubyTutorial](https://github.com/krischik/SteemRubyTutorial)
-* steem-api sample code: [Steem-Dump-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb)
-* radiator sample code: [Steem-Print.Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Balances.rb).
+* steem-api sample code: [Steem-Dump-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Posting-Votes.rb)
+* radiator sample code: [Steem-Print-Posting-Votes.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Posting-Votes.rb).
 
 ### steem-ruby
 
@@ -37,7 +37,7 @@ This tutorial shows how to interact with the Steem blockchain and Steem database
 
 Since both APIs have advantages and disadvantages sample code for both APIs will be provided so the reader ca decide which is more suitable.
 
-This chapter teaches how to display all up and downvotes in persent on any posting. The next part will teach how to calcultate the value of each post.
+This chapter teaches how to display all up and downvotes in present on any posting. In the next part will teach how to calculate the value in SBD for each post.
 
 ## Requirements
 
@@ -64,26 +64,26 @@ For reader with programming experience this tutorial is **basic level**.
 
 ## Tutorial Contents
 
-Information on the postings are accessed via the `get_active_votes` method of the `CondenserApi`. The method takes two paramter: the authors name and the id of the posting. Both can be extracted from the URL of the posting. As Result you get an array of voting resutls:
+Information on the postings are accessed via the `get_active_votes` method of the `CondenserApi`. The method takes two parameter: the authors name and the id of the posting. Both can be extracted from the URL of the posting. As Result you get an array of voting results:
 
-<center></center>
+<center>![Screenshot at Feb 26 16-17-18.png](https://cdn.steemitimages.com/DQmcxuPUSRvRXFj2D4mq5UTDpacnodJzqRFmh1Lk5mXedup/Screenshot%20at%20Feb%2026%2016-17-18.png)</center>
 
 | Name      | Desciption                                         |
 |-----------|----------------------------------------------------|
-|voter      |Name of the voter                                   |
-|percent    |percentage of vote (times 10000 / 100%)             |
-|weight     |Used to calculator the vote value                   |
-|rshares    |Used to calculator the vote value                   |
-|reputation |Voters reputation. not used any more and always 0.  |
-|time       |Time and date of the actual vote                    |
+|voter      |Name of the voter.                                  |
+|percent    |percentage of vote (times 10000).                   |
+|weight     |Used to calculate the vote value.                   |
+|rshares    |Used to calculate the vote value.                   |
+|reputation |Voters reputation. Not used any more and always 0.  |
+|time       |Time and date of the actual vote.                   |
 
 **A little reminder:** A % sign behind the number usually means that the number was multiplied by 100. So 1% equals 0.01 and 100% equals 1.0. Steem itself however doesn't use floating-point numbers and multiplies the percentage with 10000 instead to make them integers while still allowing for a 0.0001 / 0.01% precision.
 
-The correct use if `weight` and `rshares` is rather complex and will be described in an separate tutorial.
+The correct use if `weight` and `rshares` is rather complex and will be described in a separate tutorial.
 
 ## Implementation using steem-ruby
 
-To ease the use of the voting values we defined a value class which does all the a parsing and converts the integer values into floating points das time stamps. Note that floating point values are not as precise but easier to use.
+To ease the use of the voting values we define a `Value` class which does all the a parsing and converts the integer values into floating points as well as converting time stamps ti the `Time` instances. Note that floating point values are not as precise but easier to use the fixed points numbers.
 
 -----
 
@@ -97,7 +97,7 @@ class Vote < Steem::Type::BaseType
    attr_reader :voter, :percent, :weight, :rshares, :reputation, :time
 ```
 
-Create a new instance from the data returned from get_active_votes. The percent is devided by 10000 to make the value mathematicaly correct.
+Create a new instance from the data returned from the `get_active_votes` method. The percent is divided by 10000 to make the value mathematically correct.
 
 ```ruby
    Contract HashOf[String => Or[String, Num]] => nil
@@ -115,7 +115,7 @@ Create a new instance from the data returned from get_active_votes. The percent 
    end
 ```
 
-Create a colorized string from the instance. The vote percentages are multiplied with 100 and are coloized, positive values are printed in green, negative values in red and zero votes (yes they exist) are shown in grey, for improved human readability.
+Create a colorised string from the instance. The vote percentages are multiplied with 100 and are colorised (positive values are printed in green, negative values in red and zero votes (yes they exist) are shown in grey), for improved human readability.
 
 ```ruby
    Contract None => String
@@ -142,9 +142,9 @@ Create a colorized string from the instance. The vote percentages are multiplied
 
 Print a list a vote values:
 
-1. Loop over all votes
-2. convert the vote JSON object into a ruby class instance
-3. print as ansi strings
+1. Loop over all votes.
+2. convert the vote JSON object into the ruby `Vote` class.
+3. print as ansi strings.
 
 ```ruby
    Contract ArrayOf[HashOf[String => Or[String, Num]] ] => nil
@@ -159,9 +159,9 @@ Print a list a vote values:
    end
 ```
 
-Print the votes from a posting given as URL:
+Print the votes from a postings given as URLs:
 
-1. Extract the posting ID and author name from the URL with standart string operations. 
+1. Extract the posting ID and author name from the URL with standard string operations. 
 2. Print a short header
 3. Request the list of votes from `Condenser_Api` using `get_active_votes`
 4. print the votes.
@@ -193,43 +193,54 @@ end
 
 -----
 
-**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting: [Steem-Dump-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Balances.rb).
+To avoid replications the rest of the operation is described in the radiator chapter.
+
+**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting: [Steem-Dump-Posting-Votes.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Posting-Votes.rb).
 
 The output of the command (for the steem account) looks like this:
 
-<center>![Screenshot at Feb 13 145331.png](https://files.steempeak.com/file/steempeak/krischik/bj5gfctG-Screenshot20at20Feb20132014-53-31.png)</center>
+<center>![Screenshot at Feb 26 16-36-28.png](https://cdn.steemitimages.com/DQmQzNSb7JzhnDC3X8DCnxfWYKfFWss8LZeBJXsBWXQVdwg/Screenshot%20at%20Feb%2026%2016-36-28.png)</center>
 
 ## Implementation using radiator
+
+To avoid replications the `Vote` class is only described in the steem-ruby chapter
 
 -----
 
 ```ruby
 begin
 ```
-   # create instance to the steem condenser API which
-   # will give us access to to the global properties and
-   # median history
+
+create instance to the steem condenser API which will give us access to the active votes.
 
 ```ruby
    Condenser_Api = Radiator::CondenserApi.new
 rescue => error
 ```
-   # I am using Kernel::abort so the code snipped
-   # including error handler can be copy pasted into other
-   # scripts
+
+I am using `Kernel::abort` so the script ends when data can't be loaded
 
 ```ruby
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
+```
 
+Display help if no URL are given.
+
+```ruby
 if ARGV.length == 0 then
    puts "
 Steem-Print-Posting-Votes — Print voting on account.
 
 Usage:
-   Steem-Print-Posting-Votes URL
+   Steem-Print-Posting-Votes URL …
 "
 else
+```
+
+Loop over all URLs given and print the values using the Vote class.
+
+```ruby
    ARGV.each do |_url|
       Vote.print_url _url
    end
@@ -238,11 +249,13 @@ end
 
 -----
 
-**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb).
+**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Posting-Votes.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Posting-Votes.rb).
 
-The output of the command (for the steem account) looks identical to the previous output:
+The output of the command (for the steem account) looks similar to the previous output:
 
-<center>![Screenshot at Feb 13 145420.png](https://files.steempeak.com/file/steempeak/krischik/3dURm96L-Screenshot20at20Feb20132014-54-20.png)</center>
+<center>![Screenshot at Feb 26 16-46-37.png](https://cdn.steemitimages.com/DQmUNJQyFoRnJEWQCbqxUFBv3adzoNodY3abujVbh7BrTp9/Screenshot%20at%20Feb%2026%2016-46-37.png)</center>
+
+This time a posting with a negative vote in red is shown.
 
 # Curriculum
 
@@ -260,7 +273,7 @@ The output of the command (for the steem account) looks identical to the previou
 
 ## Proof of Work
 
-* GitHub: [SteemRubyTutorial Issue #7](https://github.com/krischik/SteemRubyTutorial/issues/7)
+* GitHub Task: [SteemRubyTutorial Issue #9](https://github.com/krischik/SteemRubyTutorial/issues/9)
 
 ## Image Source
 
@@ -270,7 +283,9 @@ The output of the command (for the steem account) looks identical to the previou
 
 ## Beneficiary
 
-![Beneficiary.png](https://cdn.steemitimages.com/DQmYnQfCi8Z12jkaNqADKc37gZ89RKdvdLzp7uXRjbo1AHy/image.png)
+<center>![](https://cdn.steemitimages.com/DQmVbTpJiKYkUN7XWyRcR6pEKjKG8jyZ24Mp9gjFTcSBzpH/image.png)</center>
+
+-----
 
 <center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png)</center>
 
