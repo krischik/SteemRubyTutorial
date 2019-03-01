@@ -20,6 +20,24 @@
         <RUBY_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="steem" />
         <method v="2" />
       </configuration>
+      <configuration default="false" name="Steem-Dump-Posting-Votes" type="RubyRunConfigurationType" factoryName="Ruby">
+        <module name="SteemRubyTutorial" />
+        <RUBY_RUN_CONFIG NAME="RUBY_ARGS" VALUE="" />
+        <RUBY_RUN_CONFIG NAME="WORK DIR" VALUE="$MODULE_DIR$/Scripts" />
+        <RUBY_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
+        <RUBY_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
+        <RUBY_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
+        <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+        <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+        <EXTENSION ID="RubyCoverageRunConfigurationExtension" track_test_folders="true" runner="rcov">
+          <COVERAGE_PATTERN ENABLED="true">
+            <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+          </COVERAGE_PATTERN>
+        </EXTENSION>
+        <RUBY_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$MODULE_DIR$/Scripts/Steem-Dump-Posting-Votes.rb" />
+        <RUBY_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="https://steemit.com/dlike/@krischik/international-conference-on-mens-issues-2019 https://steemit.com/dmania/@krischik/awoo-zg1hbmlh-0h24f" />
+        <method v="2" />
+      </configuration>
       <configuration default="false" name="Steem-Print-Balances" type="RubyRunConfigurationType" factoryName="Ruby">
         <module name="SteemRubyTutorial" />
         <RUBY_RUN_CONFIG NAME="RUBY_ARGS" VALUE="" />
