@@ -67,7 +67,7 @@ class Amount < Radiator::Type::Amount
       # @return [Float]
       #     actual amount as float
       #
-      Contract nil => Float
+      Contract None => Float
       def to_f
          return @amount.to_f
       end
@@ -79,7 +79,7 @@ class Amount < Radiator::Type::Amount
       # @return [String]
       #     one of "Whale", "Orca", "Dolphin", "Minnow", "Plankton" or "N/A"
       #
-      Contract nil => String
+      Contract None => String
       def to_level
          _value = @amount.to_f
 
@@ -107,7 +107,7 @@ class Amount < Radiator::Type::Amount
       # @raise [ArgumentError]
       #     not a SBD, STEEM or VESTS value
       #
-      Contract nil => Amount
+      Contract None => Amount
       def to_sbd
          return (
          case @asset
@@ -130,7 +130,7 @@ class Amount < Radiator::Type::Amount
       # @raise [ArgumentError]
       #    not a SBD, STEEM or VESTS value
       #
-      Contract nil => Amount
+      Contract None => Amount
       def to_steem
          return (
          case @asset
@@ -153,7 +153,7 @@ class Amount < Radiator::Type::Amount
       # @raise [ArgumentError]
       #    not a SBD, STEEM or VESTS value
       #
-      Contract nil => Amount
+      Contract None => Amount
       def to_vests
          return (
          case @asset
@@ -177,7 +177,7 @@ class Amount < Radiator::Type::Amount
       # @return [String]
       #    formatted value
       #
-      Contract nil => String
+      Contract None => String
       def to_ansi_s
          _sbd   = to_sbd
          _steem = to_steem
