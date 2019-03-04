@@ -29,6 +29,21 @@ require 'radiator'
 ##
 # Class to handle vote values from postings.
 #
+# Information on the postings are accessed via the
+# `get_active_votes` method of the `CondenserApi`. The method 
+# takes two parameter: the authors name and the id of the posting. 
+# Both can be extracted from the URL of the posting. As Result you 
+# get an array of voting results:
+# 
+# | Name      | Desciption                                         |
+# |-----------|----------------------------------------------------|
+# |voter      |Name of the voter.                                  |
+# |percent    |percentage of vote (times 10000).                   |
+# |weight     |Used to calculate the vote value.                   |
+# |rshares    |Used to calculate the vote value.                   |
+# |reputation |Voters reputation. Not used any more and always 0.  |
+# |time       |Time and date of the actual vote.                   
+#
 class Vote < Radiator::Type::Serializer
    include Contracts::Core
    include Contracts::Builtin
@@ -36,8 +51,9 @@ class Vote < Radiator::Type::Serializer
    attr_reader :voter, :percent, :weight, :rshares, :reputation, :time
 
    ##
-   # Create a new instance from the data returned from
-   # get_active_votes.
+   # Create a new instance from the data returned from the
+   # `get_active_votes` method. The percent is divided by
+   # 10000 to make the value mathematically correct.
    #
    # @param [Hash] value
    #     the data hash from the get_active_votes
@@ -57,10 +73,11 @@ class Vote < Radiator::Type::Serializer
    end
 
    ##
-   # create a colorized string showing the vote
-   # percentages. positive values are printed in green,
-   # negative values in red and zero votes (yes they
-   # exist) are shown in grey.
+   # Create a colorised string from the instance. The vote
+   # percentages are multiplied with 100 and are colorised
+   # (positive values are printed in green, negative values
+   # in red and zero votes (yes they exist) are shown in
+   # grey), for improved human readability.
    #
    # @return [String]
    #    formatted value
@@ -87,7 +104,11 @@ class Vote < Radiator::Type::Serializer
    end
 
    ##
-   # print a list a vote values.
+   # Print a list a vote values:
+   # 
+   # 1. Loop over all votes.
+   # 2. convert the vote JSON object into the ruby `Vote` class.
+   # 3. print as ansi strings.
    #
    # @param [Array<Hash>] votes
    #     list of votes
@@ -104,7 +125,12 @@ class Vote < Radiator::Type::Serializer
    end
 
    ##
-   # print the votes from a posting.
+   # Print the votes from a postings given as URLs:
+   # 
+   # 1. Extract the posting ID and author name from the URL with standard string operations. 
+   # 2. Print a short header
+   # 3. Request the list of votes from `Condenser_Api` using `get_active_votes`
+   # 4. print the votes.
    #
    # @param [String] url
    #     URL of the posting.
@@ -144,6 +170,8 @@ rescue => error
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
 
+# Display help if no URL are given.
+
 if ARGV.length == 0 then
    puts "
 Steem-Print-Posting-Votes — Print voting on account.
@@ -152,6 +180,9 @@ Usage:
    Steem-Print-Posting-Votes URL …
 "
 else
+   # Loop over all URLs given and print the values using
+   # the Vote class.
+
    ARGV.each do |_url|
       Vote.print_url _url
    end
