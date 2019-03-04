@@ -11,7 +11,7 @@ utopian-io tutorials ruby steem-api programming
 All examples from this tutorial can be found as fully functional scripts on GitHub:
 
 * [SteemRubyTutorial](https://github.com/krischik/SteemRubyTutorial)
-* steem-api sample code: [Steem-Dump-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Posting-Votes.rb)
+* steem-api sample code: [Steem-Dump-Posting-Votes.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Posting-Votes.rb)
 * radiator sample code: [Steem-Print-Posting-Votes.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Posting-Votes.rb).
 
 ### steem-ruby
