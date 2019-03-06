@@ -1,0 +1,6 @@
+https://www.codecogs.com/latex/eqneditor.php
+
+steem = vest \frac{total\_vesting\_fund\_steem}{total\_vesting\_shares}
+
+% vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 expandtab :
+% vim: set textwidth=0 filetype=tex foldmethod=marker spell :

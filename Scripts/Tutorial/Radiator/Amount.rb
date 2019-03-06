@@ -16,29 +16,34 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the steem-ruby gem. This is
+# use the "steem.rb" file from the radiator gem. This is
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "steem-ruby", :require => "steem"
+gem "radiator", :require => "steem"
 
 require 'pp'
 require 'colorize'
 require 'contracts'
-require 'steem'
+require 'radiator'
 
 ##
-# steem-ruby comes with a helpful Steem::Type::Amount class
-# to handle account balances. However Steem::Type::Amount
-# won't let you access the actual amount as float which is
-# quite cumbersome when you want to make calculations.
+# steem-ruby comes with a helpful Radiator::Type::Amount
+# class to handle account balances. However
+# Radiator::Type::Amount won't let you access any
+# attributes which makes using the class quite cumbersome.
 #
-# This class expands Steem::Type::Amount to add the missing
-# functions.
+# This class expands Radiator::Type::Amount to add the missing functions
+# making it super convenient.
 #
-class Amount < Steem::Type::Amount
+class Amount < Radiator::Type::Amount
    include Contracts::Core
    include Contracts::Builtin
+
+   ##
+   # add the missing attribute reader.
+   #
+   attr_reader :amount, :precision, :asset, :value
 
    public
 
@@ -63,7 +68,7 @@ class Amount < Steem::Type::Amount
       # @return [Float]
       #     actual amount as float
       #
-      Contract self => Float
+      Contract None => Float
       def to_f
          return @amount.to_f
       end
@@ -110,7 +115,7 @@ class Amount < Steem::Type::Amount
             when SBD
                self.clone
             when STEEM
-               Amount.to_amount(@amount.to_f * SBD_Median_Price, SBD)
+               Amount.to_amount(@amount.to_f * Conversion_Rate_Steem, SBD)
             when VESTS
                self.to_steem.to_sbd
             else
@@ -131,7 +136,7 @@ class Amount < Steem::Type::Amount
          return (
          case @asset
             when SBD
-               Amount.to_amount(@amount.to_f / SBD_Median_Price, STEEM)
+               Amount.to_amount(@amount.to_f / Conversion_Rate_Steem, STEEM)
             when STEEM
                self.clone
             when VESTS
@@ -212,7 +217,7 @@ class Amount < Steem::Type::Amount
       #
       # @param [Amount]
       #     amount to add
-      # @return [Amount]
+      # @return [Float]
       #     result of addition
       # @raise [ArgumentError]
       #    values of different asset type
@@ -229,7 +234,7 @@ class Amount < Steem::Type::Amount
       #
       # @param [Amount]
       #     amount to subtract
-      # @return [Amount]
+      # @return [Float]
       #     result of subtraction
       # @raise [ArgumentError]
       #    values of different asset type
@@ -246,7 +251,7 @@ class Amount < Steem::Type::Amount
       #
       # @param [Amount]
       #     amount to divert
-      # @return [Amount]
+      # @return [Float]
       #     result of division
       # @raise [ArgumentError]
       #    values of different asset type
@@ -263,7 +268,7 @@ class Amount < Steem::Type::Amount
       #
       # @param [Amount]
       #     amount to divert
-      # @return [Amount]
+      # @return [Float]
       #     result of division
       # @raise [ArgumentError]
       #    values of different asset type
@@ -274,8 +279,6 @@ class Amount < Steem::Type::Amount
 
          return Amount.to_amount(@amount.to_f / right.to_f, @asset)
       end
-
-   private
 
       ##
       # Helper factory method to create a new Amount from
@@ -292,130 +295,6 @@ class Amount < Steem::Type::Amount
          return Amount.new(value.to_s + " " + asset)
       end
 end # Amount
-
-begin
-   # create instance to the steem condenser API which
-   # will give us access to to the global properties and
-   # median history
-
-   _condenser_api = Steem::CondenserApi.new
-
-   # read the  median history value and
-   # Calculate the conversion Rate for Vests to steem
-   # backed dollar. We use the Amount class from Part 2 to
-   # convert the string values into amounts.
-
-   _median_history_price = _condenser_api.get_current_median_history_price.result
-   _base                 = Amount.new _median_history_price.base
-   _quote                = Amount.new _median_history_price.quote
-   SBD_Median_Price      = _base.to_f / _quote.to_f
-
-   # read the global properties and
-   # calculate the conversion Rate for VESTS to steem. We
-   # use the Amount class from Part 2 to convert the string
-   # values into amounts.
-
-   _global_properties        = _condenser_api.get_dynamic_global_properties.result
-   _total_vesting_fund_steem = Amount.new _global_properties.total_vesting_fund_steem
-   _total_vesting_shares     = Amount.new _global_properties.total_vesting_shares
-   Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
-rescue => error
-   # I am using `Kernel::abort` so the script ends when
-   # data can't be loaded
-
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
-end
-
-##
-# print account information for an array of accounts
-#
-# @param [Array<Hash>] accounts
-#     the accounts to print
-#
-def print_account_balances(accounts)
-   accounts.each do |account|
-      # create an amount instances for each balance to be
-      # used for further processing
-
-      _balance                  = Amount.new account.balance
-      _savings_balance          = Amount.new account.savings_balance
-      _sbd_balance              = Amount.new account.sbd_balance
-      _savings_sbd_balance      = Amount.new account.savings_sbd_balance
-      _vesting_shares           = Amount.new account.vesting_shares
-      _delegated_vesting_shares = Amount.new account.delegated_vesting_shares
-      _received_vesting_shares  = Amount.new account.received_vesting_shares
-
-      # calculate actual vesting by adding and subtracting delegation.
-
-      _total_vests = _vesting_shares - _delegated_vesting_shares + _received_vesting_shares
-
-      # calculate the account value by adding all balances in SBD
-
-      _account_value =
-         _balance.to_sbd +
-            _savings_balance.to_sbd +
-            _sbd_balance.to_sbd +
-            _savings_sbd_balance.to_sbd +
-            _vesting_shares.to_sbd
-
-      # pretty print out the balances. Note that for a
-      # quick printout Steem::Type::Amount provides a
-      # simple to_s method. But this method won't align the
-      # decimal point
-
-      puts ("Account: %1$s".blue + +" " + "(%2$s)".green) % [account.name, _vesting_shares.to_level]
-      puts ("  SBD             = " + _sbd_balance.to_ansi_s)
-      puts ("  SBD Savings     = " + _savings_sbd_balance.to_ansi_s)
-      puts ("  Steem           = " + _balance.to_ansi_s)
-      puts ("  Steem Savings   = " + _savings_balance.to_ansi_s)
-      puts ("  Steem Power     = " + _vesting_shares.to_ansi_s)
-      puts ("  Delegated Power = " + _delegated_vesting_shares.to_ansi_s)
-      puts ("  Received Power  = " + _received_vesting_shares.to_ansi_s)
-      puts ("  Actual Power    = " + _total_vests.to_ansi_s)
-      puts ("  Account Value   = " + "%1$15.3f %2$s".green) % [
-         _account_value.to_f,
-         _account_value.asset]
-   end
-
-   return
-end
-
-if ARGV.length == 0 then
-   puts "
-Steem-Dump-Balances — Dump account balances.
-
-Usage:
-   Steem-Dump-Balances account_name …
-
-"
-else
-   # read arguments from command line
-
-   Account_Names = ARGV
-
-   # create instance to the steem database API
-
-   _database_api = Steem::DatabaseApi.new
-
-   # request account information from the Steem database
-   # and print out the accounts balances found using a new
-   # function or print out error information when an error
-   # occurred.
-
-   _database_api.find_accounts(accounts: Account_Names) do |result|
-      Accounts = result.accounts
-
-      if Accounts.length == 0 then
-         puts "No accounts found.".yellow
-      else
-         # print out the actual account balances.
-
-         print_account_balances Accounts
-      end
-   rescue => error
-      Kernel::abort("Error reading accounts:\n".red + error.to_s)
-   end
-end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

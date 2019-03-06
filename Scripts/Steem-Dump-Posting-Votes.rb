@@ -30,11 +30,11 @@ require 'steem'
 # Class to handle vote values from postings.
 #
 # Information on the postings are accessed via the
-# `get_active_votes` method of the `CondenserApi`. The method 
-# takes two parameter: the authors name and the id of the posting. 
-# Both can be extracted from the URL of the posting. As Result you 
+# `get_active_votes` method of the `CondenserApi`. The method
+# takes two parameter: the authors name and the id of the posting.
+# Both can be extracted from the URL of the posting. As Result you
 # get an array of voting results:
-# 
+#
 # | Name      | Desciption                                         |
 # |-----------|----------------------------------------------------|
 # |voter      |Name of the voter.                                  |
@@ -42,7 +42,7 @@ require 'steem'
 # |weight     |Used to calculate the vote value.                   |
 # |rshares    |Used to calculate the vote value.                   |
 # |reputation |Voters reputation. Not used any more and always 0.  |
-# |time       |Time and date of the actual vote.                   
+# |time       |Time and date of the actual vote.
 #
 class Vote < Steem::Type::BaseType
    include Contracts::Core
@@ -67,7 +67,7 @@ class Vote < Steem::Type::BaseType
       @weight     = value.weight
       @rshares    = value.rshares
       @reputation = value.reputation
-      @time       = Time.strptime(value.time + "Z" , "%Y-%m-%dT%H:%M:%S")
+      @time       = Time.strptime(value.time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
 
       return
    end
@@ -105,7 +105,7 @@ class Vote < Steem::Type::BaseType
 
    ##
    # Print a list a vote values:
-   # 
+   #
    # 1. Loop over all votes.
    # 2. convert the vote JSON object into the ruby `Vote` class.
    # 3. print as ansi strings.
@@ -126,8 +126,8 @@ class Vote < Steem::Type::BaseType
 
    ##
    # Print the votes from a postings given as URLs:
-   # 
-   # 1. Extract the posting ID and author name from the URL with standard string operations. 
+   #
+   # 1. Extract the posting ID and author name from the URL with standard string operations.
    # 2. Print a short header
    # 3. Request the list of votes from `Condenser_Api` using `get_active_votes`
    # 4. print the votes.

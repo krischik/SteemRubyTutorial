@@ -1,0 +1,28 @@
+https://www.codecogs.com/latex/eqneditor.php
+
+\\*
+seconds\_ago = now - last\_vote\_time
+\\*
+five\_days = 5 \times 24 \times 60 \times 60
+\\*
+\begin{cases}
+current\_voting\_power = voting\_power + \frac{seconds\_ago}{five\_days}
+\\
+current\_voting\_power = [0,1]
+\end{cases}
+ 
+sbd\_median\_price = \frac{base}{quote}
+
+\\*
+total\_vests = vesting\_shares + received\_vesting\_shares - delegated\_vesting\_shares
+\\*
+final\_vest = total\_vests \times 10^{6}
+
+power = \frac{voting\_power \times weight}{50}
+
+rshares = power \times final\_vest 
+
+estimate = \frac{rshares}{recent\_claims \times reward\_balance \times sbd\_median\_price}
+
+% vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 expandtab :
+% vim: set textwidth=0 filetype=tex foldmethod=marker spell :
