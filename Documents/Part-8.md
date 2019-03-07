@@ -72,31 +72,47 @@ Estimating the vote value is a rather complex process involving all of the follo
 
 ### Step 1 Calculate SBD Median Price 
 
-<center>![SBD_Median_Price.png](https://cdn.steemitimages.com/DQmcYAvStASmtaR7htYzCCcgTpQtxu4TYbxTgarNf1aq4q1/SBD_Median_Price.png)</center>
+To improve precision of any calcuatlion the Steem database only stores integer numbers. In case of the SDB median price is stored as quotient or fraction which we just devide them as floating point number are good enough for an estimate.
+
+<center>![sbd\_median\_price = \frac{base}{quote}](https://cdn.steemitimages.com/DQmcYAvStASmtaR7htYzCCcgTpQtxu4TYbxTgarNf1aq4q1/SBD_Median_Price.png)</center>
 
 ### Step 2 Calculate the users voting power 
 
-The database only stores the users voting power at the time of last vote. This makes it necessary to add the voting power regained since the last vote. This is done with following formula
+The database only stores the users voting power at the time of last vote. This makes it necessary to add the voting power regained since the last vote. This is done with following formula:
 
-<center>![Current_Voting_Power.png](https://cdn.steemitimages.com/DQmZafbe18NBJwKruZN4EJKiuAeFpHC6e1CCoVHHhpmWqwJ/Current_Voting_Power.png)</center>
+<center>![current\_voting\_power = voting\_power + \frac{seconds\_ago}{five\_days}](https://cdn.steemitimages.com/DQmZafbe18NBJwKruZN4EJKiuAeFpHC6e1CCoVHHhpmWqwJ/Current_Voting_Power.png)</center>
+
+Note that the vote power is bounded between 0% (0.0) and 100% (1.0).
 
 ### Step 3 Calculate the users VESTS
 
-<center>![Final_Vest.png](https://cdn.steemitimages.com/DQmV9sG6wNDSmrkbqedve1jj2vfurPm8GQrxPUopRNtLbM4/Final_Vest.png)</center>
+The users VESTS is calculated by adding and subtracting the in and  delegates from the accounts VESTS and your multiply the result wiht 10⁶ (aka one million). 
+
+<center>![total\_vests = vesting\_shares + received\_vesting\_shares - delegated\_vesting\_shares](https://cdn.steemitimages.com/DQmV9sG6wNDSmrkbqedve1jj2vfurPm8GQrxPUopRNtLbM4/Final_Vest.png)</center>
 
 ### Step 4 Calculate Reward Share
 
-<center>![RShares.png](https://cdn.steemitimages.com/DQmfMbTbeBw3tQQBTxHWdw2EWVMMwU4GVpGrYMX46wWCbmf/RShares.png)</center>
+The share of the rewards pool is then calculated by multiplying the power and the VESTS.
+
+<center>![rshares = power \times final\_vest](https://cdn.steemitimages.com/DQmfMbTbeBw3tQQBTxHWdw2EWVMMwU4GVpGrYMX46wWCbmf/RShares.png)</center>
 
 ### Step 5 Calculate the actual estimate
 
-<center>![Estimate.png](https://cdn.steemitimages.com/DQmQjroDqHAcPmS2zMUPphmMCKwz3FZFD9qB428iyhFKo8e/Estimate.png)</center>
+The estimate is calculated from the data of the most rescent distribution. For this the reward share is divided by the amount of claims done last time and multiplied by the available reward pool. The result is the reward in Steem which is then then converted to SBD by multiyling it with the SBD median price.
+
+<center>![estimate = \frac{rshares}{recent\_claims \times reward\_balance \times sbd\_median\_price}](https://cdn.steemitimages.com/DQmQjroDqHAcPmS2zMUPphmMCKwz3FZFD9qB428iyhFKo8e/Estimate.png)</center>
+
+Those who opt for a 100% power up micht perfer a printout in Steem. For this leave out the multiplication with the sbd median price. But remember that the dust value is calculated in SBD and only postings with a payout of least 0.020 SBD will actualy be payed out.
 
 ## Implementation using steem-ruby
 
 Since `DatabaseApi.get_accounts` of steem-api doesn't return the `voting_power`  only the radiator implementation is included.
 
 ## Implementation using radiator
+
+`Steem-Print-Balances.rb` has been explained before in [Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) and [Part 6](https://steemit.com/@krischik/using-steem-api-with-ruby-part-6) of the tutarial and to avoid redundancy only the new functionality is described. The 
+
+Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb).
 
 -----
 
@@ -105,13 +121,11 @@ Since `DatabaseApi.get_accounts` of steem-api doesn't return the `voting_power` 
 
 -----
 
-**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb).
-
 The output of the command (for the steem account) looks like this
 
 <center>![Screenshot at Mar 06 15-52-11.png](https://cdn.steemitimages.com/DQmNtYn28Rs97DUP8JWLbHXW8mYcKmoJha2vNRYhH5PzjFH/Screenshot%20at%20Mar%2006%2015-52-11.png)</center>
 
-The current vote value is printed in as a vote power is not at it's maximum. Maximum and current vote value are displayed the same as the reduction is less then 0.001 SBD. 
+The current vote value is printed in red as a vote power is not at it's maximum. However the difference between the current vote value und the maximum vote value is smaller then 0.0005 SDB so the difference isn't shown.
 
 # Curriculum
 
@@ -129,7 +143,7 @@ The current vote value is printed in as a vote power is not at it's maximum. Max
 
 ## Proof of Work
 
-* GitHub: [SteemRubyTutorial Issue #7](https://github.com/krischik/SteemRubyTutorial/issues/7)
+* GitHub: [SteemRubyTutorial Enhancement #10](https://github.com/krischik/SteemRubyTutorial/issues/10)
 
 ## Image Source
 
