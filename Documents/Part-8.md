@@ -72,7 +72,7 @@ Estimating the vote value is a rather complex process involving all of the follo
 
 ### Step 1 Calculate SBD Median Price 
 
-To improve precision of any calcuatlion the Steem database only stores integer numbers. In case of the SDB median price is stored as quotient or fraction which we just devide them as floating point number are good enough for an estimate.
+To improve precision of any calculation the Steem database only stores integer numbers. In case of the SDB median price is stored as quotient or fraction which we just divide them as floating point number are good enough for an estimate.
 
 <center>![sbd\_median\_price = \frac{base}{quote}](https://cdn.steemitimages.com/DQmcYAvStASmtaR7htYzCCcgTpQtxu4TYbxTgarNf1aq4q1/SBD_Median_Price.png)</center>
 
@@ -86,7 +86,7 @@ Note that the vote power is bounded between 0% (0.0) and 100% (1.0).
 
 ### Step 3 Calculate the users VESTS
 
-The users VESTS is calculated by adding and subtracting the in and  delegates from the accounts VESTS and your multiply the result wiht 10⁶ (aka one million). 
+The users VESTS is calculated by adding and subtracting the in and  delegates from the accounts VESTS and your multiply the result with 10⁶ (aka one million). 
 
 <center>![total\_vests = vesting\_shares + received\_vesting\_shares - delegated\_vesting\_shares](https://cdn.steemitimages.com/DQmV9sG6wNDSmrkbqedve1jj2vfurPm8GQrxPUopRNtLbM4/Final_Vest.png)</center>
 
@@ -98,25 +98,108 @@ The share of the rewards pool is then calculated by multiplying the power and th
 
 ### Step 5 Calculate the actual estimate
 
-The estimate is calculated from the data of the most rescent distribution. For this the reward share is divided by the amount of claims done last time and multiplied by the available reward pool. The result is the reward in Steem which is then then converted to SBD by multiyling it with the SBD median price.
+The estimate is calculated from the data of the most recent distribution. For this the reward share is divided by the amount of claims done last time and multiplied by the available reward pool. The result is the reward in Steem which is then then converted to SBD by multiplying it with the SBD median price.
 
 <center>![estimate = \frac{rshares}{recent\_claims \times reward\_balance \times sbd\_median\_price}](https://cdn.steemitimages.com/DQmQjroDqHAcPmS2zMUPphmMCKwz3FZFD9qB428iyhFKo8e/Estimate.png)</center>
 
-Those who opt for a 100% power up micht perfer a printout in Steem. For this leave out the multiplication with the sbd median price. But remember that the dust value is calculated in SBD and only postings with a payout of least 0.020 SBD will actualy be payed out.
+Those who opt for a 100% power up might prefer a printout in Steem. For this leave out the multiplication with the sbd median price. But remember that the dust value is calculated in SBD and only postings with a payout of least 0.020 SBD will actually be payed out.
 
 ## Implementation using steem-ruby
 
-Since `DatabaseApi.get_accounts` of steem-api doesn't return the `voting_power`  only the radiator implementation is included.
+Since `DatabaseApi.get_accounts` of steem-api doesn't return the `voting_power` only the radiator implementation is included.
 
 ## Implementation using radiator
 
-`Steem-Print-Balances.rb` has been explained before in [Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) and [Part 6](https://steemit.com/@krischik/using-steem-api-with-ruby-part-6) of the tutarial and to avoid redundancy only the new functionality is described. The 
+`Steem-Print-Balances.rb` has been explained before in [Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) and [Part 6](https://steemit.com/@krischik/using-steem-api-with-ruby-part-6) of the tutorial and to avoid redundancy only the new functionality is described. 
 
 Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb).
 
 -----
 
+`Conversion_Rate_Steem` was renamed `SBD_Median_Price` because that's the name used in the official documentation.
+
 ```ruby
+   SBD_Median_Price      = _base.to_f / _quote.to_f
+```
+
+Read the reward funds. `get_reward_fund` takes one parameter is always "post".
+
+```ruby
+   _reward_fund =  _condenser_api.get_reward_fund("post").result
+```
+
+Extract variables needed for the vote estimate. This is done just once here to reduce the amount of string parsing needed.
+
+```ruby
+   Recent_Claims  = _reward_fund.recent_claims.to_i
+   Reward_Balance = Amount.new _reward_fund.reward_balance
+```
+
+Calculate the real voting power of an account. The voting power in the database is only updated when the user makes an up vote and needs to calculated from there.  
+
+```ruby
+def real_voting_power (account)
+   _last_vote_time = Time.strptime(account.last_vote_time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
+   _current_time = Time.now
+   _seconds_ago = _current_time - _last_vote_time;
+   _voting_power = account.voting_power.to_f / 10000.0
+   _retval = _voting_power + (_seconds_ago / Five_Days)
+
+   if _retval > 1.0 then
+      _retval = 1.0
+   end
+
+   return _retval.round(4);
+end
+
+…
+
+_voting_power             = real_voting_power account
+```
+
+Calculate actual vesting by adding and subtracting delegation as well at the final vest for vote estimate.
+
+```ruby
+      _total_vests = _vesting_shares - _delegated_vesting_shares + _received_vesting_shares
+      _final_vest  = _total_vests.to_f * 1e6
+```
+
+Calculate the vote value for 100% up votes.
+
+```ruby
+      _weight = 1.0
+```
+
+Calculate the account's current vote value for a 100% up vote.
+
+```ruby
+      _current_power = (_voting_power * _weight) / 50.0
+      _current_rshares = _current_power * _final_vest
+      _current_vote_value = (_current_rshares / Recent_Claims) * Reward_Balance.to_f * SBD_Median_Price
+```
+
+Calculate the account's maximum vote value for a 100% up vote.  
+
+```ruby
+      _max_voting_power = 1.0
+      _max_power = (_max_voting_power * _weight) / 50.0
+      _max_rshares = _max_power * _final_vest
+      _max_vote_value = (_max_rshares / Recent_Claims) * Reward_Balance.to_f * SBD_Median_Price
+```
+
+Print the current and maximum vote value. Colourise the current vote value depending on the voting power. If the vote value is 1.0 then colourise green and otherwise colourise red.
+
+```ruby
+      puts ("  Voting Power    = " +
+         "%1$15.3f SBD".colorize(
+            if _voting_power == 1.0 then
+               :green
+            else
+               :red
+            end
+         ) + " of " + "%2$1.3f SBD".blue) % [
+         _current_vote_value,
+         _max_vote_value]
 ```
 
 -----

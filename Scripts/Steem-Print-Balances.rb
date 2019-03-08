@@ -400,9 +400,11 @@ def print_account_balances(accounts)
       _received_vesting_shares  = Amount.new account.received_vesting_shares
       _voting_power             = real_voting_power account
 
-      # calculate actual vesting by adding and subtracting delegation.
+      # calculate actual vesting by adding and subtracting
+      # delegation as well at the final vest for vote estimate
 
       _total_vests = _vesting_shares - _delegated_vesting_shares + _received_vesting_shares
+      _final_vest  = _total_vests.to_f * 1e6
 
       # calculate the account value by adding all balances in SBD
 
@@ -413,7 +415,11 @@ def print_account_balances(accounts)
             _savings_sbd_balance.to_sbd +
             _vesting_shares.to_sbd
 
-      # calculate the account's vote value for a 100% upvote.
+      # calculate the vote value for 100% upvotes
+
+      _weight = 1.0
+
+      # calculate the account's current vote value for a 100% upvote.
       #
       # From https://developers.steem.io/tutorials-recipes/estimate_upvote
       #
@@ -439,16 +445,16 @@ def print_account_balances(accounts)
       #
       # ¹ Both the current and the last voting_power is called voting_power in the official dokumentation
 
-      _weight = 1.0
-      _final_vest = _total_vests.to_f * 1e6
-      _power = (_voting_power * _weight) / 50.0
-      _rshares = _power * _final_vest
-      _vote_value = (_rshares / Recent_Claims) * Reward_Balance.to_f * SBD_Median_Price
+      _current_power = (_voting_power * _weight) / 50.0
+      _current_rshares = _current_power * _final_vest
+      _current_vote_value = (_current_rshares / Recent_Claims) * Reward_Balance.to_f * SBD_Median_Price
+
+      # calculate the account's maximum vote value for a 100% upvote.
 
       _max_voting_power = 1.0
       _max_power = (_max_voting_power * _weight) / 50.0
       _max_rshares = _max_power * _final_vest
-      _max_vote_value = _max_rshares / Recent_Claims * Reward_Balance.to_f * SBD_Median_Price
+      _max_vote_value = (_max_rshares / Recent_Claims) * Reward_Balance.to_f * SBD_Median_Price
 
       # pretty print out the balances. Note that for a
       # quick printout Radiator::Type::Amount provides a
@@ -464,7 +470,7 @@ def print_account_balances(accounts)
       puts ("  Delegated Power = " + _delegated_vesting_shares.to_ansi_s)
       puts ("  Received Power  = " + _received_vesting_shares.to_ansi_s)
       puts ("  Actual Power    = " + _total_vests.to_ansi_s)
-      puts ("  Voting Power    = " + 
+      puts ("  Voting Power    = " +
          "%1$15.3f SBD".colorize(
             if _voting_power == 1.0 then
                :green
@@ -472,7 +478,7 @@ def print_account_balances(accounts)
                :red
             end
          ) + " of " + "%2$1.3f SBD".blue) % [
-         _vote_value,
+         _current_vote_value,
          _max_vote_value]
       puts ("  Account Value   = " + "%1$15.3f %2$s".green) % [
          _account_value.to_f,

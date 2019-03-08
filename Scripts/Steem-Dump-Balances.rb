@@ -63,7 +63,7 @@ class Amount < Steem::Type::Amount
       # @return [Float]
       #     actual amount as float
       #
-      Contract self => Float
+      Contract None => Float
       def to_f
          return @amount.to_f
       end
