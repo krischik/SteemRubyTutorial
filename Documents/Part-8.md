@@ -1,5 +1,7 @@
 # Using Steem-API with Ruby Part 8 — Print Account Balances with vote power
 
+utopian-io tutorials ruby steem-api programming
+
 <center>![Steemit_Ruby.png](https://steemitimages.com/500x270/https://ipfs.busy.org/ipfs/QmSDiHZ9ng7BfYFMkvwYtNVPrw3nvbzKBA1gEj3y9vU6qN)</center>
 
 ## Repositories
@@ -47,7 +49,7 @@ For reader with programming experience this tutorial is **basic level**.
 
 ## Tutorial Contents
 
-Estimating the vote value is a rather complex process involving all of the following variables needed from :
+Estimating the vote value is a rather complex process involving all of the following variables:
 
 | Name			    | API						| Description				|
 |---------------------------|---------------------------------------------------|---------------------------------------|
