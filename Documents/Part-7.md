@@ -64,7 +64,7 @@ For reader with programming experience this tutorial is **basic level**.
 
 ## Tutorial Contents
 
-Information on the postings are accessed via the `get_active_votes` method of the `CondenserApi`. The method takes two parameter: the authors name and the id of the posting. Both can be extracted from the URL of the posting. As Result you get an array of voting results:
+Info`get_active_votes` method of the `CondenserApi`.rmation on the postings are accessed via the The method takes two parameter: the authors name and the id of the posting. Both can be extracted from the URL of the posting. As Result you get an array of voting results:
 
 <center>![Screenshot at Feb 26 16-17-18.png](https://cdn.steemitimages.com/DQmcxuPUSRvRXFj2D4mq5UTDpacnodJzqRFmh1Lk5mXedup/Screenshot%20at%20Feb%2026%2016-17-18.png)</center>
 
