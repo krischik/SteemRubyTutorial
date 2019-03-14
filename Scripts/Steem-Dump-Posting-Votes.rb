@@ -16,7 +16,7 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the radiator gem. This is
+# use the "steem.rb" file from the steem-ruby gem. This is
 # only needed if you have both steem-api and radiator
 # installed.
 
@@ -25,6 +25,11 @@ gem "steem-ruby", :require => "steem"
 require 'colorize'
 require 'contracts'
 require 'steem'
+
+# The Amount class is used in most Scripts so it was
+# moved into a separate file.
+
+require_relative 'Steem/Amount'
 
 ##
 # Class to handle vote values from postings.
@@ -35,14 +40,14 @@ require 'steem'
 # Both can be extracted from the URL of the posting. As Result you
 # get an array of voting results:
 #
-# | Name      | Desciption                                         |
-# |-----------|----------------------------------------------------|
-# |voter      |Name of the voter.                                  |
-# |percent    |percentage of vote (times 10000).                   |
-# |weight     |Used to calculate the vote value.                   |
-# |rshares    |Used to calculate the vote value.                   |
-# |reputation |Voters reputation. Not used any more and always 0.  |
-# |time       |Time and date of the actual vote.
+# | Name      | Desciption                                  |
+# |-----------|---------------------------------------------|
+# |voter      | The author account name of the vote.        |
+# |percent    | Percent of vote.                            |
+# |weight     | Weight of the voting power.                 |
+# |rshares    | Reward shares.                              |
+# |reputation | The reputation of the account that voted.   |
+# |time       | Time the vote was submitted.                |
 #
 class Vote < Steem::Type::BaseType
    include Contracts::Core
@@ -51,9 +56,24 @@ class Vote < Steem::Type::BaseType
    attr_reader :voter, :percent, :weight, :rshares, :reputation, :time
 
    ##
-   # Create a new instance from the data returned from the
-   # `get_active_votes` method. The percent is divided by
-   # 10000 to make the value mathematically correct.
+   # Create a new instance from the data returned from
+   # the `get_active_votes` method.
+   #
+   # Percent is a fixed numbers with 4 decimal places and
+   # need to be divided by 10000 to make the value
+   # mathematically correct and easier to handle. Floats
+   # are not as precise as fixed numbers so this is only
+   # acceptable because we calculate estimates and not
+   # final values.
+   #
+   # Steem is using an unusual date time format which is
+   # missing the timezone indicator. Hence the special
+   # scanner and the adding of the Z timezone indicator.
+   #
+   # rshares is the rewards share the votes gets from the
+   # reward pool.
+   #
+   # reputation is always 0
    #
    # @param [Hash] value
    #     the data hash from the get_active_votes
@@ -64,12 +84,23 @@ class Vote < Steem::Type::BaseType
 
       @voter      = value.voter
       @percent    = value.percent / 10000.0
-      @weight     = value.weight
-      @rshares    = value.rshares
-      @reputation = value.reputation
+      @weight     = value.weight.to_i
+      @rshares    = value.rshares.to_i
+      @reputation = value.reputation.to_i
       @time       = Time.strptime(value.time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
 
       return
+   end
+
+   ##
+   # calculate the vote estimate from the rshares.
+   #
+   # @return [Float]
+   #    the vote estimate in SBD
+   #
+   Contract None => Num
+   def estimate
+      return @rshares.to_f / Recent_Claims * Reward_Balance.to_f * SBD_Median_Price
    end
 
    ##
@@ -84,23 +115,41 @@ class Vote < Steem::Type::BaseType
    #
    Contract None => String
    def to_ansi_s
+      # multipy percent with 100 for human readability
       _percent = @percent * 100.0
+      _estimate = estimate
 
+      # All the magic happens in the `%` operators which
+      # calls sprintf which in turn formats the string.
       return (
-      "%1$-16s : " + "%2$7.2f%%".colorize(
-         if _percent > 0 then
-            :green
-         elsif _percent < 0 then
-            :red
-         else
-            :white
-         end
-      ) + "%3$12d" + "%4$15d" + "%5$20s") % [
-         @voter,
-         _percent,
-         @weight,
-         @rshares,
-         @time.strftime("%Y-%m-%d %H:%M:%S")]
+         "%1$-16s | " +
+         "%2$7.2f%%".colorize(
+            if _percent > 0.0 then
+               :green
+            elsif _percent < -0.0 then
+               :red
+            else
+               :white
+            end
+         ) + 
+         " |" + 
+         "%3$10.3f SBD".colorize(
+            if _estimate > 0.0005 then
+               :green
+            elsif _estimate < -0.0005 then
+               :red
+            else
+               :white
+            end
+         ) + 
+         " |%4$10d |%5$16d |%6$20s |") % [
+            @voter,
+            _percent,
+            _estimate,
+            @weight,
+            @rshares,
+            @time.strftime("%Y-%m-%d %H:%M:%S")
+         ]
    end
 
    ##
@@ -115,11 +164,33 @@ class Vote < Steem::Type::BaseType
    #
    Contract ArrayOf[HashOf[String => Or[String, Num]] ] => nil
    def self.print_list (votes)
+      # used to calculate the total vote value
+      _total_estimate = 0.0
+
       votes.each do |_vote|
          _vote = Vote.new _vote
 
          puts _vote.to_ansi_s
+
+         # add up extimate
+         _total_estimate = _total_estimate + _vote.estimate
       end
+
+      # print the total estimate after the last vote
+      puts (
+         "Total vote value |          |" + 
+         "%1$10.3f SBD".colorize(
+            if _total_estimate > 0.0005 then
+               :green
+            elsif _total_estimate < -0.0005 then
+               :red
+            else
+               :white
+            end
+         ) +
+         " |           |                 |                     |") % [
+            _total_estimate
+         ]
 
       return
    end
@@ -142,7 +213,8 @@ class Vote < Steem::Type::BaseType
 
       puts ("Post Author      : " + "%1$s".blue) % _author
       puts ("Post ID          : " + "%1$s".blue) % _permlink
-      puts ("Voter name       :  percent      weight        rshares    vote date & time")
+      puts ("Voter name       |  percent |         value |    weight |         rshares |    vote date & time |")
+      puts ("-----------------+----------+---------------+-----------+-----------------+---------------------+")
 
       Condenser_Api.get_active_votes(_author, _permlink) do |votes|
          if votes.length == 0 then
@@ -163,6 +235,27 @@ begin
    # will give us access to the active votes.
 
    Condenser_Api = Steem::CondenserApi.new
+
+   # read the global properties and median history values
+   # and calculate the conversion Rate for steem to SBD
+   # We use the Amount class from Part 2 to convert the
+   # string values into amounts.
+
+   _median_history_price = Condenser_Api.get_current_median_history_price.result
+   _base                 = Amount.new _median_history_price.base
+   _quote                = Amount.new _median_history_price.quote
+   SBD_Median_Price      = _base.to_f / _quote.to_f
+
+   # read the reward funds. `get_reward_fund` takes one
+   # parameter is always "post" and extract variables
+   # needed for the vote estimate. This is done just once
+   # here to reduce the amount of string parsing needed.
+   # `get_reward_fund` takes one parameter is always "post".
+
+   _reward_fund   = Condenser_Api.get_reward_fund("post").result
+   Recent_Claims  = _reward_fund.recent_claims.to_i
+   Reward_Balance = Amount.new _reward_fund.reward_balance
+
 rescue => error
    # I am using `Kernel::abort` so the script ends when
    # data can't be loaded
