@@ -1,6 +1,7 @@
-# Using Steem-API with Ruby Part 6 — Print Posting Votes improved
+# Using Steem-API with Ruby Part 9 — Print Posting Votes improved
 
 utopian-io tutorials ruby steem-api programming
+utopian.pay
 
 <center>![Steemit_Ruby.png](https://steemitimages.com/500x270/https://ipfs.busy.org/ipfs/QmSDiHZ9ng7BfYFMkvwYtNVPrw3nvbzKBA1gEj3y9vU6qN)</center>
 
@@ -37,7 +38,7 @@ This tutorial shows how to interact with the Steem blockchain and Steem database
 
 Since both APIs have advantages and disadvantages sample code for both APIs will be provided so the reader can decide which is more suitable.
 
-This installement teaches how to calculate the estimated values of all votes on all posting. How we get the lost was already described in [Part 7](https://steemit.com/@krischik/using-steem-api-with-ruby-part-7)
+This instalment teaches how to calculate the estimated values of all votes on all posting. How we get the lost was already described in [Part 7](https://steemit.com/@krischik/using-steem-api-with-ruby-part-7)
 
 ## Requirements
 
@@ -68,7 +69,7 @@ Calculating the vote value is fairly easy as the `rshares` of each vote are calc
 
 <center>![Screenshot at Feb 26 16-17-18.png](https://cdn.steemitimages.com/DQmcxuPUSRvRXFj2D4mq5UTDpacnodJzqRFmh1Lk5mXedup/Screenshot%20at%20Feb%2026%2016-17-18.png)</center>
 
-All that is needed is to calculate the estimate with the fomular explained in [Part 8](https://steemit.com/@krischik/using-steem-api-with-ruby-part-8):
+All that is needed is to calculate the estimate with the formula explained in [Part 8](https://steemit.com/@krischik/using-steem-api-with-ruby-part-8):
 
 <center>![estimate = \frac{rshares}{recent\_claims \times reward\_balance \times sbd\_median\_price}](https://cdn.steemitimages.com/DQmQjroDqHAcPmS2zMUPphmMCKwz3FZFD9qB428iyhFKo8e/Estimate.png)</center>
 
@@ -76,15 +77,13 @@ All that is needed is to calculate the estimate with the fomular explained in [P
 
 -----
 
-The `Amount` class is used in most Scripts so it was moved into a seperate file for convinience:
+The `Amount` class is used in most Scripts so it was moved into a separate file. You can find the source code in Git under [Steem/Amount.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem/Amount.rb)
 
 ```ruby
-require_relative 'Tutorial/Steem/Amount'
+require_relative 'Steem/Amount'
 ```
 
-
-```ruby
-Create a new instance from the data returned from the `get_active_votes` method.
+Create a new class  instance from the data which was returned by the `get_active_votes` method.
 
 ```ruby
    Contract HashOf[String => Or[String, Num]] => nil
@@ -94,26 +93,31 @@ Create a new instance from the data returned from the `get_active_votes` method.
       @voter      = value.voter
 ```
 
-Percent is a fixed numbers with 4 decimal places and need to be divided by 10000 to make the value mathematically correct and easier to handle. Floats are not as precise as fixed numbers so this is only acceptable because we calculate estimates and not final values.
+`percent` is a fixed numbers with 4 decimal places and need to be divided by 10000 to make the value mathematically correct and easier to handle. Floats are not as precise as fixed numbers so this is only acceptable because we calculate estimates and not final values.
 
 ```ruby
       @percent    = value.percent / 10000.0
+```
+
+`weight` is described as weight of the voting power. No further information to be found.
+
+```ruby
       @weight     = value.weight.to_i
 ```
 
-rshares is the rewards share the votes gets from the reward pool.
+`rshares` is the rewards share the votes gets from the reward pool.
 
 ```ruby
       @rshares    = value.rshares.to_i
 ```
 
-reputation is always 0
+`reputation` is always 0 — It's probably obsolete and only kept for compatibility.
 
 ```ruby
       @reputation = value.reputation
 ```
 
-Steem is using an unusual date time format which is missing the timezone indicator. Hence the special scanner and the adding of the Z timezone indicator.
+Steem is using an unusual date time format which which makes a special scanner necessary. Also it's'  missing the timezone indicator so it's necessary to append a Z.
 
 ```ruby
       @time       = Time.strptime(value.time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
@@ -122,7 +126,7 @@ Steem is using an unusual date time format which is missing the timezone indicat
    end
 ```
 
-calculate the vote estimate from the rshares.
+Calculate the vote estimate from the `rshares` as described.
 
 ```ruby
    Contract None => Num
@@ -136,7 +140,7 @@ Create a colourised string from the instance. The vote percentages and estimate 
 ```ruby
    Contract None => String
    def to_ansi_s
-      # multipy percent with 100 for human readability
+      # multiply percent with 100 for human readability
       _percent = @percent * 100.0
       _estimate = estimate
 
@@ -187,7 +191,7 @@ The method which print the list a vote values from [Part 7](https://steemit.com/
 
          puts _vote.to_ansi_s
 
-         # add up extimate
+         # add up estimate
          _total_estimate = _total_estimate + _vote.estimate
       end
 
@@ -219,7 +223,7 @@ To avoid replications the rest of the operation is described in the radiator cha
 
 The output of the command (for for one of my postings) looks like this:
 
-<center></center>
+<center>![Screenshot at Mar 14 10-57-12.png](https://cdn.steemitimages.com/DQmWyd41FC3mBzzfEe9bZe3f1YQxKWTSvBKyC4C6XpSmqeC/Screenshot%20at%20Mar%2014%2010-57-12.png)</center>
 
 As you can see three of the votes have a zero estimate. Most interesting here is the 0.75% vote vote from @vannour which too has zero estimate.
 
@@ -228,6 +232,12 @@ As you can see three of the votes have a zero estimate. Most interesting here is
 To avoid replications the `Vote` class is only described in the steem-ruby chapter.
 
 -----
+
+The `Amount` class is used in most Scripts so it was moved into a separate file. You can find the source code in Git under [Radiator/Amount.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Radiator/Amount.rb)
+
+```ruby
+require_relative 'Radiator/Amount'
+```
 
 Load a few values from Condenser into global constants. This is only acceptable in short running scripts as the values are not actually constant but are updated by Condenser in regular intervals.
 
@@ -272,9 +282,9 @@ end
 
 The output of the command (for for one of my postings) looks like this:
 
-<center></center>
+<center>![Screenshot at Mar 14 10-58-50.png](https://cdn.steemitimages.com/DQmU7AAEiA9XHChBabWqBzgQrmBstymxv2HDXz4i1HcTsL5/Screenshot%20at%20Mar%2014%2010-58-50.png)</center>
 
-In this output there is a 100% down vote from @camillesteemer — a well know down vote troll. However he is nothing to worry about. His down vote too has a zero estimate.
+In this output there is a 100% down vote from @camillesteemer — a well know down vote troll. However he is nothing to worry about as his down vote too has a zero estimate.
 
 # Curriculum
 
@@ -302,7 +312,7 @@ In this output there is a 100% down vote from @camillesteemer — a well know do
 
 ## Beneficiary
 
-<center></center>
+<center>![Beneficiary](https://cdn.steemitimages.com/DQmdnAeXmyTiTyZQg8uEPssCEcRa7xL8nLHBrkEJ4dX2RPv/image.png)</center>
 
 <center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png)</center>
 
