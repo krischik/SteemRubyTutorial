@@ -76,31 +76,205 @@ All that is needed is to calculate the estimate with the fomular explained in [P
 
 -----
 
+The `Amount` class is used in most Scripts so it was moved into a seperate file for convinience:
+
 ```ruby
+require_relative 'Tutorial/Steem/Amount'
 ```
+
+
+```ruby
+Create a new instance from the data returned from the `get_active_votes` method.
+
+```ruby
+   Contract HashOf[String => Or[String, Num]] => nil
+   def initialize(value)
+      super(:vote, value)
+
+      @voter      = value.voter
+```
+
+Percent is a fixed numbers with 4 decimal places and need to be divided by 10000 to make the value mathematically correct and easier to handle. Floats are not as precise as fixed numbers so this is only acceptable because we calculate estimates and not final values.
+
+```ruby
+      @percent    = value.percent / 10000.0
+      @weight     = value.weight.to_i
+```
+
+rshares is the rewards share the votes gets from the reward pool.
+
+```ruby
+      @rshares    = value.rshares.to_i
+```
+
+reputation is always 0
+
+```ruby
+      @reputation = value.reputation
+```
+
+Steem is using an unusual date time format which is missing the timezone indicator. Hence the special scanner and the adding of the Z timezone indicator.
+
+```ruby
+      @time       = Time.strptime(value.time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
+
+      return
+   end
+```
+
+calculate the vote estimate from the rshares.
+
+```ruby
+   Contract None => Num
+   def estimate
+      return @rshares.to_f / Recent_Claims * Reward_Balance.to_f * SBD_Median_Price
+   en
+```
+
+Create a colourised string from the instance. The vote percentages and estimate and are colourised (positive values are printed in green, negative values in red and zero votes (yes they exist) are shown in grey), for improved human readability.
+
+```ruby
+   Contract None => String
+   def to_ansi_s
+      # multipy percent with 100 for human readability
+      _percent = @percent * 100.0
+      _estimate = estimate
+
+      # All the magic happens in the `%` operators which
+      # calls sprintf which in turn formats the string.
+      return (
+         "%1$-16s | " +
+         "%2$7.2f%%".colorize(
+            if _percent > 0.0 then
+               :green
+            elsif _percent < -0.0 then
+               :red
+            else
+               :white
+            end
+         ) + 
+         " |" + 
+         "%3$10.3f SBD".colorize(
+            if _estimate > 0.0005 then
+               :green
+            elsif _estimate < -0.0005 then
+               :red
+            else
+               :white
+            end
+         ) + 
+         " |%4$10d |%5$16d |%6$20s |") % [
+            @voter,
+            _percent,
+            _estimate,
+            @weight,
+            @rshares,
+            @time.strftime("%Y-%m-%d %H:%M:%S")
+         ]
+   end
+```
+
+The method which print the list a vote values from [Part 7](https://steemit.com/@krischik/using-steem-api-with-ruby-part-7) has been enhanced to sum up and print the estimates.
+
+```ruby
+   Contract ArrayOf[HashOf[String => Or[String, Num]] ] => nil
+   def self.print_list (votes)
+      # used to calculate the total vote value
+      _total_estimate = 0.0
+
+      votes.each do |_vote|
+         _vote = Vote.new _vote
+
+         puts _vote.to_ansi_s
+
+         # add up extimate
+         _total_estimate = _total_estimate + _vote.estimate
+      end
+
+      # print the total estimate after the last vote
+      puts (
+         "Total vote value |          |" + 
+         "%1$10.3f SBD".colorize(
+            if _total_estimate > 0.0005 then
+               :green
+            elsif _total_estimate < -0.0005 then
+               :red
+            else
+               :white
+            end
+         ) +
+         " |           |                 |                     |") % [
+            _total_estimate
+         ]
+
+      return
+   end
+```
+
+To avoid replications the rest of the operation is described in the radiator chapter.
 
 -----
 
 **Hint:** Follow this link to Github for the complete script with comments and syntax highlighting: [Steem-Dump-Posting-Votes.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Posting-Votes.rb).
 
-The output of the command (for the steem account) looks like this:
+The output of the command (for for one of my postings) looks like this:
 
-<center>![Screenshot at Feb 13 145331.png](https://files.steempeak.com/file/steempeak/krischik/bj5gfctG-Screenshot20at20Feb20132014-53-31.png)</center>
+<center></center>
+
+As you can see three of the votes have a zero estimate. Most interesting here is the 0.75% vote vote from @vannour which too has zero estimate.
 
 ## Implementation using radiator
 
+To avoid replications the `Vote` class is only described in the steem-ruby chapter.
+
 -----
 
+Load a few values from Condenser into global constants. This is only acceptable in short running scripts as the values are not actually constant but are updated by Condenser in regular intervals.
+
 ```ruby
+begin
+   # create instance to the steem condenser API which
+   # will give us access to the active votes.
+
+   Condenser_Api = Radiator::CondenserApi.new
+
+   # read the global properties and median history values
+   # and calculate the conversion Rate for steem to SBD
+   # We use the Amount class from Part 2 to convert the
+   # string values into amounts.
+
+   _median_history_price = Condenser_Api.get_current_median_history_price.result
+   _base                 = Amount.new _median_history_price.base
+   _quote                = Amount.new _median_history_price.quote
+   SBD_Median_Price      = _base.to_f / _quote.to_f
+
+   # read the reward funds. `get_reward_fund` takes one
+   # parameter is always "post" and extract variables
+   # needed for the vote estimate. This is done just once
+   # here to reduce the amount of string parsing needed.
+   # `get_reward_fund` takes one parameter is always "post".
+
+   _reward_fund   = Condenser_Api.get_reward_fund("post").result
+   Recent_Claims  = _reward_fund.recent_claims.to_i
+   Reward_Balance = Amount.new _reward_fund.reward_balance
+
+rescue => error
+   # I am using `Kernel::abort` so the script ends when
+   # data can't be loaded
+
+   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+end
 ```
 
 -----
 
 **Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Posting-Votes.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Posting-Votes.rb).
 
-The output of the command (for the steem account) looks identical to the previous output:
+The output of the command (for for one of my postings) looks like this:
 
-<center>![Screenshot at Feb 13 145420.png](https://files.steempeak.com/file/steempeak/krischik/3dURm96L-Screenshot20at20Feb20132014-54-20.png)</center>
+<center></center>
+
+In this output there is a 100% down vote from @camillesteemer — a well know down vote troll. However he is nothing to worry about. His down vote too has a zero estimate.
 
 # Curriculum
 
@@ -128,7 +302,7 @@ The output of the command (for the steem account) looks identical to the previou
 
 ## Beneficiary
 
-![Beneficiary.png](https://cdn.steemitimages.com/DQmYnQfCi8Z12jkaNqADKc37gZ89RKdvdLzp7uXRjbo1AHy/image.png)
+<center></center>
 
 <center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png)</center>
 

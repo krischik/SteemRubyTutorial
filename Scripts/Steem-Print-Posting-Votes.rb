@@ -67,7 +67,10 @@ class Vote < Radiator::Type::Serializer
    # missing the timezone indicator. Hence the special
    # scanner and the adding of the Z timezone indicator.
    #
-   # rshares is the rewards share you get for the vote.
+   # rshares is the rewards share the votes gets from the
+   # reward pool.
+   #
+   # reputation is always 0
    #
    # @param [Hash] value
    #     the data hash from the get_active_votes
@@ -80,7 +83,7 @@ class Vote < Radiator::Type::Serializer
       @percent    = value.percent / 10000.0
       @weight     = value.weight.to_i
       @rshares    = value.rshares.to_i
-      @reputation = value.reputation
+      @reputation = value.reputation.to_i
       @time       = Time.strptime(value.time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
 
       return
@@ -113,29 +116,32 @@ class Vote < Radiator::Type::Serializer
       _estimate = estimate
 
       return (
-      "%1$-16s | " + "%2$7.2f%% |".colorize(
-         if _percent > 0.0 then
-            :green
-         elsif _percent < -0.0 then
-            :red
-         else
-            :white
-         end
-      ) + "%3$10.3f SBD |".colorize(
-         if _estimate > 0.0005 then
-            :green
-         elsif _estimate < -0.0005 then
-            :red
-         else
-            :white
-         end
-      ) + "%4$10d |" + "%5$16d |" + "%6$20s |") % [
-         @voter,
-         _percent,
-         _estimate,
-         @weight,
-         @rshares,
-         @time.strftime("%Y-%m-%d %H:%M:%S")]
+         "%1$-16s | " + "%2$7.2f%%".colorize(
+            if _percent > 0.0 then
+               :green
+            elsif _percent < -0.0 then
+               :red
+            else
+               :white
+            end
+         ) + 
+         " |" + "%3$10.3f SBD".colorize(
+            if _estimate > 0.0005 then
+               :green
+            elsif _estimate < -0.0005 then
+               :red
+            else
+               :white
+            end
+         ) + 
+         " |%4$10d |%5$16d |%6$20s |") % [
+            @voter,
+            _percent,
+            _estimate,
+            @weight,
+            @rshares,
+            @time.strftime("%Y-%m-%d %H:%M:%S")
+         ]
    end
 
    ##
@@ -150,11 +156,33 @@ class Vote < Radiator::Type::Serializer
    #
    Contract ArrayOf[HashOf[String => Or[String, Num]] ] => nil
    def self.print_list (votes)
+      # used to calculate the total vote value
+      _total_estimate = 0.0
+
       votes.each do |_vote|
          _vote = Vote.new _vote
 
          puts _vote.to_ansi_s
+
+         # add up extimate
+         _total_estimate = _total_estimate + _vote.estimate
       end
+
+      # print the total estimate after the last vote
+      puts (
+         "Total vote value |          |" + 
+         "%1$10.3f SBD".colorize(
+            if _total_estimate > 0.0005 then
+               :green
+            elsif _total_estimate < -0.0005 then
+               :red
+            else
+               :white
+            end
+         ) +
+         " |           |                 |                     |") % [
+            _total_estimate
+         ]
 
       return
    end
