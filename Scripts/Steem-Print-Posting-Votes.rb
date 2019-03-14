@@ -26,7 +26,10 @@ require 'colorize'
 require 'contracts'
 require 'radiator'
 
-require_relative 'Tutorial/Radiator/Amount'
+# The Amount class is used in most Scripts so it was
+# moved into a separate file.
+
+require_relative 'Radiator/Amount'
 
 ##
 # Class to handle vote values from postings.

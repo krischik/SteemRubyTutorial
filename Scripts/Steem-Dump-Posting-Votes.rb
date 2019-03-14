@@ -26,7 +26,10 @@ require 'colorize'
 require 'contracts'
 require 'steem'
 
-require_relative 'Tutorial/Steem/Amount'
+# The Amount class is used in most Scripts so it was
+# moved into a separate file.
+
+require_relative 'Steem/Amount'
 
 ##
 # Class to handle vote values from postings.
