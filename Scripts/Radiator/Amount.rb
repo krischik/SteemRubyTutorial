@@ -217,7 +217,7 @@ class Amount < Radiator::Type::Amount
       #
       # @param [Amount]
       #     amount to add
-      # @return [Float]
+      # @return [Amount]
       #     result of addition
       # @raise [ArgumentError]
       #    values of different asset type
@@ -234,7 +234,7 @@ class Amount < Radiator::Type::Amount
       #
       # @param [Amount]
       #     amount to subtract
-      # @return [Float]
+      # @return [Amount]
       #     result of subtraction
       # @raise [ArgumentError]
       #    values of different asset type
@@ -251,7 +251,7 @@ class Amount < Radiator::Type::Amount
       #
       # @param [Amount]
       #     amount to divert
-      # @return [Float]
+      # @return [Amount]
       #     result of division
       # @raise [ArgumentError]
       #    values of different asset type
@@ -268,7 +268,7 @@ class Amount < Radiator::Type::Amount
       #
       # @param [Amount]
       #     amount to divert
-      # @return [Float]
+      # @return [Amount]
       #     result of division
       # @raise [ArgumentError]
       #    values of different asset type
@@ -279,6 +279,8 @@ class Amount < Radiator::Type::Amount
 
          return Amount.to_amount(@amount.to_f / right.to_f, @asset)
       end
+
+   private
 
       ##
       # Helper factory method to create a new Amount from

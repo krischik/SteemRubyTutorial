@@ -26,52 +26,92 @@ require 'pp'
 require 'colorize'
 require 'radiator'
 
-begin
-   # create instance to the steem condenser API which
-   # will give us access to
+# The Amount class is used in most Scripts so it was
+# moved into a separate file.
 
-   _condenser_api = Radiator::CondenserApi.new
+require_relative 'Steem/Amount'
 
-   # read the global properties. Yes, it's as simple as
-   # this.
+class Vesting < Radiator::Type::Serializer
+   include Contracts::Core
+   include Contracts::Builtin
 
-   _vesting = _condenser_api.get_vesting_delegations("krischik", "", 10)
+   Contract HashOf[String => Or[String, Num]] => nil
+   def initialize(value)
+      super(:vesting, value)
 
-   pp _vesting
-rescue => error
-   # I am using Kernel::abort so the code snipped
-   # including error handler can be copy pasted into other
-   # scripts
-
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+      return
+   end
 end
 
 begin
    # create instance to the steem condenser API which
-   # will give us access to
+   # will give us access to to the global properties and
+   # median history
 
-   _database_api = Radiator::DatabaseApi.new
+   Condenser_Api = Radiator::CondenserApi.new
 
-   # read the global properties. Yes, it's as simple as
-   # this.
+   # read the global properties and median history values
+   # and calculate the conversion Rate for steem to SBD
+   # We use the Amount class from Part 2 to convert the
+   # string values into amounts.
 
-   _vesting = _database_api.list_vesting_delegations("krischik")
+   _median_history_price = Condenser_Api.get_current_median_history_price.result
+   _base                 = Amount.new _median_history_price.base
+   _quote                = Amount.new _median_history_price.quote
+   SBD_Median_Price      = _base.to_f / _quote.to_f
 
-   pp _vesting
+   # read the reward funds. `get_reward_fund` takes one
+   # parameter is always "post" and extract variables
+   # needed for the vote estimate. This is done just once
+   # here to reduce the amount of string parsing needed.
+   # `get_reward_fund` takes one parameter is always "post".
+
+   _reward_fund   = Condenser_Api.get_reward_fund("post").result
+   Recent_Claims  = _reward_fund.recent_claims.to_i
+   Reward_Balance = Amount.new _reward_fund.reward_balance
+
+   # create instance to the steem database API
+
+   Database_Api = Radiator::DatabaseApi.new
+
 rescue => error
-   # I am using Kernel::abort so the code snipped
-   # including error handler can be copy pasted into other
-   # scripts
+   # I am using `Kernel::abort` so the script ends when
+   # data can't be loaded
 
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
 
-# pretty print the result. It might look strange to do so
-# outside the begin / rescue but the value is now available
-# in constant for the rest of the script. Do note that
-# using constant is only suitable for short running script.
-# Long running scripts would need to re-read the value
-# on a regular basis.
+
+
+if ARGV.length == 0 then
+   puts "
+Steem-Dump-Accounts — Dump account infos from Steem database
+
+Usage:
+   Steem-Dump-Accounts account_name …
+
+"
+else
+   # read arguments from command line
+
+   Account_Names = ARGV
+
+   Account_Names.each do |account|
+      _vesting = Condenser_Api.get_vesting_delegations(account, "", 100)
+    
+      _vesting.result do |vest| 
+         pp vest
+
+      end
+   end
+
+   # pretty print the result. It might look strange to do so
+   # outside the begin / rescue but the value is now available
+   # in constant for the rest of the script. Do note that
+   # using constant is only suitable for short running script.
+   # Long running scripts would need to re-read the value
+   # on a regular basis.
+end
 
 
 ############################################################ {{{1 ###########

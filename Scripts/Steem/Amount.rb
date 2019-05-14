@@ -27,13 +27,13 @@ require 'contracts'
 require 'steem'
 
 ##
-# steem-ruby comes with a helpful Radiator::Type::Amount
-# class to handle account balances. However
-# Radiator::Type::Amount won't let you access any
-# attributes which makes using the class quite cumbersome.
+# steem-ruby comes with a helpful Steem::Type::Amount class
+# to handle account balances. However Steem::Type::Amount
+# won't let you access the actual amount as float which is
+# quite cumbersome when you want to make calculations.
 #
-# This class expands Radiator::Type::Amount to add the missing functions
-# making it super convenient.
+# This class expands Steem::Type::Amount to add the missing
+# functions.
 #
 class Amount < Steem::Type::Amount
    include Contracts::Core
@@ -211,7 +211,7 @@ class Amount < Steem::Type::Amount
       #
       # @param [Amount]
       #     amount to add
-      # @return [Float]
+      # @return [Amount]
       #     result of addition
       # @raise [ArgumentError]
       #    values of different asset type
@@ -228,7 +228,7 @@ class Amount < Steem::Type::Amount
       #
       # @param [Amount]
       #     amount to subtract
-      # @return [Float]
+      # @return [Amount]
       #     result of subtraction
       # @raise [ArgumentError]
       #    values of different asset type
@@ -245,7 +245,7 @@ class Amount < Steem::Type::Amount
       #
       # @param [Amount]
       #     amount to divert
-      # @return [Float]
+      # @return [Amount]
       #     result of division
       # @raise [ArgumentError]
       #    values of different asset type
@@ -262,7 +262,7 @@ class Amount < Steem::Type::Amount
       #
       # @param [Amount]
       #     amount to divert
-      # @return [Float]
+      # @return [Amount]
       #     result of division
       # @raise [ArgumentError]
       #    values of different asset type
@@ -273,6 +273,8 @@ class Amount < Steem::Type::Amount
 
          return Amount.to_amount(@amount.to_f / right.to_f, @asset)
       end
+
+   private
 
       ##
       # Helper factory method to create a new Amount from
