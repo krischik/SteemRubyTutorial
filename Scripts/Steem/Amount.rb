@@ -109,7 +109,7 @@ class Amount < Steem::Type::Amount
             when SBD
                self.clone
             when STEEM
-               Amount.to_amount(@amount.to_f * Conversion_Rate_Steem, SBD)
+               Amount.to_amount(@amount.to_f * SBD_Median_Price, SBD)
             when VESTS
                self.to_steem.to_sbd
             else
@@ -130,7 +130,7 @@ class Amount < Steem::Type::Amount
          return (
          case @asset
             when SBD
-               Amount.to_amount(@amount.to_f / Conversion_Rate_Steem, STEEM)
+               Amount.to_amount(@amount.to_f / SBD_Median_Price, STEEM)
             when STEEM
                self.clone
             when VESTS

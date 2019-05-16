@@ -47,7 +47,7 @@ begin
    _median_history_price = _condenser_api.get_current_median_history_price.result
    _base                 = Amount.new _median_history_price.base
    _quote                = Amount.new _median_history_price.quote
-   Conversion_Rate_Steem = _base.to_f / _quote.to_f
+   SBD_Median_Price      = _base.to_f / _quote.to_f
 
    # read the global properties and
    # calculate the conversion Rate for VESTS to steem. We

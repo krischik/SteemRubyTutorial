@@ -35,12 +35,139 @@ class Vesting < Radiator::Type::Serializer
    include Contracts::Core
    include Contracts::Builtin
 
-   Contract HashOf[String => Or[String, Num]] => nil
+   attr_reader :id, :delegator, :delegatee, :vesting_shares, :min_delegation_time
+
+   ##
+   #
+   Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]] ]] => nil
    def initialize(value)
-      super(:vesting, value)
+      super(:id, value)
+
+      @id                  = value.id
+      @delegator           = value.delegator
+      @delegatee           = value.delegatee    
+      @vesting_shares      = Amount.new (value.vesting_shares)
+      @min_delegation_time = Time.strptime(value.min_delegation_time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
 
       return
    end
+
+   ##
+   # Create a colorised string from the instance. The vote
+   # percentages are multiplied with 100 and are colorised
+   # (positive values are printed in green, negative values
+   # in red and zero votes (yes they exist) are shown in
+   # grey), for improved human readability.
+   #
+   # @return [String]
+   #    formatted value
+   #
+   Contract None => String
+   def to_ansi_s
+      # All the magic happens in the `%` operators which
+      # calls sprintf which in turn formats the string.
+      return (
+         "%1$10d | " +
+         "%2$-16s ⇒ " +
+         "%3$-16s | " +
+         "%4$-68s | " +
+         "%5$20s | ") % [
+            @id,
+            @delegator,
+            @delegatee,
+            @vesting_shares.to_ansi_s,
+            @min_delegation_time.strftime("%Y-%m-%d %H:%M:%S")
+         ]
+   end
+
+   ##
+   # Print a list a vesting values:
+   #
+   # 1. Loop over all vesting.
+   # 2. convert the vote JSON object into the ruby `Vesting` class.
+   # 3. print as ansi strings.
+   #
+   # @param [Array<Hash>] vesting
+   #     list of vesting
+   #
+   Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]] ]] ] => nil
+   def self.print_list (vesting)
+      vesting.each do |vest|
+         _vest = Vesting.new vest
+
+         puts _vest.to_ansi_s
+      end
+
+      return
+   end
+
+   ##
+   # Print the vesting from user:
+   #
+   # @param [String] account
+   #     account of the posting.
+   #
+   Contract String => nil
+   def self.print_account (account)
+
+      puts ("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
+
+      # `get_vesting_delegations` returns a subset of an 
+      # accounts delegation. This is helpful for accounts
+      # with more then a thousand delegations like steem.
+      # The 2nd parameter is the first delegatee to 
+      # return. The 3nd parameter is maximum amount results
+      # to return. Must be less then 1000.
+      #
+      # The loop needed is pretty complicated as the last
+      # element on each iteration is duplicated as first
+      # element of the next iteration.
+     
+      # empty string denotes start of list
+
+      _previous_delegatee = ""
+
+      loop do
+         # get the next 1000 items.
+         # 
+         _vesting = Condenser_Api.get_vesting_delegations(account, _previous_delegatee, 1000)
+
+         # no elements found, end loop now. This only
+         # happens when the account doesn't exist.
+
+      break if _vesting.result.length == 0
+
+         # get and remove the last element. The last element
+         # meeds to be removed as it will be dupplicated
+         # as firt element in the next itteration.
+ 
+         _last_vest = Vesting.new _vesting.result.pop
+
+         # check of the delegatee of the current last element
+         # is the same as the last element of the previous
+         # itteration. If this happens we have reached the
+         # end of the list
+
+         if _previous_delegatee == _last_vest.delegatee then
+            # In the last itteration there will also
+            # be only one element which we need to print.
+            
+            puts _last_vest.to_ansi_s
+            break
+         else
+            # Print the list. 
+             
+            Vesting.print_list _vesting.result
+            
+            # remember the delegatee for the next interation.
+
+            _previous_delegatee = _last_vest.delegatee 
+         end
+      end
+
+      return
+   end
+   
 end
 
 begin
@@ -60,15 +187,10 @@ begin
    _quote                = Amount.new _median_history_price.quote
    SBD_Median_Price      = _base.to_f / _quote.to_f
 
-   # read the reward funds. `get_reward_fund` takes one
-   # parameter is always "post" and extract variables
-   # needed for the vote estimate. This is done just once
-   # here to reduce the amount of string parsing needed.
-   # `get_reward_fund` takes one parameter is always "post".
-
-   _reward_fund   = Condenser_Api.get_reward_fund("post").result
-   Recent_Claims  = _reward_fund.recent_claims.to_i
-   Reward_Balance = Amount.new _reward_fund.reward_balance
+   _global_properties        = Condenser_Api.get_dynamic_global_properties.result
+   _total_vesting_fund_steem = Amount.new _global_properties.total_vesting_fund_steem
+   _total_vesting_shares     = Amount.new _global_properties.total_vesting_shares
+   Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 
    # create instance to the steem database API
 
@@ -80,8 +202,6 @@ rescue => error
 
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
-
-
 
 if ARGV.length == 0 then
    puts "
@@ -96,23 +216,12 @@ else
 
    Account_Names = ARGV
 
+   puts ("        id | delegator        | delegatee        |                                                     vesting shares |  min delegation time |")
+
    Account_Names.each do |account|
-      _vesting = Condenser_Api.get_vesting_delegations(account, "", 100)
-    
-      _vesting.result do |vest| 
-         pp vest
-
-      end
+      Vesting.print_account account
    end
-
-   # pretty print the result. It might look strange to do so
-   # outside the begin / rescue but the value is now available
-   # in constant for the rest of the script. Do note that
-   # using constant is only suitable for short running script.
-   # Long running scripts would need to re-read the value
-   # on a regular basis.
 end
-
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

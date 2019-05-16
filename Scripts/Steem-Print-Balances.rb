@@ -49,7 +49,7 @@ begin
    _median_history_price = _condenser_api.get_current_median_history_price.result
    _base                 = Amount.new _median_history_price.base
    _quote                = Amount.new _median_history_price.quote
-   Conversion_Rate_Steem = _base.to_f / _quote.to_f
+   SBD_Median_Price      = _base.to_f / _quote.to_f
 
    # read the global properties and
    # calculate the conversion Rate for VESTS to steem. We
@@ -72,7 +72,6 @@ begin
 
    Recent_Claims  = _reward_fund.recent_claims.to_i
    Reward_Balance = Amount.new _reward_fund.reward_balance
-
 rescue => error
    # I am using `Kernel::abort` so the script ends when
    # data can't be loaded
@@ -181,14 +180,14 @@ def print_account_balances(accounts)
 
       _current_power = (_voting_power * _weight) / 50.0
       _current_rshares = _current_power * _final_vest
-      _current_vote_value = (_current_rshares / Recent_Claims) * Reward_Balance.to_f * Conversion_Rate_Steem
+      _current_vote_value = (_current_rshares / Recent_Claims) * Reward_Balance.to_f * SBD_Median_Price
 
       # calculate the account's maximum vote value for a 100% upvote.
 
       _max_voting_power = 1.0
       _max_power = (_max_voting_power * _weight) / 50.0
       _max_rshares = _max_power * _final_vest
-      _max_vote_value = (_max_rshares / Recent_Claims) * Reward_Balance.to_f * Conversion_Rate_Steem
+      _max_vote_value = (_max_rshares / Recent_Claims) * Reward_Balance.to_f * SBD_Median_Price
 
       # pretty print out the balances. Note that for a
       # quick printout Radiator::Type::Amount provides a
