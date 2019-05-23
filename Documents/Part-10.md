@@ -583,7 +583,7 @@ The output of the command (for the steem account) looks like this:
 
 ## Proof of Work
 
-* GitHub: [SteemRubyTutorial Issue #8](https://github.com/krischik/SteemRubyTutorial/issues/7)
+* GitHub: [SteemRubyTutorial Issue #8](https://github.com/krischik/SteemRubyTutorial/issues/8)
 
 ## Image Source
 
