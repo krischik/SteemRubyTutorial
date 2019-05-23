@@ -403,9 +403,9 @@ end
 
 **Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Vesting.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Vesting.rb).
 
-The output of the command (for the steem account) looks identical to the previous output:
+The output of the command (for my and the steampeak account) looks like this:
 
-<center>![Screenshot at Feb 13 145420.png](https://files.steempeak.com/file/steempeak/krischik/3dURm96L-Screenshot20at20Feb20132014-54-20.png)</center>
+<center>![Screenshot at May 23 14-26-21.png](https://cdn.steemitimages.com/DQmZt8Ui1ELYDyN57Mb1RQPDhQ7WGjyGjiv5afT1yMfmPcp/Screenshot%20at%20May%2023%2014-26-21.png)</center>
 
 ## Implementation using steem-ruby
 
