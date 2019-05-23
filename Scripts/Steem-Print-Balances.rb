@@ -134,7 +134,8 @@ def print_account_balances(accounts)
       _voting_power             = real_voting_power account
 
       # calculate actual vesting by adding and subtracting
-      # delegation as well at the final vest for vote estimate
+      # delegation as well at the final vest for vote
+      # estimate
 
       _total_vests = _vesting_shares - _delegated_vesting_shares + _received_vesting_shares
       _final_vest  = _total_vests.to_f * 1e6
@@ -152,7 +153,8 @@ def print_account_balances(accounts)
 
       _weight = 1.0
 
-      # calculate the account's current vote value for a 100% upvote.
+      # calculate the account's current vote value for a
+      # 100% upvote.
       #
       # From https://developers.steem.io/tutorials-recipes/estimate_upvote
       #
@@ -161,7 +163,6 @@ def print_account_balances(accounts)
       # power = (voting_power * weight / 10000) / 50
       # rshares = power * final_vest / 10000
       # estimate = rshares / recent_claims * reward_balance * sbd_median_price
-      #
       #
       # | Name                    | API                                          | Desciption                                                |
       # |-------------------------|----------------------------------------------|-----------------------------------------------------------|
@@ -176,7 +177,8 @@ def print_account_balances(accounts)
       # |base                     |CondenserApi.get_current_median_history_price |Conversion rate steem ⇔ SBD                                |
       # |quote                    |CondenserApi.get_current_median_history_price |Conversion rate steem ⇔ SBD                                |
       #
-      # ¹ Both the current and the last voting_power is called voting_power in the official dokumentation
+      # ¹ Both the current and the last voting_power is
+      #   called voting_power in the official dokumentation
 
       _current_power = (_voting_power * _weight) / 50.0
       _current_rshares = _current_power * _final_vest

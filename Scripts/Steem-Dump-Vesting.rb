@@ -26,11 +26,25 @@ require 'pp'
 require 'colorize'
 require 'steem'
 
-# The Amount class is used in most Scripts so it was
-# moved into a separate file.
+# The Amount class is used in most Scripts so it was moved
+# into a separate file.
 
 require_relative 'Steem/Amount'
 
+##
+# Class to hold a vesting delegation
+#
+# @attrib [Number] id
+#     ID unique to all delegations.
+# @attrib [String] delegator
+#     Account name of the account who delegates
+# @attrib [String] delegatee
+#     Account name of the account who is delegates to
+# @attrib [Amount] vesting_shares
+#     Amount
+# @attrib [Time] min_delegation_time
+#     Start of delegation
+#
 class Vesting < Steem::Type::BaseType
    include Contracts::Core
    include Contracts::Builtin
@@ -38,6 +52,13 @@ class Vesting < Steem::Type::BaseType
    attr_reader :id, :delegator, :delegatee, :vesting_shares, :min_delegation_time
 
    ##
+   # Create a new instance
+   #
+   # @param [Hash] value
+   #     a vesting as returned by from
+   #     `find_vesting_delegations`,
+   #     `get_vesting_delegations` or
+   #     `list_vesting_delegations`.
    #
    Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]] ]] => nil
    def initialize(value)
@@ -45,7 +66,7 @@ class Vesting < Steem::Type::BaseType
 
       @id                  = value.id
       @delegator           = value.delegator
-      @delegatee           = value.delegatee    
+      @delegatee           = value.delegatee
       @vesting_shares      = Amount.new (value.vesting_shares)
       @min_delegation_time = Time.strptime(value.min_delegation_time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
 
@@ -81,11 +102,11 @@ class Vesting < Steem::Type::BaseType
    end
 
    ##
-   # Check if delegation is related to the account
-   # either as delegator or delegatee.
+   # Check if delegation is related to the account either
+   # as delegator or delegatee.
    #
    # @param [Array<String>] accounts
-   #     account to check against vesting.
+   #     accounts to check against vesting.
    # @return [Boolean]
    #     true is the account is either a delegator
    #     or delegatee.
@@ -96,11 +117,15 @@ class Vesting < Steem::Type::BaseType
    end
 
    ##
-   # Print a list a vesting values:
+   # Prints all vesting values which are related to given
+   # list of accounts:
    #
    # 1. Loop over all vesting.
-   # 2. convert the vote JSON object into the ruby `Vesting` class.
-   # 3. print as ansi strings.
+   # 2. Checks is vesting is related to the list of
+   #    accounts
+   # 3. Convert the vote JSON object into the ruby
+   #    `Vesting` class.
+   # 4. Print as ansi strings.
    #
    # @param [Array<Hash>] vesting
    #     list of vesting
@@ -119,7 +144,8 @@ class Vesting < Steem::Type::BaseType
    end
 
    ##
-   # Print the vesting from user:
+   # Fetches all the vestings form the database and prints
+   # those who are related to the given list of accounts
    #
    # @param [Array<String>] accounts
    #     the accounts to search.
@@ -135,9 +161,9 @@ class Vesting < Steem::Type::BaseType
       # the only way to find delegatees.
       #
       # The start parameter takes the delegator / delegatee
-      # pair to start the search, limit is the maximum amount
-      # of results to be returned (less then 1000) and order
-      # is always "by_delegation".
+      # pair to start the search, limit is the maximum
+      # amount of results to be returned (less then 1000)
+      # and order is always "by_delegation".
       #
       # The loop needed is pretty complicated as the last
       # element on each iteration is duplicated as first
@@ -149,7 +175,7 @@ class Vesting < Steem::Type::BaseType
 
       loop do
          # get the next 1000 items.
-         # 
+
          _vesting = Database_Api.list_vesting_delegations(start: _previous_end, limit: 10, order: "by_delegation")
 
          # no elements found, end loop now. This only
@@ -158,18 +184,34 @@ class Vesting < Steem::Type::BaseType
 
       break if _vesting == nil || _vesting.result.length == 0
 
-         _last_vest = Vesting.new _vesting.result.delegations.pop         
+         # get the delegator / delegatee pair of the last
+         #  element
+
+         _last_vest = Vesting.new _vesting.result.delegations.pop
          _current_end = [_last_vest.delegator, _last_vest.delegatee]
 
-         if _previous_end == _current_end then 
+         # check of the delegatee of the current last
+         # element is the same as the last element of the
+         # previous literation. If this happens we have
+         # reached the end of the list
+
+         if _previous_end == _current_end then
+            # In the last iteration there will also be only
+            # one element which we need to print.
+
             if _last_vest.is_accounts accounts then
-               puts _last_vest.to_ansi_s 
+               puts _last_vest.to_ansi_s
             end
 
             break
          else
+            # Print the list.
+
             Vesting.print_list(_vesting.result.delegations, accounts)
-            
+
+            # remember the delegator / delegatee pair for
+            # the next iteration.
+
             _previous_end = _current_end
          end
       end

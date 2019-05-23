@@ -26,11 +26,26 @@ require 'pp'
 require 'colorize'
 require 'radiator'
 
-# The Amount class is used in most Scripts so it was
-# moved into a separate file.
+# The Amount class is used in most Scripts so it was moved
+# into a separate file.
 
 require_relative 'Steem/Amount'
 
+##
+# Class to hold a vesting delegation. The vesting holds the
+# following values
+#
+# @attrib [Number] id
+#     ID unique to all delegations.
+# @attrib [String] delegator
+#     Account name of the account who delegates
+# @attrib [String] delegatee
+#     Account name of the account who is delegates to
+# @attrib [Amount] vesting_shares
+#     Amount
+# @attrib [Time] min_delegation_time
+#     Start of delegation
+#
 class Vesting < Radiator::Type::Serializer
    include Contracts::Core
    include Contracts::Builtin
@@ -38,6 +53,13 @@ class Vesting < Radiator::Type::Serializer
    attr_reader :id, :delegator, :delegatee, :vesting_shares, :min_delegation_time
 
    ##
+   # Create a new instance
+   #
+   # @param [Hash] value
+   #     a vesting as returned by from
+   #     `find_vesting_delegations`,
+   #     `get_vesting_delegations` or
+   #     `list_vesting_delegations`.
    #
    Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]] ]] => nil
    def initialize(value)
@@ -45,7 +67,7 @@ class Vesting < Radiator::Type::Serializer
 
       @id                  = value.id
       @delegator           = value.delegator
-      @delegatee           = value.delegatee    
+      @delegatee           = value.delegatee
       @vesting_shares      = Amount.new (value.vesting_shares)
       @min_delegation_time = Time.strptime(value.min_delegation_time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
 
@@ -53,7 +75,7 @@ class Vesting < Radiator::Type::Serializer
    end
 
    ##
-   # Create a colorised string from the instance. The vote
+   # Create a colourised string from the instance. The vote
    # percentages are multiplied with 100 and are colorised
    # (positive values are printed in green, negative values
    # in red and zero votes (yes they exist) are shown in
@@ -84,7 +106,8 @@ class Vesting < Radiator::Type::Serializer
    # Print a list a vesting values:
    #
    # 1. Loop over all vesting.
-   # 2. convert the vote JSON object into the ruby `Vesting` class.
+   # 2. convert the vote JSON object into the ruby
+   #    `Vesting` class.
    # 3. print as ansi strings.
    #
    # @param [Array<Hash>] vesting
@@ -102,7 +125,7 @@ class Vesting < Radiator::Type::Serializer
    end
 
    ##
-   # Print the vesting from user:
+   # Print the vesting the given account makes:
    #
    # @param [String] account
    #     account of the posting.
@@ -112,24 +135,24 @@ class Vesting < Radiator::Type::Serializer
 
       puts ("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
 
-      # `get_vesting_delegations` returns a subset of an 
+      # `get_vesting_delegations` returns a subset of an
       # accounts delegation. This is helpful for accounts
       # with more then a thousand delegations like steem.
-      # The 2nd parameter is the first delegatee to 
+      # The 2nd parameter is the first delegatee to
       # return. The 3nd parameter is maximum amount results
       # to return. Must be less then 1000.
       #
       # The loop needed is pretty complicated as the last
       # element on each iteration is duplicated as first
       # element of the next iteration.
-     
+
       # empty string denotes start of list
 
       _previous_delegatee = ""
 
       loop do
          # get the next 1000 items.
-         # 
+
          _vesting = Condenser_Api.get_vesting_delegations(account, _previous_delegatee, 1000)
 
          # no elements found, end loop now. This only
@@ -137,43 +160,44 @@ class Vesting < Radiator::Type::Serializer
 
       break if _vesting.result.length == 0
 
-         # get and remove the last element. The last element
-         # meeds to be removed as it will be dupplicated
-         # as firt element in the next itteration.
- 
+         # get and remove the last element. The last
+         # element meeds to be removed as it will be
+         # dupplicated as firt element in the next
+         # itteration.
+
          _last_vest = Vesting.new _vesting.result.pop
 
-         # check of the delegatee of the current last element
-         # is the same as the last element of the previous
-         # itteration. If this happens we have reached the
-         # end of the list
+         # check of the delegatee of the current last
+         # element is the same as the last element of the
+         # previous itteration. If this happens we have
+         # reached the end of the list
 
          if _previous_delegatee == _last_vest.delegatee then
-            # In the last itteration there will also
-            # be only one element which we need to print.
-            
+            # In the last itteration there will also be
+            # only one element which we need to print.
+
             puts _last_vest.to_ansi_s
             break
          else
-            # Print the list. 
-             
-            Vesting.print_list _vesting.result
-            
-            # remember the delegatee for the next interation.
+            # Print the list.
 
-            _previous_delegatee = _last_vest.delegatee 
+            Vesting.print_list _vesting.result
+
+            # remember the delegatee for the next
+            # interation.
+
+            _previous_delegatee = _last_vest.delegatee
          end
       end
 
       return
    end
-   
 end
 
 begin
-   # create instance to the steem condenser API which
-   # will give us access to to the global properties and
-   # median history
+   # create instance to the steem condenser API which will
+   # give us access to to the global properties and median
+   # history
 
    Condenser_Api = Radiator::CondenserApi.new
 
@@ -191,10 +215,6 @@ begin
    _total_vesting_fund_steem = Amount.new _global_properties.total_vesting_fund_steem
    _total_vesting_shares     = Amount.new _global_properties.total_vesting_shares
    Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
-
-   # create instance to the steem database API
-
-   Database_Api = Radiator::DatabaseApi.new
 
 rescue => error
    # I am using `Kernel::abort` so the script ends when

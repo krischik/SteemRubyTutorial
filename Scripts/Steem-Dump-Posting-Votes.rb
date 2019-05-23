@@ -35,10 +35,10 @@ require_relative 'Steem/Amount'
 # Class to handle vote values from postings.
 #
 # Information on the postings are accessed via the
-# `get_active_votes` method of the `CondenserApi`. The method
-# takes two parameter: the authors name and the id of the posting.
-# Both can be extracted from the URL of the posting. As Result you
-# get an array of voting results:
+# `get_active_votes` method of the `CondenserApi`. The
+# method takes two parameter: the authors name and the id
+# of the posting. Both can be extracted from the URL of the
+# posting. As Result you get an array of voting results:
 #
 # | Name      | Desciption                                  |
 # |-----------|---------------------------------------------|
@@ -131,8 +131,8 @@ class Vote < Steem::Type::BaseType
             else
                :white
             end
-         ) + 
-         " |" + 
+         ) +
+         " |" +
          "%3$10.3f SBD".colorize(
             if _estimate > 0.0005 then
                :green
@@ -141,7 +141,7 @@ class Vote < Steem::Type::BaseType
             else
                :white
             end
-         ) + 
+         ) +
          " |%4$10d |%5$16d |%6$20s |") % [
             @voter,
             _percent,
@@ -156,7 +156,8 @@ class Vote < Steem::Type::BaseType
    # Print a list a vote values:
    #
    # 1. Loop over all votes.
-   # 2. convert the vote JSON object into the ruby `Vote` class.
+   # 2. convert the vote JSON object into the ruby `Vote`
+   #    class.
    # 3. print as ansi strings.
    #
    # @param [Array<Hash>] votes
@@ -178,7 +179,7 @@ class Vote < Steem::Type::BaseType
 
       # print the total estimate after the last vote
       puts (
-         "Total vote value |          |" + 
+         "Total vote value |          |" +
          "%1$10.3f SBD".colorize(
             if _total_estimate > 0.0005 then
                :green
@@ -198,9 +199,11 @@ class Vote < Steem::Type::BaseType
    ##
    # Print the votes from a postings given as URLs:
    #
-   # 1. Extract the posting ID and author name from the URL with standard string operations.
+   # 1. Extract the posting ID and author name from the
+   #    URL with standard string operations.
    # 2. Print a short header
-   # 3. Request the list of votes from `Condenser_Api` using `get_active_votes`
+   # 3. Request the list of votes from `Condenser_Api`
+   #    using `get_active_votes`
    # 4. print the votes.
    #
    # @param [String] url
@@ -250,7 +253,8 @@ begin
    # parameter is always "post" and extract variables
    # needed for the vote estimate. This is done just once
    # here to reduce the amount of string parsing needed.
-   # `get_reward_fund` takes one parameter is always "post".
+   # `get_reward_fund` takes one parameter is always
+   # "post".
 
    _reward_fund   = Condenser_Api.get_reward_fund("post").result
    Recent_Claims  = _reward_fund.recent_claims.to_i

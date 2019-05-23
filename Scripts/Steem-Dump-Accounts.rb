@@ -16,8 +16,9 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################## }}}1 ##########
 
-# use the "steem.rb" file from the steem-ruby gem. This is only needed if you have
-# both steem-api and radiator installed.
+# use the "steem.rb" file from the steem-ruby gem. This is
+# only needed if you have both steem-api and radiator
+# installed.
 
 gem "steem-ruby", :require => "steem"
 
@@ -42,9 +43,10 @@ else
 
    Database_Api = Steem::DatabaseApi.new
 
-   # request account information from the Steem database and print out
-   # the accounts found using pretty print (pp) or print out error
-   # information when an error occurred.
+   # request account information from the Steem database
+   # and print out the accounts found using pretty print
+   # (pp) or print out error information when an error
+   # occurred.
 
    Database_Api.find_accounts(accounts: Account_Names) do |result|
       Accounts = result.accounts

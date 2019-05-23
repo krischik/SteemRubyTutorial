@@ -23,7 +23,7 @@ All examples from this tutorial can be found as fully functional scripts on GitH
 ## What Will I Learn?
 
 This tutorial shows how to interact with the Steem blockchain and Steem database using Ruby. This instalment teacher how to estimate a users vote value.
- 
+
 ## Requirements
 
 Basic knowledge of Ruby programming is needed. It is necessary to install at least Ruby 2.5 as well as the following ruby gems:
@@ -72,13 +72,13 @@ Estimating the vote value is a rather complex process involving all of the follo
 * ² : Both the current and the last voting_power is called voting_power in the official documentation which maybe confusing.
 * ³ : The UTC marker is missing and must be added before converting the string into a date/time.
 
-### Step 1 Calculate SBD Median Price 
+### Step 1 Calculate SBD Median Price
 
 To improve precision of any calculation the Steem database only stores integer numbers. In case of the SDB median price is stored as quotient or fraction which we just divide them as floating point number are good enough for an estimate.
 
 <center>![sbd\_median\_price = \frac{base}{quote}](https://cdn.steemitimages.com/DQmcYAvStASmtaR7htYzCCcgTpQtxu4TYbxTgarNf1aq4q1/SBD_Median_Price.png)</center>
 
-### Step 2 Calculate the users voting power 
+### Step 2 Calculate the users voting power
 
 The database only stores the users voting power at the time of last vote. This makes it necessary to add the voting power regained since the last vote. This is done with following formula:
 
@@ -88,7 +88,7 @@ Note that the vote power is bounded between 0% (0.0) and 100% (1.0).
 
 ### Step 3 Calculate the users VESTS
 
-The users VESTS is calculated by adding and subtracting the in and  delegates from the accounts VESTS and your multiply the result with 10⁶ (aka one million). 
+The users VESTS is calculated by adding and subtracting the in and  delegates from the accounts VESTS and your multiply the result with 10⁶ (aka one million).
 
 <center>![total\_vests = vesting\_shares + received\_vesting\_shares - delegated\_vesting\_shares](https://cdn.steemitimages.com/DQmV9sG6wNDSmrkbqedve1jj2vfurPm8GQrxPUopRNtLbM4/Final_Vest.png)</center>
 
@@ -112,7 +112,7 @@ Since `DatabaseApi.get_accounts` of steem-api doesn't return the `voting_power` 
 
 ## Implementation using radiator
 
-`Steem-Print-Balances.rb` has been explained before in [Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) and [Part 6](https://steemit.com/@krischik/using-steem-api-with-ruby-part-6) of the tutorial and to avoid redundancy only the new functionality is described. 
+`Steem-Print-Balances.rb` has been explained before in [Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) and [Part 6](https://steemit.com/@krischik/using-steem-api-with-ruby-part-6) of the tutorial and to avoid redundancy only the new functionality is described.
 
 Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb).
 
@@ -137,7 +137,7 @@ Extract variables needed for the vote estimate. This is done just once here to r
    Reward_Balance = Amount.new _reward_fund.reward_balance
 ```
 
-Calculate the real voting power of an account. The voting power in the database is only updated when the user makes an up vote and needs to calculated from there.  
+Calculate the real voting power of an account. The voting power in the database is only updated when the user makes an up vote and needs to calculated from there.
 
 ```ruby
 def real_voting_power (account)
@@ -180,7 +180,7 @@ Calculate the account's current vote value for a 100% up vote.
       _current_vote_value = (_current_rshares / Recent_Claims) * Reward_Balance.to_f * SBD_Median_Price
 ```
 
-Calculate the account's maximum vote value for a 100% up vote.  
+Calculate the account's maximum vote value for a 100% up vote.
 
 ```ruby
       _max_voting_power = 1.0

@@ -33,8 +33,8 @@ require 'radiator'
 # Radiator::Type::Amount won't let you access any
 # attributes which makes using the class quite cumbersome.
 #
-# This class expands Radiator::Type::Amount to add the missing functions
-# making it super convenient.
+# This class expands Radiator::Type::Amount to add the
+# missing functions making it super convenient.
 #
 class Amount < Radiator::Type::Amount
    include Contracts::Core

@@ -156,8 +156,8 @@ Create a colourised string from the instance. The vote percentages and estimate 
             else
                :white
             end
-         ) + 
-         " |" + 
+         ) +
+         " |" +
          "%3$10.3f SBD".colorize(
             if _estimate > 0.0005 then
                :green
@@ -166,7 +166,7 @@ Create a colourised string from the instance. The vote percentages and estimate 
             else
                :white
             end
-         ) + 
+         ) +
          " |%4$10d |%5$16d |%6$20s |") % [
             @voter,
             _percent,
@@ -197,7 +197,7 @@ The method which print the list a vote values from [Part 7](https://steemit.com/
 
       # print the total estimate after the last vote
       puts (
-         "Total vote value |          |" + 
+         "Total vote value |          |" +
          "%1$10.3f SBD".colorize(
             if _total_estimate > 0.0005 then
                :green
