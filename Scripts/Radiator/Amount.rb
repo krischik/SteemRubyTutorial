@@ -33,8 +33,8 @@ require 'radiator'
 # Radiator::Type::Amount won't let you access any
 # attributes which makes using the class quite cumbersome.
 #
-# This class expands Radiator::Type::Amount to add the missing functions
-# making it super convenient.
+# This class expands Radiator::Type::Amount to add the
+# missing functions making it super convenient.
 #
 class Amount < Radiator::Type::Amount
    include Contracts::Core
@@ -115,7 +115,7 @@ class Amount < Radiator::Type::Amount
             when SBD
                self.clone
             when STEEM
-               Amount.to_amount(@amount.to_f * Conversion_Rate_Steem, SBD)
+               Amount.to_amount(@amount.to_f * SBD_Median_Price, SBD)
             when VESTS
                self.to_steem.to_sbd
             else
@@ -136,7 +136,7 @@ class Amount < Radiator::Type::Amount
          return (
          case @asset
             when SBD
-               Amount.to_amount(@amount.to_f / Conversion_Rate_Steem, STEEM)
+               Amount.to_amount(@amount.to_f / SBD_Median_Price, STEEM)
             when STEEM
                self.clone
             when VESTS
@@ -217,7 +217,7 @@ class Amount < Radiator::Type::Amount
       #
       # @param [Amount]
       #     amount to add
-      # @return [Float]
+      # @return [Amount]
       #     result of addition
       # @raise [ArgumentError]
       #    values of different asset type
@@ -234,7 +234,7 @@ class Amount < Radiator::Type::Amount
       #
       # @param [Amount]
       #     amount to subtract
-      # @return [Float]
+      # @return [Amount]
       #     result of subtraction
       # @raise [ArgumentError]
       #    values of different asset type
@@ -251,7 +251,7 @@ class Amount < Radiator::Type::Amount
       #
       # @param [Amount]
       #     amount to divert
-      # @return [Float]
+      # @return [Amount]
       #     result of division
       # @raise [ArgumentError]
       #    values of different asset type
@@ -268,7 +268,7 @@ class Amount < Radiator::Type::Amount
       #
       # @param [Amount]
       #     amount to divert
-      # @return [Float]
+      # @return [Amount]
       #     result of division
       # @raise [ArgumentError]
       #    values of different asset type
@@ -279,6 +279,8 @@ class Amount < Radiator::Type::Amount
 
          return Amount.to_amount(@amount.to_f / right.to_f, @asset)
       end
+
+   private
 
       ##
       # Helper factory method to create a new Amount from

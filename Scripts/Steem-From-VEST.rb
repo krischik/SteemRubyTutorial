@@ -26,76 +26,10 @@ require 'pp'
 require 'colorize'
 require 'steem'
 
-##
-# steem-ruby comes with a helpful Steem::Type::Amount
-# class to handle account balances.
-#
-class Amount < Steem::Type::Amount
-   ##
-   # return amount as float to be used for calculations
-   #
-   # @return [Float]
-   #     actual amount as float
-   #
-   def to_f
-      return @amount.to_f
-   end
+# The Amount class is used in most Scripts so it was
+# moved into a separate file.
 
-   # to_f
-
-   ##
-   # operator to add two balances for the users convenience
-   #
-   # @param [Numeric|Amount] right
-   #     amount to add
-   # @return [Float]
-   #     result of addition
-   #
-   def +(right)
-      return (
-      if right.is_a?(Numeric) then
-         @amount.to_f + right
-      else
-         @amount.to_f + right.to_f
-      end)
-   end
-
-   ##
-   # operator to subtract two balances for the users
-   # convenience
-   #
-   # @param [Numeric|Amount] right
-   #     amount to subtract
-   # @return [Float]
-   #     result of subtraction
-   #
-   def -(right)
-      return (
-      if right.is_a?(Numeric) then
-         @amount.to_f - right
-      else
-         @amount.to_f - right.to_f
-      end)
-   end
-
-   ##
-   # operator to divert two balances for the users
-   # convenience
-   #
-   # @param [Numeric|Amount] right
-   #     amount to divert
-   # @return [Float]
-   #     result of division
-   #
-   def /(right)
-      return (
-      if right.is_a?(Numeric) then
-         @amount.to_f / right
-      else
-         @amount.to_f / right.to_f
-      end)
-   end
-end # Amount
+require_relative 'Steem/Amount'
 
 begin
    # create instance to the steem condenser API which
@@ -135,7 +69,7 @@ else
 
    _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
    _total_vesting_shares = Amount.new Global_Properties.total_vesting_shares
-   _conversion_rate = _total_vesting_fund_steem / _total_vesting_shares
+   _conversion_rate = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 
    # iterate over the valued passed in the command line
 

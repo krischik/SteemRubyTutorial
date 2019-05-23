@@ -127,7 +127,7 @@ class Vote < Radiator::Type::Serializer
             else
                :white
             end
-         ) + 
+         ) +
          " |" + "%3$10.3f SBD".colorize(
             if _estimate > 0.0005 then
                :green
@@ -136,7 +136,7 @@ class Vote < Radiator::Type::Serializer
             else
                :white
             end
-         ) + 
+         ) +
          " |%4$10d |%5$16d |%6$20s |") % [
             @voter,
             _percent,
@@ -173,7 +173,7 @@ class Vote < Radiator::Type::Serializer
 
       # print the total estimate after the last vote
       puts (
-         "Total vote value |          |" + 
+         "Total vote value |          |" +
          "%1$10.3f SBD".colorize(
             if _total_estimate > 0.0005 then
                :green
@@ -193,9 +193,11 @@ class Vote < Radiator::Type::Serializer
    ##
    # Print the votes from a postings given as URLs:
    #
-   # 1. Extract the posting ID and author name from the URL with standard string operations.
+   # 1. Extract the posting ID and author name from the URL
+   #    with standard string operations.
    # 2. Print a short header
-   # 3. Request the list of votes from `Condenser_Api` using `get_active_votes`
+   # 3. Request the list of votes from `Condenser_Api`
+   #    using `get_active_votes`
    # 4. print the votes.
    #
    # @param [String] url

@@ -161,7 +161,7 @@ Print a list a vote values:
 
 Print the votes from a postings given as URLs:
 
-1. Extract the posting ID and author name from the URL with standard string operations. 
+1. Extract the posting ID and author name from the URL with standard string operations.
 2. Print a short header
 3. Request the list of votes from `Condenser_Api` using `get_active_votes`
 4. print the votes.

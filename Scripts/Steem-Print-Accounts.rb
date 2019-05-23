@@ -16,8 +16,8 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the steem.rb file from the radiator gem. This is only needed if you have
-# both steem-api and radiator installed.
+# use the steem.rb file from the radiator gem. This is only
+# needed if you have both steem-api and radiator installed.
 
 gem "radiator", :require => "steem"
 
@@ -42,9 +42,10 @@ else
 
    Database_Api = Radiator::DatabaseApi.new
 
-   # request account information from the steem database and print out
-   # the accounts found using pretty print (pp) or print out error
-   # information when an error occurred.
+   # request account information from the steem database
+   # and print out the accounts found using pretty print
+   # (pp) or print out error information when an error
+   # occurred.
 
    Result = Database_Api.get_accounts(Account_Names)
 
