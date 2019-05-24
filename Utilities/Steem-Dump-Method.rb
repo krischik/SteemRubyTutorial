@@ -16,9 +16,8 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################## }}}1 ##########
 
-# use the "steem.rb" file from the steem-ruby gem. This is
-# only needed if you have both steem-api and radiator
-# installed.
+# use the "steem.rb" file from the steem-ruby gem. This is only needed if you have
+# both steem-api and radiator installed.
 
 gem "steem-ruby", :require => "steem"
 
@@ -26,39 +25,50 @@ require 'pp'
 require 'colorize'
 require 'steem'
 
+
+begin
+   Condenser_Api = Radiator::CondenserApi.new
+   Database_Api = Radiator::DatabaseApi.new
+
+rescue => error
+   # I am using `Kernel::abort` so the script ends when
+   # data can't be loaded
+
+   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+end
+
+
 if ARGV.length == 0 then
    puts "
-Steem-Dump-Accounts — Dump account infos from Steem database
+Steem-Dump-Method — Dump account infos from Steem database
 
 Usage:
-   Steem-Dump-Accounts account_name …
+   Steem-Dump-Method.rb class method
 
 "
+elsif ARGV.length == 1 then
+   # read arguments from command line
+
+   Query_Class = ARGV[0]
+
+   # x = JsonRpc.get_methods(Query_Class)
+   # x = JsonRpc.get_methods("Radiator::DatabaseApi")
+
+   pp Database_Api.methods 
+
 else
    # read arguments from command line
 
-   Account_Names = ARGV
+   Query_Class = ARGV[0]
+   Query_Method = ARGV[1]
 
    # create instance to the steem database API
 
-   Database_Api = Steem::DatabaseApi.new
+   JsonRpc = Steem::Jsonrpc.new
 
-   # request account information from the Steem database
-   # and print out the accounts found using pretty print
-   # (pp) or print out error information when an error
-   # occurred.
-
-   Database_Api.find_accounts(accounts: Account_Names) do |result|
-      Accounts = result.accounts
-
-      if Accounts.length == 0 then
-         puts "No accounts found.".yellow
-      else
-         pp Accounts
-      end
-   rescue => error
-      Kernel::abort("Error reading accounts:\n".red + error.to_s)
-   end
+   # x = JsonRpc.get_signature(Query_Class)
+   # x = JsonRpc.get_signature(Steem::DatabaseApi)
+   
 end
 
 ############################################################ {{{1 ###########

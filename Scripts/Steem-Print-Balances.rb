@@ -27,278 +27,12 @@ require 'colorize'
 require 'contracts'
 require 'radiator'
 
+# The Amount class is used in most Scripts so it was
+# moved into a separate file.
+
+require_relative 'Radiator/Amount'
+
 Five_Days = 5 * 24 * 60 * 60
-
-##
-# steem-ruby comes with a helpful Radiator::Type::Amount
-# class to handle account balances. However
-# Radiator::Type::Amount won't let you access any
-# attributes which makes using the class quite cumbersome.
-#
-# This class expands Radiator::Type::Amount to add the missing functions
-# making it super convenient.
-#
-class Amount < Radiator::Type::Amount
-   include Contracts::Core
-   include Contracts::Builtin
-
-   ##
-   # add the missing attribute reader.
-   #
-   attr_reader :amount, :precision, :asset, :value
-
-   public
-
-      ##
-      # Asset string for VESTS
-      #
-      VESTS = "VESTS"
-
-      ##
-      # Asset string for STEEM
-      #
-      STEEM = "STEEM"
-
-      ##
-      # Asset string for Steem Backed Dollar
-      #
-      SBD = "SBD"
-
-      ##
-      # return amount as float to be used for calculations
-      #
-      # @return [Float]
-      #     actual amount as float
-      #
-      Contract None => Float
-      def to_f
-         return @amount.to_f
-      end
-
-      ##
-      # convert VESTS to level or "N/A" when the value
-      # isn't a VEST value.
-      #
-      # @return [String]
-      #     one of "Whale", "Orca", "Dolphin", "Minnow", "Plankton" or "N/A"
-      #
-      Contract None => String
-      def to_level
-         _value = @amount.to_f
-
-         return (
-         if @asset != VESTS then
-            "N/A"
-         elsif _value > 1.0e9 then
-            "Whale"
-         elsif _value > 1.0e8 then
-            "Ocra"
-         elsif _value > 1.0e7 then
-            "Dolphin"
-         elsif _value > 1.0e6 then
-            "Minnow"
-         else
-            "Plankton"
-         end)
-      end
-
-      ##
-      # Convert Amount to steem backed dollar
-      #
-      # @return [Amount]
-      #     the amount represented as steem backed dollar
-      # @raise [ArgumentError]
-      #     not a SBD, STEEM or VESTS value
-      #
-      Contract None => Amount
-      def to_sbd
-         return (
-         case @asset
-            when SBD
-               self.clone
-            when STEEM
-               Amount.to_amount(@amount.to_f * SBD_Median_Price, SBD)
-            when VESTS
-               self.to_steem.to_sbd
-            else
-               raise ArgumentError, 'unknown asset type types'
-         end)
-      end
-
-      ##
-      # convert Vests to steem
-      #
-      # @return [Amount]
-      #    a value in VESTS value
-      # @raise [ArgumentError]
-      #    not a SBD, STEEM or VESTS value
-      #
-      Contract None => Amount
-      def to_steem
-         return (
-         case @asset
-            when SBD
-               Amount.to_amount(@amount.to_f / SBD_Median_Price, STEEM)
-            when STEEM
-               self.clone
-            when VESTS
-               Amount.to_amount(@amount.to_f * Conversion_Rate_Vests, STEEM)
-            else
-               raise ArgumentError, 'unknown asset type types'
-         end)
-      end
-
-      ##
-      # convert Vests to steem
-      #
-      # @return [Amount]
-      #    a value in VESTS value
-      # @raise [ArgumentError]
-      #    not a SBD, STEEM or VESTS value
-      #
-      Contract None => Amount
-      def to_vests
-         return (
-         case @asset
-            when SBD
-               self.to_steem.to_vests
-            when STEEM
-               Amount.to_amount(@amount.to_f / Conversion_Rate_Vests, VESTS)
-            when VESTS
-               self.clone
-            else
-               raise ArgumentError, 'unknown asset type types'
-         end)
-      end
-
-      ##
-      # create a colorized string showing the amount in
-      # SDB, STEEM and VESTS. The actual value is colorized
-      # in blue while the converted values are colorized in
-      # grey (aka dark white).
-      #
-      # @return [String]
-      #    formatted value
-      #
-      Contract None => String
-      def to_ansi_s
-         _sbd   = to_sbd
-         _steem = to_steem
-         _vests = to_vests
-
-         return (
-         "%1$15.3f %2$s".colorize(
-            if @asset == SBD then
-               :blue
-            else
-               :white
-            end
-         ) + " " + "%3$15.3f %4$s".colorize(
-            if @asset == STEEM then
-               :blue
-            else
-               :white
-            end
-         ) + " " + "%5$18.6f %6$s".colorize(
-            if @asset == VESTS then
-               :blue
-            else
-               :white
-            end
-         )) % [
-            _sbd.to_f,
-            _sbd.asset,
-            _steem.to_f,
-            _steem.asset,
-            _vests.to_f,
-            _vests.asset]
-      end
-
-      ##
-      # operator to add two balances
-      #
-      # @param [Amount]
-      #     amount to add
-      # @return [Amount]
-      #     result of addition
-      # @raise [ArgumentError]
-      #    values of different asset type
-      #
-      Contract Amount => Amount
-      def +(right)
-         raise ArgumentError, 'asset types differ' if @asset != right.asset
-
-         return Amount.to_amount(@amount.to_f + right.to_f, @asset)
-      end
-
-      ##
-      # operator to subtract two balances
-      #
-      # @param [Amount]
-      #     amount to subtract
-      # @return [Amount]
-      #     result of subtraction
-      # @raise [ArgumentError]
-      #    values of different asset type
-      #
-      Contract Amount => Amount
-      def -(right)
-         raise ArgumentError, 'asset types differ' if @asset != right.asset
-
-         return Amount.to_amount(@amount.to_f - right.to_f, @asset)
-      end
-
-      ##
-      # operator to divert two balances
-      #
-      # @param [Amount]
-      #     amount to divert
-      # @return [Amount]
-      #     result of division
-      # @raise [ArgumentError]
-      #    values of different asset type
-      #
-      Contract Amount => Amount
-      def *(right)
-         raise ArgumentError, 'asset types differ' if @asset != right.asset
-
-         return Amount.to_amount(@amount.to_f * right.to_f, @asset)
-      end
-
-      ##
-      # operator to divert two balances
-      #
-      # @param [Amount]
-      #     amount to divert
-      # @return [Amount]
-      #     result of division
-      # @raise [ArgumentError]
-      #    values of different asset type
-      #
-      Contract Amount => Amount
-      def /(right)
-         raise ArgumentError, 'asset types differ' if @asset != right.asset
-
-         return Amount.to_amount(@amount.to_f / right.to_f, @asset)
-      end
-
-   private
-
-      ##
-      # Helper factory method to create a new Amount from
-      # an value and asset type.
-      #
-      # @param [Float] value
-      #     the numeric value to create an amount from
-      # @param [String] asset
-      #     the asset type which should be STEEM, SBD or VESTS
-      # @return [Amount]
-      #     the value as amount
-      Contract Float, String => Amount
-      def self.to_amount(value, asset)
-         return Amount.new(value.to_s + " " + asset)
-      end
-end # Amount
 
 begin
    # create instance to the steem condenser API which
@@ -338,7 +72,6 @@ begin
 
    Recent_Claims  = _reward_fund.recent_claims.to_i
    Reward_Balance = Amount.new _reward_fund.reward_balance
-
 rescue => error
    # I am using `Kernel::abort` so the script ends when
    # data can't be loaded
@@ -401,7 +134,8 @@ def print_account_balances(accounts)
       _voting_power             = real_voting_power account
 
       # calculate actual vesting by adding and subtracting
-      # delegation as well at the final vest for vote estimate
+      # delegation as well at the final vest for vote
+      # estimate
 
       _total_vests = _vesting_shares - _delegated_vesting_shares + _received_vesting_shares
       _final_vest  = _total_vests.to_f * 1e6
@@ -419,7 +153,8 @@ def print_account_balances(accounts)
 
       _weight = 1.0
 
-      # calculate the account's current vote value for a 100% upvote.
+      # calculate the account's current vote value for a
+      # 100% upvote.
       #
       # From https://developers.steem.io/tutorials-recipes/estimate_upvote
       #
@@ -428,7 +163,6 @@ def print_account_balances(accounts)
       # power = (voting_power * weight / 10000) / 50
       # rshares = power * final_vest / 10000
       # estimate = rshares / recent_claims * reward_balance * sbd_median_price
-      #
       #
       # | Name                    | API                                          | Desciption                                                |
       # |-------------------------|----------------------------------------------|-----------------------------------------------------------|
@@ -443,7 +177,8 @@ def print_account_balances(accounts)
       # |base                     |CondenserApi.get_current_median_history_price |Conversion rate steem ⇔ SBD                                |
       # |quote                    |CondenserApi.get_current_median_history_price |Conversion rate steem ⇔ SBD                                |
       #
-      # ¹ Both the current and the last voting_power is called voting_power in the official dokumentation
+      # ¹ Both the current and the last voting_power is
+      #   called voting_power in the official dokumentation
 
       _current_power = (_voting_power * _weight) / 50.0
       _current_rshares = _current_power * _final_vest
