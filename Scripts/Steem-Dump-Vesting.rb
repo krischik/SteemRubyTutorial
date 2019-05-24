@@ -190,6 +190,10 @@ class Vesting < Steem::Type::BaseType
          _last_vest = Vesting.new _vesting.result.delegations.pop
          _current_end = [_last_vest.delegator, _last_vest.delegatee]
 
+         # Delete the progress indicator.
+
+         print "\e[1K\r"
+
          # check of the delegatee of the current last
          # element is the same as the last element of the
          # previous literation. If this happens we have
@@ -209,11 +213,34 @@ class Vesting < Steem::Type::BaseType
 
             Vesting.print_list(_vesting.result.delegations, accounts)
 
-            # remember the delegator / delegatee pair for
-            # the next iteration.
+            if _previous_end[0] != "steem" && _current_end[0] == "steem" then
+               # The large mayority of delegations are done
+               # by the steem account. Not only will it
+               # take more then an hour to iterate over the
+               # steem delegations there is also a very
+               # high likelihood of a network error
+               # preventing the iteration from finishing.
+               # For this we skip over the steem account.
 
-            _previous_end = _current_end
+               _previous_end = ["steem", "zzzzzzj"]
+            else
+               # remember the delegator / delegatee pair for
+               # the next iteration.
+
+               _previous_end = _current_end
+            end
          end
+
+         # Print the current position of the iteration as
+         # progress indicator for the user.
+
+         print (
+            "%1$10d | " +
+            "%2$-16s ⇒ " +
+            "%3$-16s ") % [
+               _last_vest.id,
+               _last_vest.delegator,
+               _last_vest.delegatee]
       end
 
       return
