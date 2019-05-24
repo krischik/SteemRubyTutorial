@@ -1,6 +1,4 @@
-# Using Steem-API with Ruby Part 19 — Print Account Delegation of Vesting
-
-utopian-io tutorials ruby steem-api programming
+# Using Steem-API with Ruby Part 10 — Print Account Delegation of Vesting
 
 <center>![Steemit_Ruby.png](https://steemitimages.com/500x270/https://ipfs.busy.org/ipfs/QmSDiHZ9ng7BfYFMkvwYtNVPrw3nvbzKBA1gEj3y9vU6qN)</center>
 
@@ -30,7 +28,7 @@ All examples from this tutorial can be found as fully functional scripts on GitH
 
 ## What Will I Learn?
 
-This tutorial shows how to interact with the Steem blockchain and Steem database using Ruby to access an accounts incomming and outgoing vestings.
+This tutorial shows how to interact with the Steem blockchain and Steem database using Ruby to access an accounts incoming and outgoing vestings.
 
 When using Ruby you have two APIs available to chose: **steem-api** and **radiator** which differentiates in how return values and errors are handled:
 
@@ -100,14 +98,14 @@ loop do
 break if _vesting.result.length == 0
 
    # get and remove the last element. The last element
-   # meeds to be removed as it will be dupplicated
-   # as firt element in the next itteration.
+   # meeds to be removed as it will be duplicated
+   # as first element in the next iteration.
 
    _last_vest = Vesting.new _vesting.result.pop
 
    # check of the delegatee of the current last element
    # is the same as the last element of the previous
-   # itteration. If this happens we have reached the
+   # iteration. If this happens we have reached the
    # end of the list
 
    if _previous_delegatee == _last_vest.delegatee then
@@ -121,7 +119,7 @@ break if _vesting.result.length == 0
 
       Vesting.print_list _vesting.result
 
-      # remember the delegatee for the next interation.
+      # remember the delegatee for the next integration.
 
       _previous_delegatee = _last_vest.delegatee
    end
@@ -156,11 +154,11 @@ loop do
 
    # check of the delegator / delegatee pair of the
    # current last element is the same as the last
-   # element of the previous itteration. If this
+   # element of the previous iteration. If this
    # happens we have reached the end of the list
 
     if _previous_end == _current_end then
-      # In the last itteration there will also
+      # In the last iteration there will also
       # be only one element which we need to print.
 
       puts _last_vest.to_ansi_s
@@ -172,27 +170,18 @@ loop do
       Vesting.print_list(_vesting.result.delegations, accounts)
 
       # remember the delegator / delegatee pair for
-      # the next interation.
+      # the next iteration.
 
       _previous_end = _current_end
    end
-
-   # Print the list
-
-   Vesting.print_list _vesting.result.delegations
-
-   # remember the delegator / delegatee pair for
-   # the next interation.
-
-   _previous_end = _current_end
 end
 ```
 
-**Note:** As of writing `radiator` doen't supply an impemations for `get_vesting_delegations`.
+**Note:** As of writing `radiator` doesn't supply an implementation for `get_vesting_delegations`.
 
 ## Implementation using radiator
 
-With the radiator implementation the access of delegation from a given list of account makes is demonstrated.
+With the radiator implementation the access of delegation from a given list of accounts is demonstrated.
 
 -----
 
@@ -283,7 +272,7 @@ Print the vesting the given account makes:
       # accounts delegation. This is helpful for accounts
       # with more then a thousand delegations like steem.
       # The 2nd parameter is the first delegatee to
-      # return. The 3nd parameter is maximum amount results
+      # return. The 3rd parameter is maximum amount results
       # to return. Must be less then 1000.
       #
       # The loop needed is pretty complicated as the last
@@ -306,17 +295,17 @@ Print the vesting the given account makes:
 
          # get and remove the last element. The last element
          # meeds to be removed as it will be dupplicated
-         # as firt element in the next itteration.
+         # as firt element in the next iteration.
 
          _last_vest = Vesting.new _vesting.result.pop
 
          # check of the delegatee of the current last element
          # is the same as the last element of the previous
-         # itteration. If this happens we have reached the
+         # iteration. If this happens we have reached the
          # end of the list
 
          if _previous_delegatee == _last_vest.delegatee then
-            # In the last itteration there will also
+            # In the last iteration there will also
             # be only one element which we need to print.
 
             puts _last_vest.to_ansi_s
@@ -326,7 +315,7 @@ Print the vesting the given account makes:
 
             Vesting.print_list _vesting.result
 
-            # remember the delegatee for the next interation.
+            # remember the delegatee for the next iteration.
 
             _previous_delegatee = _last_vest.delegatee
          end
@@ -403,9 +392,9 @@ end
 
 **Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Vesting.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Vesting.rb).
 
-The output of the command (for the steem account) looks identical to the previous output:
+The output of the command (for my and the steampeak account) looks like this:
 
-<center>![Screenshot at Feb 13 145420.png](https://files.steempeak.com/file/steempeak/krischik/3dURm96L-Screenshot20at20Feb20132014-54-20.png)</center>
+<center>![Screenshot at May 23 14-26-21.png](https://cdn.steemitimages.com/DQmZt8Ui1ELYDyN57Mb1RQPDhQ7WGjyGjiv5afT1yMfmPcp/Screenshot%20at%20May%2023%2014-26-21.png)</center>
 
 ## Implementation using steem-ruby
 
@@ -454,7 +443,9 @@ Prints all vesting values which are related to given list of accounts:
    end
 ```
 
-Fetches all the vestings form the database and prints those who are related to the given list of accounts
+Fetches all the vestings form the database and prints those who are related to the given list of accounts. Fetching all delegation takes quite a long time and there is a good change that there will be a network error before the operation finishes.
+
+For this a crude hack which skips over the **steem** account is applied. Even with skipping over the **steem** account the operation can take half an hour. To keep the user informed a  progress indicator is added aw well.
 
 ```ruby
    Contract ArrayOf[String] => nil
@@ -497,13 +488,17 @@ Fetches all the vestings form the database and prints those who are related to t
          _last_vest = Vesting.new _vesting.result.delegations.pop
          _current_end = [_last_vest.delegator, _last_vest.delegatee]
 
+         # Delete the progress indicator.
+
+         print "\e[1K\r"
+
          # check of the delegatee of the current last element
          # is the same as the last element of the previous
-         # itteration. If this happens we have reached the
+         # iteration. If this happens we have reached the
          # end of the list
 
          if _previous_end == _current_end then
-            # In the last itteration there will also
+            # In the last iteration there will also
             # be only one element which we need to print.
 
             if _last_vest.is_accounts accounts then
@@ -514,13 +509,34 @@ Fetches all the vestings form the database and prints those who are related to t
          else
             # Print the list.
 
-            Vesting.print_list(_vesting.result.delegations, accounts)
+            if _previous_end[0] != "steem" && _current_end[0] == "steem" then
+               # The large majority of delegations are done
+               # by the steem account. Not only will it
+               # take more then an hour to iterate over the
+               # steem delegations there is also a very
+               # high likelihood of a network error
+               # preventing the iteration from finishing.
+               # For this we skip over the steem account.
 
-            # remember the delegator / delegatee pair for
-            # the next interation.
+               _previous_end = ["steem", "zzzzzzj"]
+            else
+               # remember the delegator / delegatee pair for
+               # the next iteration.
 
-            _previous_end = _current_end
+               _previous_end = _current_end
+            end
          end
+
+         # Print the current position of the iteration as
+         # progress indicator for the user.
+
+         print (
+            "%1$10d | " +
+            "%2$-16s ⇒ " +
+            "%3$-16s ") % [
+               _last_vest.id,
+               _last_vest.delegator,
+               _last_vest.delegatee]
       end
 
       return
@@ -528,16 +544,11 @@ Fetches all the vestings form the database and prints those who are related to t
 end
 ```
 
-Since all delegations from the database are read
-and this is quite a time consuming operation it
-would be wasteful to make one call for each
-account.
+Since all delegations from the database are read and this is quite a time consuming operation it would be wasteful to make one call for each account.
 
-Instead the list of accounts is passed into
-the print method to filter all accounts at once.
+Instead the list of accounts is passed into the print method to filter all accounts at once.
 
-The disadvantage being that the printed data
-isn't sorted by account.
+The disadvantage being that the printed data isn't sorted by account.
 
 ```ruby
 if ARGV.length == 0 then
@@ -563,9 +574,9 @@ end
 
 **Hint:** Follow this link to Github for the complete script with comments and syntax highlighting: [Steem-Dump-Vesting.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Vesting.rb).
 
-The output of the command (for the steem account) looks like this:
+The output of the command (for my and the steampeak account) looks like this:
 
-<center>![Screenshot at Feb 13 145331.png](https://files.steempeak.com/file/steempeak/krischik/bj5gfctG-Screenshot20at20Feb20132014-53-31.png)</center>
+<center>![Screenshot at May 24 14-03-04.png](https://cdn.steemitimages.com/DQmTjnxgXJZaNLYFnt2MAQ3AC6xogPdvKsywB1vLq2J5bFt/Screenshot%20at%20May%2024%2014-03-04.png)</center>
 
 # Curriculum
 
@@ -583,7 +594,7 @@ The output of the command (for the steem account) looks like this:
 
 ## Proof of Work
 
-* GitHub: [SteemRubyTutorial Issue #8](https://github.com/krischik/SteemRubyTutorial/issues/7)
+* GitHub: [SteemRubyTutorial Issue #8](https://github.com/krischik/SteemRubyTutorial/issues/8)
 
 ## Image Source
 
