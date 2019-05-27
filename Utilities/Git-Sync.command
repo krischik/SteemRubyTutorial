@@ -17,19 +17,15 @@
 ############################################################# }}}1 ##########
 
 setopt No_XTrace
-setopt No_Err_Exit
+setopt Err_Exit
 
-git pull --all
+git fetch --all --prune --tags
 
-git checkout master
-git pull --all
-git push --all
+git checkout "master"
+git merge FETCH_HEAD
 
-git checkout develop
-git pull --all
-git push --all
-
-git push --tags
+git checkout "develop"
+git merge FETCH_HEAD
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 expandtab :
