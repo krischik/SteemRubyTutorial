@@ -71,11 +71,11 @@ begin
 
    Recent_Claims  = _reward_fund.recent_claims.to_i
    Reward_Balance = Radiator::Type::Amount.new _reward_fund.reward_balance
-rescue => error
+# rescue => error
    # I am using `Kernel::abort` so the script ends when
    # data can't be loaded
 
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+   # Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
 
 ##
