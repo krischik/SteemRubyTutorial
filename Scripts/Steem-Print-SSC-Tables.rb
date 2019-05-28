@@ -80,6 +80,14 @@ else
          }
       )
 
+   pp Contracts.find(
+         contract: "tokens",
+         table: "balances",
+         query: {
+            account: "krischik"
+         }
+      )
+
 #  "  let tableExists = await api.db.tableExists('tokens');\n" +
 #  "  if (tableExists === false) {\n" +
 #  "    await api.db.createTable('tokens', ['symbol']);\n" +
