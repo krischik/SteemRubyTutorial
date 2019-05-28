@@ -31,6 +31,7 @@ require 'radiator'
 # moved into a separate file.
 
 require_relative 'Radiator/Amount'
+require_relative 'Radiator/Price'
 
 Five_Days = 5 * 24 * 60 * 60
 
@@ -46,10 +47,8 @@ begin
    # backed dollar. We use the Amount class from Part 2 to
    # convert the string values into amounts.
 
-   _median_history_price = _condenser_api.get_current_median_history_price.result
-   _base                 = Amount.new _median_history_price.base
-   _quote                = Amount.new _median_history_price.quote
-   SBD_Median_Price      = _base.to_f / _quote.to_f
+   _median_history_price = Radiator::Type::Price.new _condenser_api.get_current_median_history_price.result
+   SBD_Median_Price      = _median_history_price.sbd_median_price 
 
    # read the global properties and
    # calculate the conversion Rate for VESTS to steem. We
@@ -57,8 +56,8 @@ begin
    # values into amounts.
 
    _global_properties        = _condenser_api.get_dynamic_global_properties.result
-   _total_vesting_fund_steem = Amount.new _global_properties.total_vesting_fund_steem
-   _total_vesting_shares     = Amount.new _global_properties.total_vesting_shares
+   _total_vesting_fund_steem = Radiator::Type::Amount.new _global_properties.total_vesting_fund_steem
+   _total_vesting_shares     = Radiator::Type::Amount.new _global_properties.total_vesting_shares
    Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 
    # read the reward funds. `get_reward_fund` takes one
@@ -71,7 +70,7 @@ begin
    # parsing needed.
 
    Recent_Claims  = _reward_fund.recent_claims.to_i
-   Reward_Balance = Amount.new _reward_fund.reward_balance
+   Reward_Balance = Radiator::Type::Amount.new _reward_fund.reward_balance
 rescue => error
    # I am using `Kernel::abort` so the script ends when
    # data can't be loaded
@@ -124,13 +123,13 @@ def print_account_balances(accounts)
       # create an amount instances for each balance to be
       # used for further processing
 
-      _balance                  = Amount.new account.balance
-      _savings_balance          = Amount.new account.savings_balance
-      _sbd_balance              = Amount.new account.sbd_balance
-      _savings_sbd_balance      = Amount.new account.savings_sbd_balance
-      _vesting_shares           = Amount.new account.vesting_shares
-      _delegated_vesting_shares = Amount.new account.delegated_vesting_shares
-      _received_vesting_shares  = Amount.new account.received_vesting_shares
+      _balance                  = Radiator::Type::Amount.new account.balance
+      _savings_balance          = Radiator::Type::Amount.new account.savings_balance
+      _sbd_balance              = Radiator::Type::Amount.new account.sbd_balance
+      _savings_sbd_balance      = Radiator::Type::Amount.new account.savings_sbd_balance
+      _vesting_shares           = Radiator::Type::Amount.new account.vesting_shares
+      _delegated_vesting_shares = Radiator::Type::Amount.new account.delegated_vesting_shares
+      _received_vesting_shares  = Radiator::Type::Amount.new account.received_vesting_shares
       _voting_power             = real_voting_power account
 
       # calculate actual vesting by adding and subtracting
