@@ -19,14 +19,14 @@
 setopt No_XTrace
 setopt Err_Exit
 
-git fetch --all --prune --tags
-
-git checkout "master"
-git merge FETCH_HEAD
-
-git checkout "develop"
-git merge FETCH_HEAD
+Scripts/Steem-Dump-Accounts.rb		    "steem" "busy.org" "steempeak"
+Scripts/Steem-Dump-Balances.rb		    "steem" "busy.org" "steempeak"
+Scripts/Steem-Dump-Global-Properties.rb 
+Scripts/Steem-Dump-Median-History-Price.rb
+Scripts/Steem-Dump-Posting-Votes.rb	    "https://steempeak.com/@krischik/using-steem-api-with-ruby-part-7"
+Scripts/Steem-From-VEST.rb		    "1000000" "10000000" "100000000" "100000000"
+Scripts/Steem-Dump-Vesting.rb		    "busy.org" "steempeak"
 
 ############################################################ {{{1 ###########
-# vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 expandtab :
+# vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
 # vim: set textwidth=0 filetype=zsh foldmethod=marker nospell :

@@ -17,15 +17,15 @@
 ############################################################# }}}1 ##########
 
 setopt No_XTrace
-setopt Err_Exit
+setopt No_Err_Exit
 
-git fetch --all --prune --tags
-
-git checkout "master"
-git merge FETCH_HEAD
-
-git checkout "develop"
-git merge FETCH_HEAD
+if test "${USER}" = "root"; then
+    gem update $(gem list | cut -d ' ' -f 1) --verbose
+    gem cleanup --verbose 
+else
+    setopt Multi_OS
+    sudo ${0:a} 1>&1 2>&2 &>~/Library/Logs/${0:r:t}.out
+fi
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 expandtab :
