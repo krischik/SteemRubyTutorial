@@ -32,6 +32,16 @@ require 'steem-mechanize'
 require_relative 'Steem/Amount'
 
 ##
+# Maximum retries to be done when a
+#
+Max_Retry_Count = 3
+
+##
+# Delete the current line on the console.
+#
+Delete_Line     = "\e[1K\r"
+
+##
 # Class to hold a vesting delegation
 #
 # @attrib [Number] id
@@ -173,6 +183,10 @@ class Vesting < Steem::Type::BaseType
 
       _previous_end = ["", ""]
 
+      # counter keep track of the amount of retries left
+
+      _retry_count = Max_Retry_Count
+
       loop do
          # get the next 1000 items.
 
@@ -192,7 +206,7 @@ class Vesting < Steem::Type::BaseType
 
          # Delete the progress indicator.
 
-         print "\e[1K\r"
+         print Delete_Line
 
          # check of the delegatee of the current last
          # element is the same as the last element of the
@@ -241,7 +255,29 @@ class Vesting < Steem::Type::BaseType
                _last_vest.id,
                _last_vest.delegator,
                _last_vest.delegatee]
+
+         # Throttle to 20 http requests per second. That
+         # seem to be the acceptable upper limit for
+         # https://api.steemit.com
+
          sleep 0.05 
+
+         # resets the counter that keeps track of the
+         # retries.
+
+         _retry_count = Max_Retry_Count
+      rescue => error
+         if _retry_count == 0 then
+            # We made Max_Retry_Count repeats ⇒ giving up.
+
+            print Delete_Line
+            Kernel::abort ("\nCould not read %1$s with %2$d retrys :\n%3$s".red) % [_previous_end, Max_Retry_Count, error.to_s]
+         end
+
+         # wait one second before making the next retry
+
+         _retry_count = _retry_count - 1
+         sleep 1.0
       end
 
       return
