@@ -62,7 +62,7 @@ Another way to improve performance is the use of [steem-mechanize](https://githu
 
 ## Implementation using steem-mechanize
 
-steem-mechanize is a drop in replacement for steem-ruby and theoretically the only change to the code needed is the use of `require  'steem-mechanize'` instead  `require  'steem-ruby'`. 
+steem-mechanize is a drop in replacement for steem-ruby and theoretically the only change to the code needed is the use of `require  'steem-mechanize'` instead  `require  'steem-ruby'`.
 
 -----
 
@@ -83,7 +83,7 @@ require 'steem-mechanize'
 require_relative 'Steem/Amount'
 ```
 
-However in praxis there is one more Problem: [steem-mechanize](https://github.com/steemit/steem-mechanize) is to fast for https://api.steemit.com and you will be get an “Error 403” / “HTTP Forbidden” if you try. 
+However in praxis there is one more Problem: [steem-mechanize](https://github.com/steemit/steem-mechanize) is to fast for https://api.steemit.com and you will be get an “Error 403” / “HTTP Forbidden” if you try.
 
 <center>![Screenshot at May 29 12-52-01.png](https://cdn.steemitimages.com/DQmbEgp3TV1i6LomjAmNmXwmxBrU3S8mXeLmj38Ubxoat24/Screenshot%20at%20May%2029%2012-52-01.png)</center>
 
@@ -121,7 +121,7 @@ For the few cases where throttling is not sufficient an error handler is added t
          # seem to be the acceptable upper limit for
          # https://api.steemit.com
 
-         sleep 0.05 
+         sleep 0.05
 
          # resets the counter that keeps track of the
          # retries.
@@ -150,12 +150,12 @@ The output of the command (for my own and  the steem account) looks just like be
 
 <center>![Screenshot at May 29 14-02-41.png](https://cdn.steemitimages.com/DQmYbrguwQ9khfKmjp2zUNHULyqEZYM3YcSKEuTszz5kDRr/Screenshot%20at%20May%2029%2014-02-41.png)</center>
 
-However it steem-mechanize version is just about 2½ faster: 
+However it steem-mechanize version is just about 2½ faster:
 
-|API used  | Time elapsed |
-|------|------------|
-| steem-ruby | 27'58" |
-| steem-mechanize | 11'49" |
+|API used         | Time elapsed |
+|-----------------|--------------|
+| steem-ruby      |       27'58" |
+| steem-mechanize |       11'49" |
 
 # Curriculum
 
@@ -183,7 +183,7 @@ However it steem-mechanize version is just about 2½ faster:
 
 ## Beneficiary
 
-![Beneficiary.png](https://cdn.steemitimages.com/DQmYnQfCi8Z12jkaNqADKc37gZ89RKdvdLzp7uXRjbo1AHy/image.png)
+<center>![](https://cdn.steemitimages.com/DQmNg1qvYP2GFxxDmuyQr4wVtKQVyXGZqKKH3mNEYWRzvrh/image.png)</center>
 
 <center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png)</center>
 
