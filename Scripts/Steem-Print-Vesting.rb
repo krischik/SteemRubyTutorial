@@ -29,7 +29,8 @@ require 'radiator'
 # The Amount class is used in most Scripts so it was moved
 # into a separate file.
 
-require_relative 'Steem/Amount'
+require_relative 'Radiator/Amount'
+require_relative 'Radiator/Price'
 
 ##
 # Class to hold a vesting delegation. The vesting holds the
@@ -68,7 +69,7 @@ class Vesting < Radiator::Type::Serializer
       @id                  = value.id
       @delegator           = value.delegator
       @delegatee           = value.delegatee
-      @vesting_shares      = Amount.new (value.vesting_shares)
+      @vesting_shares      = Radiator::Type::Amount.new (value.vesting_shares)
       @min_delegation_time = Time.strptime(value.min_delegation_time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
 
       return
@@ -206,14 +207,17 @@ begin
    # We use the Amount class from Part 2 to convert the
    # string values into amounts.
 
-   _median_history_price = Condenser_Api.get_current_median_history_price.result
-   _base                 = Amount.new _median_history_price.base
-   _quote                = Amount.new _median_history_price.quote
-   SBD_Median_Price      = _base.to_f / _quote.to_f
+   _median_history_price = Radiator::Type::Price.new Condenser_Api.get_current_median_history_price.result
+   SBD_Median_Price      = _median_history_price.sbd_median_price 
+
+   # read the global properties and
+   # calculate the conversion Rate for VESTS to steem. We
+   # use the Amount class from Part 2 to convert the string
+   # values into amounts.
 
    _global_properties        = Condenser_Api.get_dynamic_global_properties.result
-   _total_vesting_fund_steem = Amount.new _global_properties.total_vesting_fund_steem
-   _total_vesting_shares     = Amount.new _global_properties.total_vesting_shares
+   _total_vesting_fund_steem = Radiator::Type::Amount.new _global_properties.total_vesting_fund_steem
+   _total_vesting_shares     = Radiator::Type::Amount.new _global_properties.total_vesting_shares
    Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 
 rescue => error

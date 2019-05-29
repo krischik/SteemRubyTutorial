@@ -67,8 +67,8 @@ else
    # Calculate the conversion Rate. We use the Amount class
    # from Part 2 to convert the sting values into amounts.
 
-   _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
-   _total_vesting_shares = Amount.new Global_Properties.total_vesting_shares
+   _total_vesting_fund_steem = Steem::Type::Amount.new Global_Properties.total_vesting_fund_steem
+   _total_vesting_shares = Steem::Type::Amount.new Global_Properties.total_vesting_shares
    _conversion_rate = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 
    # iterate over the valued passed in the command line
