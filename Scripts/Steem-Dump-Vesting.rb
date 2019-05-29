@@ -24,7 +24,7 @@ gem "steem-ruby", :require => "steem"
 
 require 'pp'
 require 'colorize'
-require 'steem'
+require 'steem-mechanize'
 
 # The Amount class is used in most Scripts so it was moved
 # into a separate file.
@@ -241,6 +241,7 @@ class Vesting < Steem::Type::BaseType
                _last_vest.id,
                _last_vest.delegator,
                _last_vest.delegatee]
+         sleep 0.05 
       end
 
       return

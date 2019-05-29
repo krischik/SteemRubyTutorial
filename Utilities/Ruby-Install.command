@@ -20,15 +20,18 @@ setopt No_XTrace
 setopt No_Err_Exit
 
 if test "${USER}" = "root"; then
+
+    gem install --no-document ntlm-http  
+
     gem install bundler
     gem install colorize
     gem install contracts
     gem install gems
     gem install ruby-debug-ide
     gem install rubygems-update
-    gem install fastlane
     gem install steem-ruby
     gem install radiator
+    gem install steem-mechanize
 
     update_rubygems
 else
