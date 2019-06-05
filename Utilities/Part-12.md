@@ -1,9 +1,8 @@
 # Using Steem-API with Ruby Part 12 — Print Steem Engine Contracts
 
 utopian-io tutorials ruby steem-api programming
-utopian.pay
 
-<center>![Steemit_Ruby_Engine.png](https://cdn.steemitimages.com/DQmc3r9KH3ws5oe2feQWtmMmyfNHLcCw4ttp7ppuEk7RB8n/Steemit_Ruby_Engine.png)</center>
+<center>![Steemit_Ruby_Engine.png](https://cdn.steemitimages.com/DQmR1jWexK1B1gGwUgcVdGtwRkAZPZ5rUwBXBt6x55TMPjY/Steemit_Ruby_Engine.png)</center>
 
 ## Repositories
 
@@ -23,6 +22,8 @@ All examples from this tutorial can be found as fully functional scripts on GitH
 
 ### Steem Engine
 
+<center>![steem-engine_logo-horizontal-dark.png](https://cdn.steemitimages.com/DQmcuU8q2NnZjUcj74ChEQDsUBdE4LNc8t9LpucE25TP7Sf/steem-engine_logo-horizontal-dark.png)</center>
+
 * Project Name: Steem Engine
 * Home Page: [https://steem-engine.com](https://steem-engine.com)
 * Repository: [https://github.com/harpagon210/steem-engine](https://github.com/harpagon210/steem-engine)
@@ -34,6 +35,8 @@ All examples from this tutorial can be found as fully functional scripts on GitH
 This tutorial shows how to interact with the Steem blockchain, Steem database and Steem Engine using Ruby. When accessing Steem Engine using Ruby their only one APIs available to chose: **radiator**.
 
 In this particular chapter you learn how to read smart contracts from the Steem Engine side chain.
+
+<center>![img_train.png](https://cdn.steemitimages.com/DQmSpZxwXGzzVWmAmWHuq4i5Q1vcG7vAPSM8dhqJzq2UmXs/img_train.png)</center>
 
 ## Requirements
 
@@ -144,11 +147,12 @@ The 2nd important attribute is the  table attribute the end of the output which 
 
 * Ruby symbol: [Wikimedia](https://commons.wikimedia.org/wiki/File:Ruby_logo.svg), CC BY-SA 2.5.
 * Steemit logo [Wikimedia](https://commons.wikimedia.org/wiki/File:Steemit_New_Logo.png), CC BY-SA 4.0.
+* Steem Engine logo [Steem Engine](https://steem-engine.com)
 * Screenshots: @krischik, CC BY-NC-SA 4.0
 
 ## Beneficiary
 
-![Beneficiary.png](https://cdn.steemitimages.com/DQmYnQfCi8Z12jkaNqADKc37gZ89RKdvdLzp7uXRjbo1AHy/image.png)
+<center>![Beneficiary.png](https://cdn.steemitimages.com/DQmaNHromgD3b8CpUz15zvvNb7X7k9zYqWW6XqESyLCrM1y/image.png)</center>
 
 <center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png)</center>
 
