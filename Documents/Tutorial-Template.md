@@ -1,6 +1,7 @@
-# Using Steem-API with Ruby Part 11 — XXXXX
+# Using Steem-API with Ruby Part XXXXX — XXXXX
 
 utopian-io tutorials ruby steem-api programming
+utopian.pay
 
 <center>![Steemit_Ruby.png](https://steemitimages.com/500x270/https://ipfs.busy.org/ipfs/QmSDiHZ9ng7BfYFMkvwYtNVPrw3nvbzKBA1gEj3y9vU6qN)</center>
 
