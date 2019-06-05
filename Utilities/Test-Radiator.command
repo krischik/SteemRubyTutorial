@@ -26,7 +26,7 @@ Scripts/Steem-Print-Median-History-Price.rb
 Scripts/Steem-Print-Posting-Votes.rb	    "https://steempeak.com/@krischik/using-steem-api-with-ruby-part-7"
 Scripts/Steem-To-VEST.rb		    "500" "5000" "50000" "50000"
 Scripts/Steem-Print-Vesting.rb		    "busy.org" "steempeak"
-Scripts/Steem-Print-SSC-Contract.rb	    "tokens"
+Scripts/Steem-Print-SSC-Contract.rb	    "tokens" "market" "steempegged"
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :

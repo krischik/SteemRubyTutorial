@@ -27,31 +27,32 @@ require 'colorize'
 require 'radiator'
 
 begin
-   # create instance to the steem condenser API which
-   # will give us access to the median history price
+   # create an instance to the radiator contracts API which
+   # will give us access to steem engine contracts
 
    Contracts = Radiator::SSC::Contracts.new
 
 rescue => error
-   # I am using Kernel::abort so the code snipped
-   # including error handler can be copy pasted into other
-   # scripts
+   # I am using Kernel::abort so the code snipped including
+   # error handler can be copy pasted into other scripts
 
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
 
 if ARGV.length == 0 then
    puts "
-Steem-Print-SSC-Contract — Print account balances.
+Steem-Print-SSC-Contract — Print steem engine contracts.
 
 Usage:
-   Steem-Print-SSC-Contract account_name …
-
+   Steem-Print-SSC-Contract contract_name …
 "
 else
    # read arguments from command line
 
    Names = ARGV
+
+   # Loop over provided contact names and print the steen
+   # engine contracts.
 
    Names.each do |name|
       _contract = Contracts.contract name

@@ -57,36 +57,57 @@ else
       contract: _contract,
       table: _table,
       query: {
-         symbol: ''
-      }
+      },
+      limit: 10,
+      offset: 0
    )
 
    pp _rows
 
-   pp Contracts.find_one(
-         contract: "tokens",
-         table: "balances",
-         query: {
-            symbol: "STINGY",
-            account: "inertia"
-         }
-      )
+# [{"issuer"=>"inertia",
+#   "symbol"=>"STINGY",
+#   "name"=>"Stingy",
+#   "metadata"=>
+#    "{\"url\":\"https://steemit.com/steemengine/@inertia/stingy-token-powered-by-steem-engine\",\"icon\":\"https://i.imgur.com/l0opB7j.png\",\"desc\":\"We award STINGY tokens to the earliest voters who downvote a post that would have otherwise been on Trending. It determines **a)** that a post was going to get a large payout and **b)** was instead downvoted to zero by the time payout arrived.\"}",
+#   "precision"=>8,
+#   "maxSupply"=>7418880,
+#   "supply"=>"88.99999999",
+#   "circulatingSupply"=>"88.99999999",
+#   "$loki"=>46}]
 
-   pp Contracts.find(
-         contract: "tokens",
-         table: "balances",
-         query: {
-            symbol: "STINGY"
-         }
-      )
+   # pp Contracts.find_one(
+         # contract: "tokens",
+         # table: "balances",
+         # query: {
+            # symbol: "STINGY",
+            # account: "inertia"
+         # }
+      # )
 
-   pp Contracts.find(
-         contract: "tokens",
-         table: "balances",
-         query: {
-            account: "krischik"
-         }
-      )
+   # pp Contracts.find_one(
+         # contract: "tokens",
+         # table: "balances",
+         # query: {
+            # symbol: "STINGY",
+            # account: "inertia"
+         # }
+      # )
+
+   # pp Contracts.find(
+         # contract: "tokens",
+         # table: "balances",
+         # query: {
+            # symbol: "STINGY"
+         # }
+      # )
+
+   # pp Contracts.find(
+         # contract: "tokens",
+         # table: "balances",
+         # query: {
+            # account: "krischik"
+         # }
+      # )
 
 #  "  let tableExists = await api.db.tableExists('tokens');\n" +
 #  "  if (tableExists === false) {\n" +
