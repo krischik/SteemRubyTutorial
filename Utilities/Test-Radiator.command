@@ -21,7 +21,7 @@ setopt Err_Exit
 
 Scripts/Steem-Print-Accounts.rb		    "steem" "busy.org" "steempeak"
 Scripts/Steem-Print-Balances.rb		    "steem" "busy.org" "steempeak"
-Scripts/Steem-Print-Global-Properties.rb 
+Scripts/Steem-Print-Global-Properties.rb
 Scripts/Steem-Print-Median-History-Price.rb
 Scripts/Steem-Print-Posting-Votes.rb	    "https://steempeak.com/@krischik/using-steem-api-with-ruby-part-7"
 Scripts/Steem-To-VEST.rb		    "500" "5000" "50000" "50000"
