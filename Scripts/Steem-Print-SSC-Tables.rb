@@ -115,7 +115,7 @@ else
 #  "    await api.db.createTable('balances', ['account']);\n" +
 #  "    await api.db.createTable('contractsBalances', ['account']);\n" +
 #  "    await api.db.createTable('params');\n" +
-   
+
 end
 
 ############################################################ {{{1 ###########

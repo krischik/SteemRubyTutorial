@@ -55,7 +55,12 @@ else
    # engine contracts.
 
    Names.each do |name|
+
+      # read the contract
+
       _contract = Contracts.contract name
+
+      # print the contract
 
       pp _contract
    end
