@@ -92,9 +92,9 @@ As mentioned only **radiator** offers an API to access Steem Engine. For this **
 
 The first row of any table can be read using the `Contracts.find_one` method which has three mandatory parameters: `contract`, `table` and `query`:
 
-**contract**: The name of the contract. There are currently three known contracts: _"tokens"_, _"market"_, and _"steempegged"_. 
-**table**: The name of the tables to query. 
-**query**: A list of column names and values. Left empty to query the first row. 
+**contract**: The name of the contract. There are currently three known contracts: _"tokens"_, _"market"_, and _"steempegged"_.
+**table**: The name of the tables to query.
+**query**: A list of column names and values. Left empty to query the first row.
 
 ```ruby
 if ARGV.length == 0 then
@@ -162,7 +162,7 @@ The output of the command (for the steem account) looks identical to the previou
 
 <center>![Beneficiary.png](https://cdn.steemitimages.com/DQmYnQfCi8Z12jkaNqADKc37gZ89RKdvdLzp7uXRjbo1AHy/image.png)</center>
 
-<center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png)</center>
+<center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png?1) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png?1) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png?1) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png?1) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png?1) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png?1) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png?1)</center>
 
 <!-- vim: set wrap tabstop=8 shiftwidth=3 softtabstop=3 noexpandtab : -->
 <!-- vim: set textwidth=0 filetype=markdown foldmethod=marker nospell : -->

@@ -56,14 +56,14 @@ For reader with programming experience this tutorial is **basic level**.
 
 ## Tutorial Contents
 
-Steem Engine allows users to add  token and contacts to the steem block chain. Currently only three predefined contracts are know: _"tokens"_, _"market"_, and "steempegged". Additional contracts can bee added but you have to get into contact with the Steem Engine team.
+Steem Engine allows users to add  token and contacts to the steem block chain. Currently only three predefined contracts are know: _"tokens"_, _"market"_, and "steempegged". Additional contracts can be added but you have to get into contact with the Steem Engine team.
 
 <center>![img_steem-engine_overview.png](https://cdn.steemitimages.com/DQmQTATEmyZFm8cRspRNYin2CcdYvMRbg2rUe5Cs8ZAGh8s/img_steem-engine_overview.png)</center>
 
 There are two main components to each contract:
 
 * The contract source code written in Java Script.
-* A collection of database tables where the contract can store it's data.
+* A collection of database tables where the contract can store its data.
 
 In addition to those there is a small set of meta data like the owner and hash code of the contract.
 
@@ -103,16 +103,16 @@ Usage:
 else
    # read arguments from command line
 
-   Names = ARGV
+   _names = ARGV
 
    # Loop over provided contact names and print the steen
    # engine contracts.
 
-   Names.each do |name|
+   _names.each do |_name|
 
       # read the contract
 
-      _contract = Contracts.contract name
+       _contract = Contracts.contract _name
 
       # print the contract
 
@@ -162,7 +162,7 @@ The 2nd important attribute is the  table attribute the end of the output which 
 
 <center>![Beneficiary.png](https://cdn.steemitimages.com/DQmaNHromgD3b8CpUz15zvvNb7X7k9zYqWW6XqESyLCrM1y/image.png)</center>
 
-<center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png)</center>
+<center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png?1) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png?1) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png?1) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png?1) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png?1) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png?1) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png?1)</center>
 
 <!-- vim: set wrap tabstop=8 shiftwidth=3 softtabstop=3 noexpandtab : -->
 <!-- vim: set textwidth=0 filetype=markdown foldmethod=marker nospell : -->

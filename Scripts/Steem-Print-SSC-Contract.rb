@@ -49,16 +49,16 @@ Usage:
 else
    # read arguments from command line
 
-   Names = ARGV
+   _names = ARGV
 
    # Loop over provided contact names and print the steen
    # engine contracts.
 
-   Names.each do |name|
+   _names.each do |_name|
 
       # read the contract
 
-      _contract = Contracts.contract name
+      _contract = Contracts.contract _name
 
       # print the contract
 
