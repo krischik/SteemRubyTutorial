@@ -42,10 +42,10 @@ end
 
 if ARGV.length == 0 then
    puts "
-Steem-Print-SSC-Contract — Print account balances.
+Steem-Print-SSC-Table — Print first 10 rows of a steem engine tabple
 
 Usage:
-   Steem-Print-SSC-Contract account_name …
+   Steem-Print-SSC-Contract contract_name table_name
 
 "
 else
@@ -53,6 +53,9 @@ else
 
    _contract = ARGV[0]
    _table = ARGV[1]
+
+   # the query
+
    _rows = Contracts.find(
       contract: _contract,
       table: _table,
@@ -63,59 +66,6 @@ else
    )
 
    pp _rows
-
-# [{"issuer"=>"inertia",
-#   "symbol"=>"STINGY",
-#   "name"=>"Stingy",
-#   "metadata"=>
-#    "{\"url\":\"https://steemit.com/steemengine/@inertia/stingy-token-powered-by-steem-engine\",\"icon\":\"https://i.imgur.com/l0opB7j.png\",\"desc\":\"We award STINGY tokens to the earliest voters who downvote a post that would have otherwise been on Trending. It determines **a)** that a post was going to get a large payout and **b)** was instead downvoted to zero by the time payout arrived.\"}",
-#   "precision"=>8,
-#   "maxSupply"=>7418880,
-#   "supply"=>"88.99999999",
-#   "circulatingSupply"=>"88.99999999",
-#   "$loki"=>46}]
-
-   # pp Contracts.find_one(
-         # contract: "tokens",
-         # table: "balances",
-         # query: {
-            # symbol: "STINGY",
-            # account: "inertia"
-         # }
-      # )
-
-   # pp Contracts.find_one(
-         # contract: "tokens",
-         # table: "balances",
-         # query: {
-            # symbol: "STINGY",
-            # account: "inertia"
-         # }
-      # )
-
-   # pp Contracts.find(
-         # contract: "tokens",
-         # table: "balances",
-         # query: {
-            # symbol: "STINGY"
-         # }
-      # )
-
-   # pp Contracts.find(
-         # contract: "tokens",
-         # table: "balances",
-         # query: {
-            # account: "krischik"
-         # }
-      # )
-
-#  "  let tableExists = await api.db.tableExists('tokens');\n" +
-#  "  if (tableExists === false) {\n" +
-#  "    await api.db.createTable('tokens', ['symbol']);\n" +
-#  "    await api.db.createTable('balances', ['account']);\n" +
-#  "    await api.db.createTable('contractsBalances', ['account']);\n" +
-#  "    await api.db.createTable('params');\n" +
-
 end
 
 ############################################################ {{{1 ###########

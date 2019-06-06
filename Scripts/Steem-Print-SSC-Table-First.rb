@@ -27,42 +27,52 @@ require 'colorize'
 require 'radiator'
 
 begin
-   # create an instance to the radiator contracts API which
-   # will give us access to steem engine contracts
+   # create instance to the steem condenser API which
+   # will give us access to the median history price
 
    Contracts = Radiator::SSC::Contracts.new
 
 rescue => error
-   # I am using Kernel::abort so the code snipped including
-   # error handler can be copy pasted into other scripts
+   # I am using Kernel::abort so the code snipped
+   # including error handler can be copy pasted into other
+   # scripts
 
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
 
 if ARGV.length == 0 then
    puts "
-Steem-Print-SSC-Contract — Print steem engine contracts.
+Steem-Print-SSC-Table-Sample — Print first row of a steem engine table.
 
 Usage:
-   Steem-Print-SSC-Contract contract_name …
+   Steem-Print-SSC-Table-Sample contract_name table_name
+
 "
 else
    # read arguments from command line
 
-   _names = ARGV
+   _contract = ARGV[0]
+   _table = ARGV[1]
 
-   # Loop over provided contact names and print the steen
-   # engine contracts.
+   # the query attribute is mandantory, supply an empty query
+   # to receive the first row.
 
-   _names.each do |_name|
+   _row = Contracts.find_one(
+      contract: _contract,
+      table: _table,
+      query: {
+      }
+   )
 
-      # read the contract
+   if _row == nil then
+      puts "No data found, possible reasons:
 
-      _contract = Contracts.contract _name
-
-      # print the contract
-
-      pp _contract
+⑴ The contract does not exist
+⑵ The table does not exist
+⑶ The table is empty
+"
+   else
+      pp _row
    end
 end
 
