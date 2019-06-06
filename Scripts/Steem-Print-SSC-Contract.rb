@@ -16,70 +16,53 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the steem-ruby gem. This is
+# use the "steem.rb" file from the radiator gem. This is
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "steem-ruby", :require => "steem"
+gem "radiator", :require => "steem"
 
 require 'pp'
 require 'colorize'
-require 'steem'
-
-# The Amount class is used in most Scripts so it was
-# moved into a separate file.
-
-require_relative 'Steem/Amount'
+require 'radiator'
 
 begin
-   # create instance to the steem condenser API which
-   # will give us access to
+   # create an instance to the radiator contracts API which
+   # will give us access to steem engine contracts
 
-   Condenser_Api = Steem::CondenserApi.new
+   Contracts = Radiator::SSC::Contracts.new
 
-   # read the global properties. Yes, it's as simple as
-   # this. Note the use of result at the end.
-
-   Global_Properties = Condenser_Api.get_dynamic_global_properties.result
 rescue => error
-   # I am using Kernel::abort so the code snipped
-   # including error handler can be copy pasted into other
-   # scripts
+   # I am using Kernel::abort so the code snipped including
+   # error handler can be copy pasted into other scripts
 
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
 
-# shows usage help if the no values are given to convert.
-
 if ARGV.length == 0 then
    puts "
-Steem_From_VEST — Print convert list of VESTS value to Steem values
+Steem-Print-SSC-Contract — Print steem engine contracts.
 
 Usage:
-   Steem-Print-Balances values …
-
+   Steem-Print-SSC-Contract contract_name …
 "
 else
    # read arguments from command line
 
-   Values = ARGV
+   _names = ARGV
 
-   # Calculate the conversion Rate. We use the Amount class
-   # from Part 2 to convert the sting values into amounts.
+   # Loop over provided contact names and print the steen
+   # engine contracts.
 
-   _total_vesting_fund_steem = Steem::Type::Amount.new Global_Properties.total_vesting_fund_steem
-   _total_vesting_shares = Steem::Type::Amount.new Global_Properties.total_vesting_shares
-   _conversion_rate = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
+   _names.each do |_name|
 
-   # iterate over the valued passed in the command line
+      # read the contract
 
-   Values.each do |value|
+      _contract = Contracts.contract _name
 
-      # convert the value to steem by multiplying with the
-      # conversion rate and display the value
+      # print the contract
 
-      _steem = value.to_f * _conversion_rate
-      puts "%1$18.6f VESTS = %2$15.3f STEEM" % [value, _steem]
+      pp _contract
    end
 end
 

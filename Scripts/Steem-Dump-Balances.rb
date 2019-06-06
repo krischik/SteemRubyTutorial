@@ -45,8 +45,8 @@ begin
    # convert the string values into amounts.
 
    _median_history_price = _condenser_api.get_current_median_history_price.result
-   _base                 = Amount.new _median_history_price.base
-   _quote                = Amount.new _median_history_price.quote
+   _base                 = Steem::Type::Amount.new _median_history_price.base
+   _quote                = Steem::Type::Amount.new _median_history_price.quote
    SBD_Median_Price      = _base.to_f / _quote.to_f
 
    # read the global properties and
@@ -55,8 +55,8 @@ begin
    # values into amounts.
 
    _global_properties        = _condenser_api.get_dynamic_global_properties.result
-   _total_vesting_fund_steem = Amount.new _global_properties.total_vesting_fund_steem
-   _total_vesting_shares     = Amount.new _global_properties.total_vesting_shares
+   _total_vesting_fund_steem = Steem::Type::Amount.new _global_properties.total_vesting_fund_steem
+   _total_vesting_shares     = Steem::Type::Amount.new _global_properties.total_vesting_shares
    Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 rescue => error
    # I am using `Kernel::abort` so the script ends when
@@ -76,13 +76,13 @@ def print_account_balances(accounts)
       # create an amount instances for each balance to be
       # used for further processing
 
-      _balance                  = Amount.new account.balance
-      _savings_balance          = Amount.new account.savings_balance
-      _sbd_balance              = Amount.new account.sbd_balance
-      _savings_sbd_balance      = Amount.new account.savings_sbd_balance
-      _vesting_shares           = Amount.new account.vesting_shares
-      _delegated_vesting_shares = Amount.new account.delegated_vesting_shares
-      _received_vesting_shares  = Amount.new account.received_vesting_shares
+      _balance                  = Steem::Type::Amount.new account.balance
+      _savings_balance          = Steem::Type::Amount.new account.savings_balance
+      _sbd_balance              = Steem::Type::Amount.new account.sbd_balance
+      _savings_sbd_balance      = Steem::Type::Amount.new account.savings_sbd_balance
+      _vesting_shares           = Steem::Type::Amount.new account.vesting_shares
+      _delegated_vesting_shares = Steem::Type::Amount.new account.delegated_vesting_shares
+      _received_vesting_shares  = Steem::Type::Amount.new account.received_vesting_shares
 
       # calculate actual vesting by adding and subtracting delegation.
 

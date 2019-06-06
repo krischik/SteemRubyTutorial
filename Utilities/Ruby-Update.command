@@ -15,38 +15,17 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
-#
-# Sync develop and master:
-#
-# ⑴ pull current version from server
-# ⑵ merge server version of develop with local develop
-# ⑶ merge server version of master with local master
-# ⑷ merge develop to the current branch
-#
-# This is needed to merge develop into your feature branch to avoid merger
-# confict within the pull requests.
-#
 
 setopt No_XTrace
-setopt Err_Exit
+setopt No_Err_Exit
 
-local Current_Branch=$(git branch | grep "*" | cut -d ' ' -f2)
-
-git stash push
-git fetch --all
-git fetch --prune
-git fetch --tags
-
-git checkout    "master"
-git merge       "FETCH_HEAD"
-
-git checkout    "develop"
-git merge       "FETCH_HEAD"
-
-# git push --tags
-git checkout    "${Current_Branch}"
-git merge       --no-ff "develop"
-git stash pop
+if test "${USER}" = "root"; then
+    gem update $(gem list | cut -d ' ' -f 1) --verbose
+    gem cleanup --verbose 
+else
+    setopt Multi_OS
+    sudo ${0:a} 1>&1 2>&2 &>~/Library/Logs/${0:r:t}.out
+fi
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 expandtab :

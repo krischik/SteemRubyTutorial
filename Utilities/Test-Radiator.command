@@ -15,39 +15,20 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
-#
-# Sync develop and master:
-#
-# ⑴ pull current version from server
-# ⑵ merge server version of develop with local develop
-# ⑶ merge server version of master with local master
-# ⑷ merge develop to the current branch
-#
-# This is needed to merge develop into your feature branch to avoid merger
-# confict within the pull requests.
-#
 
 setopt No_XTrace
 setopt Err_Exit
 
-local Current_Branch=$(git branch | grep "*" | cut -d ' ' -f2)
-
-git stash push
-git fetch --all
-git fetch --prune
-git fetch --tags
-
-git checkout    "master"
-git merge       "FETCH_HEAD"
-
-git checkout    "develop"
-git merge       "FETCH_HEAD"
-
-# git push --tags
-git checkout    "${Current_Branch}"
-git merge       --no-ff "develop"
-git stash pop
+Scripts/Steem-Print-Accounts.rb		    "steem" "busy.org" "steempeak"
+Scripts/Steem-Print-Balances.rb		    "steem" "busy.org" "steempeak"
+Scripts/Steem-Print-Global-Properties.rb
+Scripts/Steem-Print-Median-History-Price.rb
+Scripts/Steem-Print-Posting-Votes.rb	    "https://steempeak.com/@krischik/using-steem-api-with-ruby-part-7"
+Scripts/Steem-To-VEST.rb		    "500" "5000" "50000" "50000"
+Scripts/Steem-Print-Vesting.rb		    "busy.org" "steempeak"
+Scripts/Steem-Print-SSC-Contract.rb	    "tokens" "market" "steempegged"
+Scripts/Steem-Print-SSC-Table-One.rb	    "tokens" "tokens"
 
 ############################################################ {{{1 ###########
-# vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 expandtab :
+# vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
 # vim: set textwidth=0 filetype=zsh foldmethod=marker nospell :

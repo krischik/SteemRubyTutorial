@@ -245,8 +245,8 @@ begin
    # string values into amounts.
 
    _median_history_price = Condenser_Api.get_current_median_history_price.result
-   _base                 = Amount.new _median_history_price.base
-   _quote                = Amount.new _median_history_price.quote
+   _base                 = Steem::Type::Amount.new _median_history_price.base
+   _quote                = Steem::Type::Amount.new _median_history_price.quote
    SBD_Median_Price      = _base.to_f / _quote.to_f
 
    # read the reward funds. `get_reward_fund` takes one
@@ -258,7 +258,7 @@ begin
 
    _reward_fund   = Condenser_Api.get_reward_fund("post").result
    Recent_Claims  = _reward_fund.recent_claims.to_i
-   Reward_Balance = Amount.new _reward_fund.reward_balance
+   Reward_Balance = Steem::Type::Amount.new _reward_fund.reward_balance
 
 rescue => error
    # I am using `Kernel::abort` so the script ends when
