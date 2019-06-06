@@ -12,7 +12,7 @@ utopian.pay
 All examples from this tutorial can be found as fully functional scripts on GitHub:
 
 * [SteemRubyTutorial](https://github.com/krischik/SteemRubyTutorial)
-* radiator sample code: [Steem-Print-SSC-Table-One.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-SSC-Table-One.rb).
+* radiator sample code: [Steem-Print-SSC-Table-First.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-SSC-Table-First.rb).
 
 ### radiator
 
@@ -37,13 +37,6 @@ This tutorial shows how to interact with the Steem blockchain, Steem database an
 
 <center>![img_train.png](https://cdn.steemitimages.com/DQmSpZxwXGzzVWmAmWHuq4i5Q1vcG7vAPSM8dhqJzq2UmXs/img_train.png)</center>
 
-There are two main components to each contract:
-
-* The contract source code written in Java Script
-* A collection of database tables where the contract can store it's data.
-
-In addition to those there is a small set of meta data like the owner and hash code of the contract.
-
 In this particular chapter you learn how to read a single row from the Steem Engine database tables.
 
 ## Requirements
@@ -63,16 +56,16 @@ For reader with programming experience this tutorial is **basic level**.
 
 ## Tutorial Contents
 
-Steem Engine allows users to add  token and contacts to the steem block chain. Currently only three predefined contracts are know: _"tokens"_, _"market"_, and "steempegged". Additional contracts can bee added but you have to get into contact with the Steem Engine team.
+Steem Engine allows users to add  token and contacts to the steem block chain. Currently only three predefined contracts are know: _"tokens"_, _"market"_, and "steempegged". Each contract has one or more database table to store their data.
 
 <center>![img_steem-engine_overview.png](https://cdn.steemitimages.com/DQmQTATEmyZFm8cRspRNYin2CcdYvMRbg2rUe5Cs8ZAGh8s/img_steem-engine_overview.png)</center>
 
 In order to read the content of a table it is necessary to know the name of database tables to query. The [Steem-Print-Print-SSC-Contract.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Print-SSC-Contract.rb) from the [previous part of the tutorial](https://steemit.com/@krischik/using-steem-api-with-ruby-part-11) prints all data of a Steem Engine contract — including the database tables used by the contract.
 
-The table names are found in the aptly named attribute “tables”. Each table name is prefixed with their contract name. Presumably to makes then unique throughout the system. Here a list of the currently known tables names:
+The table names are found in the aptly named attribute “tables”. Each table name is prefixed with their contract name. Presumably to make them unique throughout the system. Here a list of the currently known tables names:
 
 | Unique name             | Contact    | Table            |
-+-------------------------+------------+------------------|
+|-------------------------|------------|------------------|
 |market_buyBook           |market      |buyBook           |
 |market_metrics           |market      |metrics           |
 |market_sellBook          |market      |sellBook          |
@@ -86,15 +79,17 @@ The table names are found in the aptly named attribute “tables”. Each table 
 
 ## Implementation using radiator
 
-As mentioned only **radiator** offers an API to access Steem Engine. For this **radiator** offerers a name space called `Radiator::SSC`
+As mentioned only **radiator** offers an API to access Steem Engine. For this **radiator** offerers a name space called `Radiator::SSC`. To access the database tables their are two methods: `Contracts.find_one` and `Contracts.find`. The latter will be described in the next part of the tutorial.
+
+Im this part of the tutorial`Contracts.find_one` is used to access the row of any table. The method has three mandatory parameters: `contract`, `table` and `query`:
+
+**contract**: The name of the contract. As mentione there are currently three known contracts: _"tokens"_, _"market"_, and _"steempegged"_.
+**table**: The name of the tables to query. See below.
+**query**: A list of column names and values. 
 
 -----
 
-The first row of any table can be read using the `Contracts.find_one` method which has three mandatory parameters: `contract`, `table` and `query`:
-
-**contract**: The name of the contract. There are currently three known contracts: _"tokens"_, _"market"_, and _"steempegged"_.
-**table**: The name of the tables to query.
-**query**: A list of column names and values. Left empty to query the first row.
+In order to just access the first row the query attribute is left empty and the result is just printed. There is no explicit  error message, if the query fails no data is returned.
 
 ```ruby
 if ARGV.length == 0 then
@@ -121,17 +116,32 @@ else
       }
    )
 
-   pp _row
+   if _row == nil then
+      puts "No data found, possible reasons:
+
+⑴ The contract does not exist
+⑵ The table does not exist
+⑶ The table is empty
+"
+   else
+      pp _row
+   end
 end
 ```
 
 -----
 
-**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-SSC-Table-One.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-SSC-Table-One.rb).
+**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-SSC-Table-First.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-SSC-Table-First.rb).
 
-The output of the command (for the steem account) looks identical to the previous output:
+The output of the command for the table “tokens” of the contract “tokens” is:
 
-<center>![Screenshot at XXXXX.png](https://files.steempeak.com/file/steempeak/krischik/3dURm96L-ScreenshotXXXXX.png)</center>
+<center>![Screenshot at Jun 06 20-03-31.png](https://cdn.steemitimages.com/DQmdYuAfc8rttHTsSEMnszsNYHGHtvaFZJNdzDyzELYb79K/Screenshot%20at%20Jun%2006%2020-03-31.png)</center>
+
+The output of the command for the table “balances” of the contract “tokens” is:
+
+![Screenshot at Jun 06 20-06-39.png](https://cdn.steemitimages.com/DQmax2zKBNPHcrqbK9NPErXtjHRtzxghnDHwrcgGyYMXPNt/Screenshot%20at%20Jun%2006%2020-06-39.png)
+
+From those output you can learn the names of the columns of the database and both tables will be used to update the  [Steem-Print-Balances.rb on GitHub](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb) script to print the Steem Engine Token in addition to Steem, Steem Dollar and VESTS.
 
 # Curriculum
 
@@ -145,7 +155,7 @@ The output of the command (for the steem account) looks identical to the previou
 
 ## Next tutorial
 
-* [Using Steem-API with Ruby Part 13](https://steemit.com/@krischik/using-steem-api-with-ruby-part-13)
+* [Using Steem-API with Ruby Part 13](https://steemit.com/@krischik/using-steem-api-with-ruby-part-14)
 
 ## Proof of Work
 
