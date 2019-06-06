@@ -42,7 +42,7 @@ end
 
 if ARGV.length == 0 then
    puts "
-Steem-Print-SSC-Table-Sample — Print first 10 rows of a steem engine table
+Steem-Print-SSC-Table-Sample — Print first row of a steem engine table.
 
 Usage:
    Steem-Print-SSC-Table-Sample contract_name table_name
@@ -54,7 +54,8 @@ else
    _contract = ARGV[0]
    _table = ARGV[1]
 
-   # the query attribute is mandantory. Leave a
+   # the query attribute is mandantory, supply an empty query
+   # to receive the first row.
 
    _row = Contracts.find_one(
       contract: _contract,
