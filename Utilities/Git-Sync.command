@@ -27,8 +27,8 @@
 # confict within the pull requests.
 #
 
-setopt No_XTrace
 setopt Err_Exit
+setopt No_XTrace
 
 local Current_Branch=$(git branch | grep "*" | cut -d ' ' -f2)
 
