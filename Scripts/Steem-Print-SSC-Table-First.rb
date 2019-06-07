@@ -64,7 +64,16 @@ else
       }
    )
 
-   pp _row
+   if _row == nil then
+      puts "No data found, possible reasons:
+
+⑴ The contract does not exist
+⑵ The table does not exist
+⑶ The table is empty
+"
+   else
+      pp _row
+   end
 end
 
 ############################################################ {{{1 ###########
