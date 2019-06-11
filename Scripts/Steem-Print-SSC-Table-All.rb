@@ -51,34 +51,37 @@ if ARGV.length == 0 then
 Steem-Print-SSC-Table-All — Print rows from a steem engine table.
 
 Usage:
-   Steem-Print-SSC-Table-All contract_name table_name [column_name column_value]
+   Steem-Print-SSC-Table-All contract_name table_name [column_name column_value]…
 
       contract_name  name of contract to which the table belongs
       table_name     table name to print rows from
       column_name    column name to filter result by (optional)
       column_value   value to filter result by (optional)
 
-      If column_name and column_value are left out print all rows.
+   If column_name and column_value are left out print all rows.
+
+   If more then one column_name and column_value pair is given then print
+   rows which match all the column_value exactly.
 "
-elsif not [2,4].include? ARGV.length then
-   puts "You need to pass either 2 or 4 parameter.".red
 else
    # read arguments from command line. There are two
    # options:
    #
-   # 2 parameter: print all rows from a database table.
-   # 4 parameter: print rows from database which match
-   #              the criteria.
+   #   When two parameter are given then print all rows
+   #   from a database table.
+   #
+   #   more then two parameter are given then print the
+   #   rows from database which match the criteria given.
 
-   _contract = ARGV[0]
-   _table = ARGV[1]
+   _contract = ARGV.shift
+   _table = ARGV.shift
    _query = {}
 
-   if ARGV.length == 4 then
+   while ARGV.length >= 2 do
       # the query parameter is a hash table with column
       # names as key and column values as value.
-
-      _query[ARGV[2]] = ARGV[3]
+      #
+      _query[ARGV.shift] = ARGV.shift
    end
 
    _current = 0
@@ -88,15 +91,32 @@ else
          table: _table,
          query: _query,
          limit: Query_Limit,
-         offset: _current
+         offset: _current,
+         descending: false
       )
-   break if _rows.length == 0
+
+      # Exit loop when no result set is returned.
+      #
+   break if (not _rows) || (_rows.length == 0)
       pp _rows
 
+      # Move current by the actual amount of rows returned
+      #
       _current = _current + _rows.length
    end
 
-   puts "Found %1$d rows".green % _current
+   # at the end of the loop _current holds the total amount
+   # of rows returned. If nothing was found _current is 0.
+   #
+   if _current == 0 then
+      puts "No data found, possible reasons:".red + "
+   ⑴ The contract doesn't exist
+   ⑵ The table doesn't exist
+   ⑶ The query doesn't match any rows
+   ⑷ The table is empty"
+   else
+      puts "Found %1$d rows".green % _current
+   end
 end
 
 ############################################################ {{{1 ###########
