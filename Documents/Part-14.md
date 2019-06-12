@@ -3,7 +3,7 @@
 utopian-io tutorials ruby steem-api programming
 utopian.pay
 
-<center>![Steemit_Ruby_Engine.png](https://cdn.steemitimages.com/DQmR1jWexK1B1gGwUgcVdGtwRkAZPZ5rUwBXBt6x55TMPjY/Steemit_Ruby_Engine.png)</center>
+<center>![Steemit_Ruby_Engine.png](https://cdn.steemitimages.com/DQmZXUaUsSUXSqSS33U19NvTAG84Sc9NEY77nfB1kXD3N4F/Steemit_Ruby_Engine.png)</center>
 
 ## Repositories
 
@@ -23,7 +23,7 @@ All examples from this tutorial can be found as fully functional scripts on GitH
 
 ### Steem Engine
 
-<center>![steem-engine_logo-horizontal-dark.png](https://cdn.steemitimages.com/DQmcuU8q2NnZjUcj74ChEQDsUBdE4LNc8t9LpucE25TP7Sf/steem-engine_logo-horizontal-dark.png)</center>
+<center>![steem-engine_logo-horizontal-dark.png](https://cdn.steemitimages.com/DQmX4qGaoCAVRSjMC5ZyCwgcQKXqbKM3KqwuBUMH1qLxXFz/steem-engine_logo-horizontal-dark.png)</center>
 
 * Project Name: Steem Engine
 * Home Page: [https://steem-engine.com](https://steem-engine.com)
@@ -35,7 +35,7 @@ All examples from this tutorial can be found as fully functional scripts on GitH
 
 This tutorial shows how to interact with the Steem blockchain, Steem database and Steem Engine using Ruby. When accessing Steem Engine using Ruby their only one APIs available to chose: **radiator**.
 
-<center>![img_train.png](https://cdn.steemitimages.com/DQmSpZxwXGzzVWmAmWHuq4i5Q1vcG7vAPSM8dhqJzq2UmXs/img_train.png)</center>
+<center>![img_train-dark.png](https://cdn.steemitimages.com/DQmQjPngbfPaKwQ9VEjZcGQPWkFsSXPbvssuPGzuasmDjzA/img_train-dark.png)</center>
 
 In this particular chapter you learn how to read a create a query and return all row from the Steem Engine database tables which matches this query.
 
@@ -75,20 +75,20 @@ Steem Engine allows users to add tokens and contacts to the steem block chain. C
 
 As mentioned only **radiator** offers an API to access Steem Engine. For this **radiator** offerers a name space called `Radiator::SSC`. To access the database tables their are two methods: `Contracts.find_one` and `Contracts.find`. The former was described in the previous part of the tutorial.
 
-Im this part of the tutorial`Contracts.find` is used to access the selection of rows of any table. The method has three mandatory parameters: `contract`, `table` and `query`:
+Im this part of the tutorial `Contracts.find` is used to access a selection of rows of any table. The method has three mandatory parameters: `contract`, `table` and `query` and three optional paramater `limit`, `offset` and `descending`:
 
-| parameter | description |
-|-----|----------|
-|**contract** |The name of the contract. |
-|**table** |The name of the tables to query. |
-|**query** |A list of column names and values. |
-|**limit** |maximum amount of rows to be returned. |
-|**offset** |offset of the first row to be returned. |
-|**descending** |set order to accending or decending. |
+| parameter     | description                            |
+|---------------|----------------------------------------|
+|**contract**   |The name of the contract.               |
+|**table**      |The name of the tables to query.        |
+|**query**      |A list of column names and values.      |
+|**limit**      |maximum amount of rows to be returned.  |
+|**offset**     |offset of the first row to be returned. |
+|**descending** |set order to accending or decending.    |
 
 -----
 
-Amount of rows read from database in a single query. If the overall results exceeds this limit then make multiple queries. 1000 seem to be the standard for Steem queries.
+The amount of rows read from database in a single query. If the overall results exceeds this limit then additional queries are made to get the full result set. One thousand seem to be the standard for Steem queries.
 
 ```ruby
 Query_Limit = 1000
@@ -96,9 +96,10 @@ Query_Limit = 1000
 
 Read arguments from command line. There are two options:
 
-When two parameter are given then print all rows from a database table.
+* When two parameter are given then print all rows from a database table.
+* When more then two parameter are given then print the rows from database which match the criteria given.
 
-When more then two parameter are given then print the rows from database which match the criteria given.
+If an 
 
 ```ruby
    _contract = ARGV.shift
@@ -113,7 +114,7 @@ When more then two parameter are given then print the rows from database which m
    end
 ```
 
-Steem Engine uses a simpler but more error prone numeric index to load batches of rows. It's easier as only a numeric index is used to keep track of the start row. But it will lead to dupplicates and missing rows if rows are added or deleted while itterating over the result set.
+Steem Engine uses a simpler but more error prone numeric index to load the rows in batches. It's easier as only a numeric index is used to keep track of the start row. But it will lead to duplicate and missing rows if rows are added or deleted while iterating over the result set.
 
 ```ruby
    _current = 0
@@ -127,7 +128,7 @@ Steem Engine uses a simpler but more error prone numeric index to load batches o
          descending: false
       )
       
-      # exit loop when no resutl set is returned
+      # exit loop when no result set is returned
       #
    break if (not _rows) || (_rows.length == 0)
       pp _rows
@@ -160,13 +161,21 @@ end
 
 ### The »params« table
 
-The 
+<center>![Screenshot at Jun 11 16-06-21.png](https://cdn.steemitimages.com/DQmV8ww1K9RZ4ZhjudRoNFzGXNNgu9s3i9LEUai1Uj5n2sa/Screenshot%20at%20Jun%2011%2016-06-21.png)</center>
 
 ### The »tokens« table
 
+<center>![Screenshot at Jun 12 09-49-02.png](https://cdn.steemitimages.com/DQmPJJ95Kb45wgJ7g83tD9NwfQJW4Aa9F9eULn51Fn6gsTi/Screenshot%20at%20Jun%2012%2009-49-02.png)</center>
+
 ### The »balances« table 
 
+<center>![Screenshot at Jun 12 10-12-35.png](https://cdn.steemitimages.com/DQmf7z578zzzUxxSmUQcn1AibsAhSJEt71Q3Mswefp2uJ2q/Screenshot%20at%20Jun%2012%2010-12-35.png)</center>
+
+<center>![Screenshot at Jun 12 10-09-20.png](https://cdn.steemitimages.com/DQmeevsJAxhStZmYQQupuedvK7NPkVS85toEE2e2i8K92pA/Screenshot%20at%20Jun%2012%2010-09-20.png)</center>
+
 ### The »metrics« table 
+
+<center>![Screenshot at Jun 12 10-14-37.png](https://cdn.steemitimages.com/DQmXPQhdpA92fu9fHcWh1qMTNgoKYSo2YdTQnxBGS5zxxWr/Screenshot%20at%20Jun%2012%2010-14-37.png)</center>
 
 # Curriculum
 
@@ -199,6 +208,6 @@ The
 
 <center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png?1) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png?1) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png?1) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png?1) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png?1) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png?1) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png?1)</center>
 
-<!-- vim: set wrap tabstop=8 shiftwidth=3 softtabstop=3 noexpandtab : -->
+<!-- vim: set wrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab : -->
 <!-- vim: set textwidth=0 filetype=markdown foldmethod=marker nospell : -->
-<!-- vim: set spell spelllang=en_gb fileencoding=utf-8 : -->
+<!-- vim: set spell spelllang=en_gb fileencoding=utf-8 : -->:

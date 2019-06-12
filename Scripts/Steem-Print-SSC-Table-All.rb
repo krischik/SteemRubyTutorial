@@ -63,6 +63,8 @@ Usage:
    If more then one column_name and column_value pair is given then print
    rows which match all the column_value exactly.
 "
+elsif ARGV.length & 1 != 0 then
+   puts "Please supply an even amount of parameter".red
 else
    # read arguments from command line. There are two
    # options:
@@ -72,7 +74,7 @@ else
    #
    #   more then two parameter are given then print the
    #   rows from database which match the criteria given.
-
+   #
    _contract = ARGV.shift
    _table = ARGV.shift
    _query = {}
