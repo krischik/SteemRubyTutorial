@@ -164,6 +164,6 @@ The 2nd important attribute is the  table attribute the end of the output which 
 
 <center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png?1) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png?1) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png?1) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png?1) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png?1) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png?1) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png?1)</center>
 
-<!-- vim: set wrap tabstop=8 shiftwidth=3 softtabstop=3 noexpandtab : -->
+<!-- vim: set wrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab : -->
 <!-- vim: set textwidth=0 filetype=markdown foldmethod=marker nospell : -->
 <!-- vim: set spell spelllang=en_gb fileencoding=utf-8 : -->
