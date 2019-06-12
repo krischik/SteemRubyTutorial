@@ -3,7 +3,7 @@
 utopian-io tutorials ruby steem-api programming
 utopian.pay
 
-<center>![Steemit_Ruby_Engine.png](https://cdn.steemitimages.com/DQmZXUaUsSUXSqSS33U19NvTAG84Sc9NEY77nfB1kXD3N4F/Steemit_Ruby_Engine.png)</center>
+<center>![Steemit_Ruby_Engine.jpg](https://cdn.steemitimages.com/DQmRS8uYnM3h7vdZywWSqKqaU8HqZH2TpuH7KC2P2RK3Ncf/Steemit_Ruby_Engine.jpg)</center>
 
 ## Repositories
 
