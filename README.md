@@ -17,3 +17,4 @@ A tutorial for the steem-ruby and radiator aplication programming interfaces.
 11. [Using Mechanize to improve performance](Documents/Part-11.md)
 12. [Print SteemEngine Contracts](Documents/Part-12.md)
 13. [Print SteemEngine Tables](Documents/Part-13.md)
+13. [Query specific rows from a Steem Engine Table](Documents/Part-14.md)

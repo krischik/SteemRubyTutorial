@@ -20,11 +20,28 @@ function Comment_To_Makdown () range
     execute a:firstline . ',' . a:lastline . 'join'
 endfunction
 
+function SteemIt_To_Wiki () 
+   0
+   /\VProof of Work/,$ delete
+   0
+   /\Vutopian.pay/ delete
+   0
+   /\Vutopian-io tutorials/,+1 delete
+   0
+   /# Using Steem-API with/,+1 delete
+
+   %s/<center>//ge
+   %s/<\/center>//ge
+endfunction
+
 command! -range CommentToMakdown <line1>,<line2>call Comment_To_Makdown ()
+command!        SteemItToWiki                   call SteemIt_To_Wiki ()
 
 41vmenu Plugin.&Fix.Comment\ To\ &Makdown<Tab>F12m :CommentToMakdown<CR>
+41menu  Plugin.&Fix.SteemIt\ To\ &Wiki<Tab>F12w    :SteemItToWiki<CR>
 
 vmap <F12>m :CommentToMakdown<CR>
+map  <F12>w :SteemItToWiki<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""" {{{1 """""""""""
 " vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 noexpandtab textwidth=96 :
