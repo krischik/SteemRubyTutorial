@@ -1,7 +1,8 @@
 # Steem Ruby Tutorial
 
-A tutorial for the steem-ruby and radiator aplication programming interfaces.
+A tutorial for the steem-ruby and radiator application programming interfaces.
 
+![Steemit_Ruby_Engine.png](https://cdn.steemitimages.com/DQmR1jWexK1B1gGwUgcVdGtwRkAZPZ5rUwBXBt6x55TMPjY/Steemit_Ruby_Engine.png)
 ## Chapter
 
 1. [Print Account Informations](Documents/Part-01.md)
