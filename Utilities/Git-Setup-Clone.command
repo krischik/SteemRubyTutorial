@@ -20,6 +20,10 @@ setopt No_XTrace
 setopt No_Err_Exit
 
 git lfs update
+git config "push.default"       "current"
+
+git submodule add -b master "https://github.com/krischik/SteemRubyTutorial.wiki.git" "Wiki"
+
 
 for I in "." "./Wiki"; do
     pushd "${I}"
@@ -28,7 +32,6 @@ for I in "." "./Wiki"; do
         git config "user.name"          "Martin Krischik"
         git config "user.email"         "krischik@users.sourceforge.net"
         git config "credential.helper"  "store"
-        git config "push.default"       "current"
 
         git branch --set-upstream-to="remotes/origin/master"            "master"
         git branch --set-upstream-to="remotes/origin/develop"           "develop"
