@@ -1,0 +1,4 @@
+[submodule "Wiki"]
+	path = Wiki
+	url = https://github.com/krischik/SteemRubyTutorial.wiki.git
+	branch = master
