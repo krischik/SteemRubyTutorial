@@ -19,9 +19,10 @@
 setopt No_XTrace
 setopt No_Err_Exit
 
+git lfs update
+
 for I in "." "./Wiki"; do
     pushd "${I}"
-        git lfs update
         git flow init
 
         git config "user.name"          "Martin Krischik"
