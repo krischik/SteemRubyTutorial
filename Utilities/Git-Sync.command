@@ -43,7 +43,6 @@ git merge       "FETCH_HEAD"
 git checkout    "develop"
 git merge       "FETCH_HEAD"
 
-# git push --tags
 git checkout    "${Current_Branch}"
 git merge       --no-ff "develop"
 git stash pop
