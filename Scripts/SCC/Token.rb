@@ -26,35 +26,88 @@ require 'pp'
 require 'colorize'
 require 'contracts'
 require 'radiator'
+require 'json'
 
 ##
 #
 module SCC
-   class Token
+   class Token < SCC::Steem_Engine
       include Contracts::Core
       include Contracts::Builtin
 
+      attr_reader :symbol, 
+         :issuer, 
+         :name, 
+         :metadata, 
+         :precision, 
+         :maxSupply, 
+         :supply, 
+         :circulatingSupply, 
+         :loki
+
       public
 
-         def find (String _name)         
-            _contract = Contracts.contract _name
+         ##
+         # create instance form Steem Engine JSON object.
+         #
+         # @param [Hash]
+         #    JSON object from contract API.
+         #    
+         Contract Any => nil
+         def initialize(token)
+            super(:symbol, token.symbol)
+
+            @issuer              = token.issuer
+            @name                = token.name
+            @metadata            = JSON.parse(token.metadata)
+            @precision           = token.precision
+            @maxSupply           = token.maxSupply
+            @supply              = token.supply
+            @circulatingSupply   = token.circulatingSupply
+            @loki                = token["$loki"]
+
+            return
          end
 
-      private 
-         def self.contracts
-            # create instance to the steem condenser API which
-            # will give us access to the median history price
+      class << self
+         ##
+         #
+         #  @param [String] name
+         #     name of contract
+         #  @return [SCC::Contract]
+         #     contract found
+         #
+         Contract String => SCC::Token
+         def find (name)
+            _token = Steem_Engine.contracts_api.find_one(
+               contract: "tokens",
+               table: "tokens",
+               query: {
+                  "symbol": name
+               })
 
-            @contracts ||= Radiator::SSC::Contracts.new
+            return SCC::Token.new _token
+         end # find
+         ##
+         #
+         #  @param [String] name
+         #     name of contract
+         #  @return [SCC::Contract]
+         #     contract found
+         #
+         Contract String => ArrayOf[SCC::Token]
+         def all
+            _tokens = Steem_Engine.contracts_api.find(
+               contract: "tokens",
+               table: "tokens",
+               query: {
+               })
 
-            return @contracts 
-         rescue => error
-            # I am using Kernel::abort so the code snipped
-            # including error handler can be copy pasted into other
-            # scripts
-
-            Kernel::abort("Error reading global properties:\n".red + error.to_s)
-         end #contracts
+            return _tokens.map do |_token|
+               SCC::Token.new _token
+            end
+         end # find
+      end # self
    end # Token
 end # SCC
 

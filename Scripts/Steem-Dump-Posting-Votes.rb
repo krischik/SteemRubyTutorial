@@ -152,85 +152,87 @@ class Vote < Steem::Type::BaseType
          ]
    end
 
-   ##
-   # Print a list a vote values:
-   #
-   # 1. Loop over all votes.
-   # 2. convert the vote JSON object into the ruby `Vote`
-   #    class.
-   # 3. print as ansi strings.
-   #
-   # @param [Array<Hash>] votes
-   #     list of votes
-   #
-   Contract ArrayOf[HashOf[String => Or[String, Num]] ] => nil
-   def self.print_list (votes)
-      # used to calculate the total vote value
-      _total_estimate = 0.0
+   class << self
+      ##
+      # Print a list a vote values:
+      #
+      # 1. Loop over all votes.
+      # 2. convert the vote JSON object into the ruby `Vote`
+      #    class.
+      # 3. print as ansi strings.
+      #
+      # @param [Array<Hash>] votes
+      #     list of votes
+      #
+      Contract ArrayOf[HashOf[String => Or[String, Num]] ] => nil
+      def print_list (votes)
+         # used to calculate the total vote value
+         _total_estimate = 0.0
 
-      votes.each do |_vote|
-         _vote = Vote.new _vote
+         votes.each do |_vote|
+            _vote = Vote.new _vote
 
-         puts _vote.to_ansi_s
+            puts _vote.to_ansi_s
 
-         # add up extimate
-         _total_estimate = _total_estimate + _vote.estimate
-      end
-
-      # print the total estimate after the last vote
-      puts (
-         "Total vote value |          |" +
-         "%1$10.3f SBD".colorize(
-            if _total_estimate > 0.0005 then
-               :green
-            elsif _total_estimate < -0.0005 then
-               :red
-            else
-               :white
-            end
-         ) +
-         " |           |                 |                     |") % [
-            _total_estimate
-         ]
-
-      return
-   end
-
-   ##
-   # Print the votes from a postings given as URLs:
-   #
-   # 1. Extract the posting ID and author name from the
-   #    URL with standard string operations.
-   # 2. Print a short header
-   # 3. Request the list of votes from `Condenser_Api`
-   #    using `get_active_votes`
-   # 4. print the votes.
-   #
-   # @param [String] url
-   #     URL of the posting.
-   #
-   Contract String => nil
-   def self.print_url (url)
-      _slug              = url.split('@').last
-      _author, _permlink = _slug.split('/')
-
-      puts ("Post Author      : " + "%1$s".blue) % _author
-      puts ("Post ID          : " + "%1$s".blue) % _permlink
-      puts ("Voter name       |  percent |         value |    weight |         rshares |    vote date & time |")
-      puts ("-----------------+----------+---------------+-----------+-----------------+---------------------+")
-
-      Condenser_Api.get_active_votes(_author, _permlink) do |votes|
-         if votes.length == 0 then
-            puts "No votes found.".yellow
-         else
-            Vote.print_list votes
+            # add up extimate
+            _total_estimate = _total_estimate + _vote.estimate
          end
-      rescue => error
-         Kernel::abort(("Error reading posting “%1$s”:\n".red + "%2$s") % [_permlink, error.to_s])
-      end
 
-      return
-   end
+         # print the total estimate after the last vote
+         puts (
+            "Total vote value |          |" +
+            "%1$10.3f SBD".colorize(
+               if _total_estimate > 0.0005 then
+                  :green
+               elsif _total_estimate < -0.0005 then
+                  :red
+               else
+                  :white
+               end
+            ) +
+            " |           |                 |                     |") % [
+               _total_estimate
+            ]
+
+         return
+      end # print_list
+
+      ##
+      # Print the votes from a postings given as URLs:
+      #
+      # 1. Extract the posting ID and author name from the
+      #    URL with standard string operations.
+      # 2. Print a short header
+      # 3. Request the list of votes from `Condenser_Api`
+      #    using `get_active_votes`
+      # 4. print the votes.
+      #
+      # @param [String] url
+      #     URL of the posting.
+      #
+      Contract String => nil
+      def print_url (url)
+         _slug              = url.split('@').last
+         _author, _permlink = _slug.split('/')
+
+         puts ("Post Author      : " + "%1$s".blue) % _author
+         puts ("Post ID          : " + "%1$s".blue) % _permlink
+         puts ("Voter name       |  percent |         value |    weight |         rshares |    vote date & time |")
+         puts ("-----------------+----------+---------------+-----------+-----------------+---------------------+")
+
+         Condenser_Api.get_active_votes(_author, _permlink) do |votes|
+            if votes.length == 0 then
+               puts "No votes found.".yellow
+            else
+               Vote.print_list votes
+            end
+         rescue => error
+            Kernel::abort(("Error reading posting “%1$s”:\n".red + "%2$s") % [_permlink, error.to_s])
+         end
+
+         return
+      end # print_url
+   end # self
 end
 
 begin

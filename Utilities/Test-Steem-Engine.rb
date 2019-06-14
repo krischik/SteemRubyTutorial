@@ -17,10 +17,13 @@
 ############################################################# }}}1 ##########
 
 require_relative '../Scripts/SCC/Contract'
+require_relative '../Scripts/SCC/Token'
 
-_tokens = SCC::Contract.new "tokens"
+pp SCC::Contract.find "tokens"
 
-pp _tokens
+pp SCC::Token.all
+
+pp SCC::Token.find "BEER"
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

@@ -39,19 +39,40 @@ module SCC
       attr_reader :name, :owner, :code, :codeHash, :tables
 
       public
-         
-         Contract String => nil
-         def initialize(_name)         
-            super(:contract, Steem_Engine.contracts_api.contract(_name))
-            
-            @name     = @value.name
-            @owner    = @value.owner 
-            @code     = @value.code
-            @codeHash = @value.codeHash
-            @tables   = @value.tables
+
+         ##
+         # create instance form Steem Engine JSON object.
+         #
+         # @param [Hash]
+         #    JSON object from contract API.
+         #    
+         Contract Any => nil
+         def initialize(contract)
+            super(:name, name)
+
+            @owner    = contract.owner
+            @code     = contract.code
+            @codeHash = contract.codeHash
+            @tables   = contract.tables
 
             return
          end
+
+      class << self
+         ##
+         #
+         #  @param [String] name
+         #     name of contract
+         #  @return [SCC::Contract]
+         #     contract found
+         #
+         Contract String => SCC::Contract
+         def find (name)
+            _contract = Steem_Engine.contracts_api.contract name
+
+            return SCC::Contract.new _contract
+         end
+      end # self
    end # Token
 end # SCC
 

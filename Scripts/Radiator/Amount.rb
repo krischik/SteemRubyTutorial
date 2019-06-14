@@ -38,7 +38,7 @@ require 'radiator'
 #
 module Radiator
    module Type
-      class Amount 
+      class Amount
          include Contracts::Core
          include Contracts::Builtin
 
@@ -282,8 +282,7 @@ module Radiator
                return Amount.to_amount(@amount.to_f / right.to_f, @asset)
             end
 
-         private
-
+         class << self
             ##
             # Helper factory method to create a new Amount from
             # an value and asset type.
@@ -295,9 +294,10 @@ module Radiator
             # @return [Amount]
             #     the value as amount
             Contract Float, String => Amount
-            def self.to_amount(value, asset)
+            def to_amount(value, asset)
                return Amount.new(value.to_s + " " + asset)
             end
+         end
       end # Amount
    end # Type
 end # Radiator

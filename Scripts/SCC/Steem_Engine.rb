@@ -26,6 +26,8 @@ require 'colorize'
 require 'contracts'
 require 'radiator'
 
+require_relative 'Steem_Engine'
+
 ##
 #
 module SCC
@@ -33,23 +35,24 @@ module SCC
       include Contracts::Core
       include Contracts::Builtin
 
-      protected
+      class << self
+         @api = nil
 
-         ##   
+         ##
          # Access to contracts interface
-         # 
+         #
          # @return ~
-         # 
+         #
          Contract None => Radiator::SSC::Contracts
-         def self.contracts_api
+         def contracts_api
             # create instance to the steem condenser API which
             # will give us access to the median history price
 
-            if @@api == nil then
-               @@api = Radiator::SSC::Contracts.new
+            if @api == nil then
+               @api = Radiator::SSC::Contracts.new
             end
 
-            return @@api 
+            return @api
          rescue => error
             # I am using Kernel::abort so the code snipped
             # including error handler can be copy pasted into other
@@ -57,11 +60,7 @@ module SCC
 
             Kernel::abort("Error creating contracts API :\n".red + error.to_s)
          end #contracts
-
-      private
-         
-         @@api = nil
-
+      end # self
    end # Token
 end # SCC
 
