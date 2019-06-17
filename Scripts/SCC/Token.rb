@@ -35,7 +35,8 @@ module SCC
       include Contracts::Core
       include Contracts::Builtin
 
-      attr_reader :symbol, 
+      attr_reader :key, :value,
+         :symbol, 
          :issuer, 
          :name, 
          :metadata, 
@@ -57,6 +58,7 @@ module SCC
          def initialize(token)
             super(:symbol, token.symbol)
 
+            @symbol              = token.symbol
             @issuer              = token.issuer
             @name                = token.name
             @metadata            = JSON.parse(token.metadata)

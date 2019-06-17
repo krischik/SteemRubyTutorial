@@ -36,7 +36,7 @@ module SCC
       include Contracts::Core
       include Contracts::Builtin
 
-      attr_reader :name, :owner, :code, :codeHash, :tables
+      attr_reader :key, :value, :name, :owner, :code, :codeHash, :tables
 
       public
 
@@ -48,8 +48,9 @@ module SCC
          #    
          Contract Any => nil
          def initialize(contract)
-            super(:name, name)
+            super(:name, contract.name)
 
+            @name     = contract.name
             @owner    = contract.owner
             @code     = contract.code
             @codeHash = contract.codeHash
