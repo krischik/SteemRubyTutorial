@@ -28,6 +28,8 @@ require 'contracts'
 require 'radiator'
 require 'json'
 
+require_relative 'Steem_Engine'
+
 module SCC
    ##
    #
@@ -59,11 +61,11 @@ module SCC
 
             @symbol              = balance.symbol
             @account             = balance.account
-            @balance             = balance.balance
-            @stake               = balance.stake
-            @delegatedStake      = balance.delegatedStake
-            @receivedStake       = balance.receivedStake
-            @pendingUnstake      = balance.pendingUnstake
+            @balance             = balance.balance.to_f
+            @stake               = balance.stake.to_f
+            @delegatedStake      = balance.delegatedStake.to_f
+            @receivedStake       = balance.receivedStake.to_f
+            @pendingUnstake      = balance.pendingUnstake.to_f
             @loki                = balance["$loki"]
 
             return
@@ -79,17 +81,35 @@ module SCC
          #
          Contract String => ArrayOf[SCC::Balance]
          def account (name)
-            _balances = Steem_Engine.contracts_api.find(
-               contract: "tokens",
-               table: "balances",
-               query: {
-                  "account": name
-               })
+            _retval = []
+            _current = 0
+            _query = {
+               "account": name
+            }
 
-            return _balances.map do |_balance|
-               SCC::Balance.new _balance
+            loop do
+               _balances = Steem_Engine.contracts_api.find(
+                  contract: "tokens",
+                  table: "balances",
+                  query: _query,
+                  limit: Steem_Engine.Query_Limit,
+                  offset: _current,
+                  descending: false)
+
+               # Exit loop when no result set is returned.
+               #
+            break if (not _balances) || (_balances.length == 0)
+               _retval += _balances.map do |_balance|
+                  SCC::Balance.new _balance
+               end
+
+               # Move current by the actual amount of rows returned
+               #
+               _current = _current + _balances.length
             end
-         end # find
+
+            return _retval
+         end # account
 
          ##
          #
@@ -100,17 +120,35 @@ module SCC
          #
          Contract String => ArrayOf[SCC::Balance]
          def symbol (name)
-            _balances = Steem_Engine.contracts_api.find(
-               contract: "tokens",
-               table: "balances",
-               query: {
-                  "symbol": name
-               })
+            _retval = []
+            _current = 0
+            _query = {
+               "symbol": name
+            }
 
-            return _balances.map do |_balance|
-               SCC::Balance.new _balance
+            loop do
+               _balances = Steem_Engine.contracts_api.find(
+                  contract: "tokens",
+                  table: "balances",
+                  query: _query,
+                  limit: Steem_Engine.Query_Limit,
+                  offset: _current,
+                  descending: false)
+
+               # Exit loop when no result set is returned.
+               #
+            break if (not _balances) || (_balances.length == 0)
+               _retval += _balances.map do |_balance|
+                  SCC::Balance.new _balance
+               end
+
+               # Move current by the actual amount of rows returned
+               #
+               _current = _current + _balances.length
             end
-         end # find
+
+            return _retval
+         end # symbol
       end # self
    end # Balance
 end # SCC

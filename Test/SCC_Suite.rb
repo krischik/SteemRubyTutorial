@@ -19,6 +19,7 @@
 require_relative '../Test/Contract_Test.rb'
 require_relative '../Test/Token_Test.rb'
 require_relative '../Test/Balance_Test.rb'
+require_relative '../Test/Metric_Test.rb'
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

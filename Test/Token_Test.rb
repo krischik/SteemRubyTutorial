@@ -16,19 +16,18 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-require_relative '../Scripts/SCC/Contract'
 require_relative '../Scripts/SCC/Token'
 require "test/unit"
  
 class Tokent_Test < Test::Unit::TestCase
-   def test_all
+   def test_all_01
       _test = SCC::Token.all
 
       assert_not_nil(_test, "There should be tokens" )
       assert_instance_of(Array, _test, "Tokens should be an array")
    end
 
-   def test_find
+   def test_find_01
       _test = SCC::Token.symbol "BEER"
 
       assert_not_nil(_test, "Token “BEER” should exist" )

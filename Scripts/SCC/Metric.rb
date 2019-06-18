@@ -33,19 +33,21 @@ require_relative 'Steem_Engine'
 module SCC
    ##
    #
-   class Token < SCC::Steem_Engine
+   class Metric < SCC::Steem_Engine
       include Contracts::Core
       include Contracts::Builtin
 
       attr_reader :key, :value,
          :symbol, 
-         :issuer, 
-         :name, 
-         :metadata, 
-         :precision, 
-         :maxSupply, 
-         :supply, 
-         :circulatingSupply, 
+         :volume, 
+         :volumeExpiration, 
+         :lastPrice, 
+         :lowestAsk, 
+         :highestBid, 
+         :lastDayPrice, 
+         :lastDayPriceExpiration, 
+         :priceChangeSteem, 
+         :priceChangePercent, 
          :loki
 
       public
@@ -57,82 +59,45 @@ module SCC
          #    JSON object from contract API.
          #    
          Contract Any => nil
-         def initialize(token)
-            super(:symbol, token.symbol)
+         def initialize(metric)
+            super(:symbol, metric.symbol)
 
-            @symbol              = token.symbol
-            @issuer              = token.issuer
-            @name                = token.name
-            @metadata            = JSON.parse(token.metadata)
-            @precision           = token.precision
-            @maxSupply           = token.maxSupply
-            @supply              = token.supply
-            @circulatingSupply   = token.circulatingSupply
-            @loki                = token["$loki"]
+            @symbol                    = metric.symbol
+            @volume                    = metric.volume.to_f
+            @volumeExpiration          = metric.volumeExpiration
+            @lastPrice                 = metric.lastPrice.to_f
+            @lowestAsk                 = metric.lowestAsk.to_f
+            @highestBid                = metric.highestBid.to_f
+            @lastDayPrice              = metric.lastPrice.to_f
+            @lastDayPriceExpiration    = metric.lastDayPriceExpiration
+            @priceChangeSteem          = metric.priceChangeSteem.to_f
+            @priceChangePercent        = metric.priceChangePercent
+            @loki                      = metric["$loki"]
 
             return
          end
 
       class << self
          ##
-         #  Get contract for given symbol
          #
          #  @param [String] name
          #     name of contract
-         #  @return [SCC::Contract]
+         #  @return [Array<SCC::Metric>]
          #     contract found
          #
-         Contract String => SCC::Token
+         Contract String => SCC::Metric
          def symbol (name)
-            _token = Steem_Engine.contracts_api.find_one(
-               contract: "tokens",
-               table: "tokens",
+            _metric = Steem_Engine.contracts_api.find_one(
+               contract: "market",
+               table: "metrics",
                query: {
                   "symbol": name
                })
 
-            return SCC::Token.new _token
-         end # find
-
-         ##
-         #  Get all token
-         #
-         #  @param [String] name
-         #     name of contract
-         #  @return [SCC::Contract]
-         #     contract found
-         #
-         Contract String => ArrayOf[SCC::Token]
-         def all
-            _retval = []
-            _current = 0
-            _query = {}
-
-            loop do
-               _tokens = Steem_Engine.contracts_api.find(
-                  contract: "tokens",
-                  table: "tokens",
-                  query: _query,
-                  limit: Steem_Engine.Query_Limit,
-                  offset: _current,
-                  descending: false)
-
-               # Exit loop when no result set is returned.
-               #
-            break if (not _tokens) || (_tokens.length == 0)
-               _retval += _tokens.map do |_token|
-                  SCC::Token.new _token
-               end
-
-               # Move current by the actual amount of rows returned
-               #
-               _current = _current + _tokens.length
-            end
-
-            return _retval
-         end # all
+            return SCC::Metric.new _metric
+         end # symbol
       end # self
-   end # Token
+   end # Metric
 end # SCC
 
 ############################################################ {{{1 ###########

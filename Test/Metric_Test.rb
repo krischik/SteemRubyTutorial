@@ -16,22 +16,15 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-require_relative '../Scripts/SCC/Balance'
+require_relative '../Scripts/SCC/Metric'
 require "test/unit"
  
-class Balance_Test < Test::Unit::TestCase
-   def test_account_01
-      _test = SCC::Balance.account "krischik"
-
-      assert_not_nil(_test, "There should be ballaces for account “krischik”" )
-      assert_instance_of(Array, _test, "The balances should be an array")
-   end
-
+class Metric_Test < Test::Unit::TestCase
    def test_symbol_01
-      _test = SCC::Balance.symbol "BEER"
+      _test = SCC::Metric.symbol "BEER"
 
-      assert_not_nil(_test, "There should be ballaces for token “BEER”" )
-      assert_instance_of(Array, _test, "Result should be of type «SCC::Balance»")
+      assert_not_nil(_test, "There should be a metric for token “BEER”" )
+      assert_instance_of(SCC::Metric, _test, "Result should be of type «SCC::Metric»")
    end
 end
 

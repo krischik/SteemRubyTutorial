@@ -26,8 +26,6 @@ require 'colorize'
 require 'contracts'
 require 'radiator'
 
-require_relative 'Steem_Engine'
-
 module SCC
    ##
    #
@@ -36,6 +34,15 @@ module SCC
       include Contracts::Builtin
 
       class << self
+         attr_reader :Query_Limit        
+
+         ##
+         # amount of rows read from database in a single query. If
+         # the overall results exceeds this limit then make multiple
+         # queries. 1000 seem to be the standard for Steem queries.
+         #
+         Query_Limit = 1000
+
          @api = nil
 
          ##
