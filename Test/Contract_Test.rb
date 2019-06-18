@@ -21,7 +21,7 @@ require "test/unit"
  
 class Contract_Test < Test::Unit::TestCase
    def test_find
-      _test = SCC::Contract.find "tokens"
+      _test = SCC::Contract.symbol "tokens"
 
       assert_not_nil(_test, "Contract “tokens” should exist" )
       assert_instance_of(SCC::Contract, _test, "Result should be of type «SCC::Contract»")
@@ -32,5 +32,5 @@ end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :

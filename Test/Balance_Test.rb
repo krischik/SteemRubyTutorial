@@ -16,63 +16,23 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the radiator gem. This is
-# only needed if you have both steem-api and radiator
-# installed.
+require_relative '../Scripts/SCC/Contract'
+require_relative '../Scripts/SCC/Balance'
+require "test/unit"
+ 
+class Balance_Test < Test::Unit::TestCase
+   def test_account_01
+      _test = SCC::Balance.account "krischik"
 
-gem "radiator", :require => "steem"
+      assert_not_nil(_test, "There should be ballaces for account “krischik”" )
+      assert_instance_of(Array, _test, "The balances should be an array")
+   end
 
-require 'pp'
-require 'colorize'
-require 'radiator'
+   def test_symbol_01
+      _test = SCC::Balance.symbol "BEER"
 
-begin
-   # create instance to the steem condenser API which
-   # will give us access to the median history price
-
-   Contracts = Radiator::SSC::Contracts.new
-
-rescue => error
-   # I am using Kernel::abort so the code snipped
-   # including error handler can be copy pasted into other
-   # scripts
-
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
-end
-
-if ARGV.length == 0 then
-   puts "
-Steem-Print-SSC-Table-Sample — Print first row of a steem engine table.
-
-Usage:
-   Steem-Print-SSC-Table-Sample contract_name table_name
-
-"
-else
-   # read arguments from command line
-
-   _contract = ARGV[0]
-   _table = ARGV[1]
-
-   # the query attribute is mandantory, supply an empty query
-   # to receive the first row.
-
-   _row = Contracts.find_one(
-      contract: _contract,
-      table: _table,
-      query: {
-      }
-   )
-
-   if _row == nil then
-      puts "No data found, possible reasons:
-
-⑴ The contract does not exist
-⑵ The table does not exist
-⑶ The table is empty
-"
-   else
-      pp _row
+      assert_not_nil(_test, "There should be ballaces for token “BEER”" )
+      assert_instance_of(Array, _test, "Result should be of type «SCC::Balance»")
    end
 end
 

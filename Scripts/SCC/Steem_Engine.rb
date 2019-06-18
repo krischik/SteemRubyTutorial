@@ -28,9 +28,9 @@ require 'radiator'
 
 require_relative 'Steem_Engine'
 
-##
-#
 module SCC
+   ##
+   #
    class Steem_Engine < Radiator::Type::Serializer
       include Contracts::Core
       include Contracts::Builtin
@@ -66,5 +66,5 @@ end # SCC
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :

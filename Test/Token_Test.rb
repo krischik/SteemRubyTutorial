@@ -29,7 +29,7 @@ class Tokent_Test < Test::Unit::TestCase
    end
 
    def test_find
-      _test = SCC::Token.find "BEER"
+      _test = SCC::Token.symbol "BEER"
 
       assert_not_nil(_test, "Token “BEER” should exist" )
       assert_instance_of(SCC::Token, _test, "Result should be of type «SCC::Token»")
@@ -40,5 +40,5 @@ end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :

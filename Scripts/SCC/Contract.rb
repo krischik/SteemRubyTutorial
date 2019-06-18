@@ -29,9 +29,9 @@ require 'radiator'
 
 require_relative 'Steem_Engine'
 
-##
-#
 module SCC
+   ##
+   #
    class Contract < SCC::Steem_Engine
       include Contracts::Core
       include Contracts::Builtin
@@ -68,7 +68,7 @@ module SCC
          #     contract found
          #
          Contract String => SCC::Contract
-         def find (name)
+         def symbol (name)
             _contract = Steem_Engine.contracts_api.contract name
 
             return SCC::Contract.new _contract
@@ -79,5 +79,5 @@ end # SCC
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :

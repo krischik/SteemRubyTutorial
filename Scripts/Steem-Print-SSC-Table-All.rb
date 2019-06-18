@@ -123,5 +123,5 @@ end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 ::

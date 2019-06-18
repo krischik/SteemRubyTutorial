@@ -31,19 +31,18 @@ require 'json'
 module SCC
    ##
    #
-   class Token < SCC::Steem_Engine
+   class Balance < SCC::Steem_Engine
       include Contracts::Core
       include Contracts::Builtin
 
       attr_reader :key, :value,
          :symbol, 
-         :issuer, 
-         :name, 
-         :metadata, 
-         :precision, 
-         :maxSupply, 
-         :supply, 
-         :circulatingSupply, 
+         :account, 
+         :balance, 
+         :stake, 
+         :delegatedStake, 
+         :receivedStake, 
+         :pendingUnstake, 
          :loki
 
       public
@@ -55,63 +54,65 @@ module SCC
          #    JSON object from contract API.
          #    
          Contract Any => nil
-         def initialize(token)
-            super(:symbol, token.symbol)
+         def initialize(balance)
+            super(:symbol, balance.symbol)
 
-            @symbol              = token.symbol
-            @issuer              = token.issuer
-            @name                = token.name
-            @metadata            = JSON.parse(token.metadata)
-            @precision           = token.precision
-            @maxSupply           = token.maxSupply
-            @supply              = token.supply
-            @circulatingSupply   = token.circulatingSupply
-            @loki                = token["$loki"]
+            @symbol              = balance.symbol
+            @account             = balance.account
+            @balance             = balance.balance
+            @stake               = balance.stake
+            @delegatedStake      = balance.delegatedStake
+            @receivedStake       = balance.receivedStake
+            @pendingUnstake      = balance.pendingUnstake
+            @loki                = balance["$loki"]
 
             return
          end
 
       class << self
          ##
-         #  Get contract for given symbol
          #
          #  @param [String] name
          #     name of contract
-         #  @return [SCC::Contract]
+         #  @return [Array<SCC::Balance>]
          #     contract found
          #
-         Contract String => SCC::Token
-         def symbol (name)
-            _token = Steem_Engine.contracts_api.find_one(
+         Contract String => ArrayOf[SCC::Balance]
+         def account (name)
+            _balances = Steem_Engine.contracts_api.find(
                contract: "tokens",
-               table: "tokens",
+               table: "balances",
                query: {
-                  "symbol": name
+                  "account": name
                })
 
-            return SCC::Token.new _token
+            return _balances.map do |_balance|
+               SCC::Balance.new _balance
+            end
          end # find
+
          ##
          #
          #  @param [String] name
          #     name of contract
-         #  @return [SCC::Contract]
+         #  @return [Array<SCC::Balance>]
          #     contract found
          #
-         Contract String => ArrayOf[SCC::Token]
-         def all
-            _tokens = Steem_Engine.contracts_api.find(
+         Contract String => ArrayOf[SCC::Balance]
+         def symbol (name)
+            _balances = Steem_Engine.contracts_api.find(
                contract: "tokens",
-               table: "tokens",
+               table: "balances",
                query: {
+                  "symbol": name
                })
 
-            return _tokens.map do |_token|
-               SCC::Token.new _token
+            return _balances.map do |_balance|
+               SCC::Balance.new _balance
             end
          end # find
       end # self
-   end # Token
+   end # Balance
 end # SCC
 
 ############################################################ {{{1 ###########
