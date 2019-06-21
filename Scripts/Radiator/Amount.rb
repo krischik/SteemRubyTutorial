@@ -186,31 +186,36 @@ module Radiator
                _vests = to_vests
 
                return (
-               "%1$15.3f %2$s".colorize(
-                  if @asset == SBD then
-                     :blue
-                  else
-                     :white
-                  end
-               ) + " " + "%3$15.3f %4$s".colorize(
-                  if @asset == STEEM then
-                     :blue
-                  else
-                     :white
-                  end
-               ) + " " + "%5$18.6f %6$s".colorize(
-                  if @asset == VESTS then
-                     :blue
-                  else
-                     :white
-                  end
-               )) % [
-                  _sbd.to_f,
-                  _sbd.asset,
-                  _steem.to_f,
-                  _steem.asset,
-                  _vests.to_f,
-                  _vests.asset]
+                  "%1$15.3f %2$s".colorize(
+                     if @asset == SBD then
+                        :blue
+                     else
+                        :white
+                     end
+                  ) +
+                  " " +
+                  "%3$15.3f %4$s".colorize(
+                     if @asset == STEEM then
+                        :blue
+                     else
+                        :white
+                     end
+                  ) +
+                  " " +
+                  "%5$18.6f %6$s".colorize(
+                     if @asset == VESTS then
+                        :blue
+                     else
+                        :white
+                     end
+                  )) % [
+                     _sbd.to_f,
+                     _sbd.asset,
+                     _steem.to_f,
+                     _steem.asset,
+                     _vests.to_f,
+                     _vests.asset
+                  ]
             end
 
             ##

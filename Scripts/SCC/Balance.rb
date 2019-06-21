@@ -119,9 +119,10 @@ module SCC
 
          ##
          # create a colorized string showing the amount in
-         # SDB, STEEM and VESTS. The actual value is colorized
-         # in blue while the converted values are colorized in
-         # grey (aka dark white).
+         # SDB, STEEM and the steem engine token. The
+         # actual value is colorized in blue while the
+         # converted values are colorized in grey (aka dark
+         # white).
          #
          # @return [String]
          #    formatted value

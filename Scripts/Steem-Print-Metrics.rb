@@ -27,35 +27,21 @@ require 'colorize'
 require 'contracts'
 require 'radiator'
 
-##
-# steem-ruby comes with a helpful Radiator::Type::Price
-# class to handle the SDB price. However
-# Radiator::Type::Price won't let you access any
-# attributes which makes using the class quite cumbersome.
-#
-# This class expands Radiator::Type::Price to add the
-# missing functions making it super convenient.
+# The Amount class is used in most Scripts so it was
+# moved into a separate file.
 
-module Radiator
-   module Type
-      class Price
-         include Contracts::Core
-         include Contracts::Builtin
+require_relative 'Radiator/Amount'
+require_relative 'Radiator/Price'
+require_relative 'SCC/Metric'
 
-         ##
-         # add the missing attribute reader.
-         #
-         attr_reader :amount, :base, :quote
+_metrics = SCC::Metric.all
 
-         public
+puts ("Token        |               highes Bid |               last price |            lowest asking |")
+puts ("-------------+--------------------------+--------------------------+--------------------------+")
 
-            def sbd_median_price ()
-               return @base.amount.to_f / @quote.amount.to_f
-            end
-
-      end # Price
-   end # Type
-end # Radiator
+_metrics.each do |_metrics|
+   puts _metrics.to_ansi_s
+end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

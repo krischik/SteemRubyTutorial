@@ -38,7 +38,6 @@ rescue => error
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
 
-
 if ARGV.length == 0 then
    puts "
 Steem-Dump-Method — Dump account infos from Steem database
@@ -55,8 +54,8 @@ elsif ARGV.length == 1 then
    # x = JsonRpc.get_methods(Query_Class)
    # x = JsonRpc.get_methods("Radiator::DatabaseApi")
 
-   # pp Api.method_names 
-   pp Database_Api.method_names 
+   # pp Api.method_names
+   pp Database_Api.method_names
 
 else
    # read arguments from command line
@@ -70,7 +69,7 @@ else
 
    # x = JsonRpc.get_signature(Query_Class)
    # x = JsonRpc.get_signature(Steem::DatabaseApi)
-   
+
 end
 
 ############################################################ {{{1 ###########

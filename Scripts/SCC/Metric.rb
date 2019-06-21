@@ -77,6 +77,56 @@ module SCC
             return
          end
 
+         ##
+         # create a colorized string showing the amount in
+         # SDB, STEEM and the steem engine token. The
+         # actual value is colorized in blue while the
+         # converted values are colorized in grey (aka dark
+         # white).
+         #
+         # @return [String]
+         #    formatted value
+         #
+         Contract None => String
+         def to_ansi_s
+            begin
+               return (
+                  "%1$-12s" +
+                  " | " +
+                  "%2$18.6f STEEM".colorize(
+                     if @highestBid > 0.000001 then
+                        :green
+                     else
+                        :white
+                     end
+                   ) +
+                   " | " +
+                   "%3$18.6f STEEM".colorize(
+                     if @lastPrice > 0.000001 then
+                        :blue
+                     else
+                        :white
+                     end
+                   ) +
+                   " | " +
+                   "%4$18.6f STEEM".colorize(
+                     if @lowestAsk > 0.000001 then
+                        :red
+                     else
+                        :white
+                     end )+
+                   " | "
+                   ) % [
+                     @symbol,
+                     @highestBid,
+                     @lastPrice,
+                     @lowestAsk
+                  ]
+            end
+
+            return _retval
+         end
+
       class << self
          ##
          #

@@ -54,7 +54,7 @@ elsif ARGV.length == 1 then
    # x = JsonRpc.get_methods(Query_Class)
    # x = JsonRpc.get_methods("Radiator::DatabaseApi")
 
-   pp Database_Api.methods 
+   pp Database_Api.methods
 
 else
    # read arguments from command line
@@ -68,7 +68,7 @@ else
 
    # x = JsonRpc.get_signature(Query_Class)
    # x = JsonRpc.get_signature(Steem::DatabaseApi)
-   
+
 end
 
 ############################################################ {{{1 ###########
