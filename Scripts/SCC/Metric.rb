@@ -38,16 +38,16 @@ module SCC
       include Contracts::Builtin
 
       attr_reader :key, :value,
-         :symbol, 
-         :volume, 
-         :volumeExpiration, 
-         :lastPrice, 
-         :lowestAsk, 
-         :highestBid, 
-         :lastDayPrice, 
-         :lastDayPriceExpiration, 
-         :priceChangeSteem, 
-         :priceChangePercent, 
+         :symbol,
+         :volume,
+         :volumeExpiration,
+         :lastPrice,
+         :lowestAsk,
+         :highestBid,
+         :lastDayPrice,
+         :lastDayPriceExpiration,
+         :priceChangeSteem,
+         :priceChangePercent,
          :loki
 
       public
@@ -57,7 +57,7 @@ module SCC
          #
          # @param [Hash]
          #    JSON object from contract API.
-         #    
+         #
          Contract Any => nil
          def initialize(metric)
             super(:symbol, metric.symbol)
@@ -81,11 +81,11 @@ module SCC
          ##
          #
          #  @param [String] name
-         #     name of contract
+         #     name of symbol
          #  @return [Array<SCC::Metric>]
-         #     contract found
+         #     metric found
          #
-         Contract String => SCC::Metric
+         Contract String => Or[SCC::Metric, nil]
          def symbol (name)
             _metric = Steem_Engine.contracts_api.find_one(
                contract: "market",
@@ -94,8 +94,45 @@ module SCC
                   "symbol": name
                })
 
+            raise KeyError, "Symbol «" + name + "» not found" if _metric == nil
+
             return SCC::Metric.new _metric
          end # symbol
+
+         ##
+         #  Get all token
+         #
+         #  @return [SCC::Metric]
+         #     metric found
+         #
+         Contract String => ArrayOf[SCC::Metric]
+         def all
+            _retval = []
+            _current = 0
+
+            loop do
+               _metric = Steem_Engine.contracts_api.find(
+                  contract: "market",
+                  table: "metrics",
+                  query: Steem_Engine::QUERY_ALL,
+                  limit: Steem_Engine::QUERY_LIMIT,
+                  offset: _current,
+                  descending: false)
+
+               # Exit loop when no result set is returned.
+               #
+            break if (not _metric) || (_metric.length == 0)
+               _retval += _metric.map do |_token|
+                  SCC::Metric.new _token
+               end
+
+               # Move current by the actual amount of rows returned
+               #
+               _current = _current + _metric.length
+            end
+
+            return _retval
+         end # all
       end # self
    end # Metric
 end # SCC

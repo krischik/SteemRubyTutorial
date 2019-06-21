@@ -28,33 +28,41 @@ require 'radiator'
 
 module SCC
    ##
+   #  Base class for all steem engine classes. This cales
+   #  holds an general constants and a lazy initialization
+   #  to the contracts API.
    #
    class Steem_Engine < Radiator::Type::Serializer
       include Contracts::Core
       include Contracts::Builtin
 
-      class << self
-         attr_reader :Query_Limit        
+      attr_reader :key, :value
 
-         ##
-         # amount of rows read from database in a single query. If
-         # the overall results exceeds this limit then make multiple
-         # queries. 1000 seem to be the standard for Steem queries.
-         #
-         Query_Limit = 1000
+      ##
+      # amount of rows read from database in a single query. If
+      # the overall results exceeds this limit then make multiple
+      # queries. 1000 seem to be the standard for Steem queries.
+      #
+      QUERY_LIMIT = 1000
+
+      ##
+      # query all rows of an table.
+      #
+      QUERY_ALL = {}
+
+      class << self
+         attr_reader :QUERY_ALL, :QUERY_LIMIT
 
          @api = nil
 
          ##
          # Access to contracts interface
          #
-         # @return ~
+         # @return [Radiator::SSC::Contracts]
+         #     the contracts API.
          #
          Contract None => Radiator::SSC::Contracts
          def contracts_api
-            # create instance to the steem condenser API which
-            # will give us access to the median history price
-
             if @api == nil then
                @api = Radiator::SSC::Contracts.new
             end

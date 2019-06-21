@@ -45,7 +45,7 @@ module SCC
          #
          # @param [Hash]
          #    JSON object from contract API.
-         #    
+         #
          Contract Any => nil
          def initialize(contract)
             super(:name, contract.name)

@@ -29,6 +29,8 @@ require 'radiator'
 require 'json'
 
 require_relative 'Steem_Engine'
+require_relative 'Metric'
+require_relative '../Radiator/Amount'
 
 module SCC
    ##
@@ -38,13 +40,13 @@ module SCC
       include Contracts::Builtin
 
       attr_reader :key, :value,
-         :symbol, 
-         :account, 
-         :balance, 
-         :stake, 
-         :delegatedStake, 
-         :receivedStake, 
-         :pendingUnstake, 
+         :symbol,
+         :account,
+         :balance,
+         :stake,
+         :delegatedStake,
+         :receivedStake,
+         :pendingUnstake,
          :loki
 
       public
@@ -54,7 +56,7 @@ module SCC
          #
          # @param [Hash]
          #    JSON object from contract API.
-         #    
+         #
          Contract Any => nil
          def initialize(balance)
             super(:symbol, balance.symbol)
@@ -69,6 +71,97 @@ module SCC
             @loki                = balance["$loki"]
 
             return
+         end
+
+         ##
+         # balance in steem.
+         #
+         # @return [Radiator::Amount]
+         #     the current value in steem
+         #
+         Contract None => Radiator::Type::Amount
+         def to_steem
+            _steem = if @symbol == "STEEMP" then
+               @balance
+            else
+               @balance * metric.lastPrice
+            end
+
+            return Radiator::Type::Amount.to_amount(
+               _steem,
+               Radiator::Type::Amount::STEEM)
+         end
+         ##
+         # balance in steem.
+         #
+         # @return [Radiator::Amount]
+         #     the current value in steem
+         #
+         Contract None => Radiator::Type::Amount
+         def to_sbd
+            return to_steem.to_sbd
+         end
+
+         ##
+         # The balance current market value
+         #
+         # @return [SCC::Metric]
+         #     the metrics instance
+         #
+         Contract None => SCC::Metric
+         def metric
+            if @metric == nil then
+               @metric = SCC::Metric.symbol @symbol
+            end
+
+            return @metric
+         end # metric
+
+         ##
+         # create a colorized string showing the amount in
+         # SDB, STEEM and VESTS. The actual value is colorized
+         # in blue while the converted values are colorized in
+         # grey (aka dark white).
+         #
+         # @return [String]
+         #    formatted value
+         #
+         Contract None => String
+         def to_ansi_s
+            begin
+               _steem = to_steem
+               _sbd   = to_sbd
+
+               _retval = (
+                  "%1$15.3f %2$s".white +
+                  " " +
+                  "%3$15.3f %4$s".white +
+                  " " +
+                  "%5$18.6f %6$s".blue) % [
+                  _sbd.to_f,
+                  _sbd.asset,
+                  _steem.to_f,
+                  _steem.asset,
+                  @balance,
+                  @symbol]
+            rescue KeyError
+               _na = "N/A"
+
+               _retval = (
+                  "%1$15s %2$s".white +
+                  " " +
+                  "%3$15s %4$5s".white +
+                  " " +
+                  "%5$18.6f %6$s".blue) % [
+                  _na,
+                  _na,
+                  _na,
+                  _na,
+                  @balance,
+                  @symbol]
+            end
+
+            return _retval
          end
 
       class << self
@@ -92,7 +185,7 @@ module SCC
                   contract: "tokens",
                   table: "balances",
                   query: _query,
-                  limit: Steem_Engine.Query_Limit,
+                  limit: SCC::Steem_Engine::QUERY_LIMIT,
                   offset: _current,
                   descending: false)
 
@@ -131,7 +224,7 @@ module SCC
                   contract: "tokens",
                   table: "balances",
                   query: _query,
-                  limit: Steem_Engine.Query_Limit,
+                  limit: Steem_Engine::QUERY_LIMIT,
                   offset: _current,
                   descending: false)
 
@@ -149,6 +242,41 @@ module SCC
 
             return _retval
          end # symbol
+
+         ##
+         #  Get all blances
+         #
+         #  @return [SCC::Balance]
+         #     token found
+         #
+         Contract String => ArrayOf[SCC::Balance]
+         def all
+            _retval = []
+            _current = 0
+
+            loop do
+               _balances = Steem_Engine.contracts_api.find(
+                  contract: "tokens",
+                  table: "balances",
+                  query: Steem_Engine::QUERY_ALL,
+                  limit: Steem_Engine::QUERY_LIMIT,
+                  offset: _current,
+                  descending: false)
+
+               # Exit loop when no result set is returned.
+               #
+            break if (not _balances) || (_balances.length == 0)
+               _retval += _balances.map do |_balance|
+                  SCC::Balance.new _balance
+               end
+
+               # Move current by the actual amount of rows returned
+               #
+               _current = _current + _balances.length
+            end
+
+            return _retval
+         end # all
       end # self
    end # Balance
 end # SCC

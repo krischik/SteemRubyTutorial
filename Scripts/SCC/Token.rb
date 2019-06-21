@@ -29,6 +29,7 @@ require 'radiator'
 require 'json'
 
 require_relative 'Steem_Engine'
+require_relative 'Metric'
 
 module SCC
    ##
@@ -38,14 +39,14 @@ module SCC
       include Contracts::Builtin
 
       attr_reader :key, :value,
-         :symbol, 
-         :issuer, 
-         :name, 
-         :metadata, 
-         :precision, 
-         :maxSupply, 
-         :supply, 
-         :circulatingSupply, 
+         :symbol,
+         :issuer,
+         :name,
+         :metadata,
+         :precision,
+         :maxSupply,
+         :supply,
+         :circulatingSupply,
          :loki
 
       public
@@ -55,7 +56,7 @@ module SCC
          #
          # @param [Hash]
          #    JSON object from contract API.
-         #    
+         #
          Contract Any => nil
          def initialize(token)
             super(:symbol, token.symbol)
@@ -72,6 +73,24 @@ module SCC
 
             return
          end
+
+         ##
+         # The tokens current market value
+         #
+         # @return [SCC::Metric]
+         #     the metrics instance
+         Contract None => SCC::Metric
+         def metric
+            if @metric == nil then
+               @metric = SCC::Metric.symbol @symbol
+            end
+
+            return @metric
+         end # metric
+
+      private
+
+         metric = nil
 
       class << self
          ##
@@ -106,14 +125,13 @@ module SCC
          def all
             _retval = []
             _current = 0
-            _query = {}
 
             loop do
                _tokens = Steem_Engine.contracts_api.find(
                   contract: "tokens",
                   table: "tokens",
-                  query: _query,
-                  limit: Steem_Engine.Query_Limit,
+                  query: Steem_Engine::QUERY_ALL,
+                  limit: Steem_Engine::QUERY_LIMIT,
                   offset: _current,
                   descending: false)
 

@@ -18,13 +18,35 @@
 
 require_relative '../Scripts/SCC/Metric'
 require "test/unit"
- 
+
 class Metric_Test < Test::Unit::TestCase
+   def test_all_01
+      # Thee “all” tests but considerable strain on the
+      # Steem Engine server so we only do them when
+      # explicitly requested
+      #
+      if Test_All then
+         _test = SCC::Metric.all
+
+         assert_not_nil(_test, "There should be metrics" )
+         assert_instance_of(Array, _test, "metric should be an array")
+
+         _metric = _test[0]
+
+         assert_not_nil(_metric, "First metric should exist" )
+         assert_instance_of(SCC::Metric, _metric, "First metric should be of type «SCC::Metric»")
+         assert_equal(:symbol, _metric.key, "First metric key should be «:symbol»")
+         assert_equal("ENG", _metric.value, "First metric value should be “ENG”")
+      end
+   end
+
    def test_symbol_01
       _test = SCC::Metric.symbol "BEER"
 
-      assert_not_nil(_test, "There should be a metric for token “BEER”" )
+      assert_not_nil(_test, "There should be a metric for metric “BEER”" )
       assert_instance_of(SCC::Metric, _test, "Result should be of type «SCC::Metric»")
+      assert_equal(:symbol, _test.key, "The metric key should be «:symbol»")
+      assert_equal("BEER", _test.value, "The metric value should be “BEER”")
    end
 end
 

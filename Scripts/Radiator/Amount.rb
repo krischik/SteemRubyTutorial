@@ -47,23 +47,22 @@ module Radiator
          #
          attr_reader :amount, :precision, :asset, :value
 
+         ##
+         # Asset string for VESTS
+         #
+         VESTS = "VESTS"
+
+         ##
+         # Asset string for STEEM
+         #
+         STEEM = "STEEM"
+
+         ##
+         # Asset string for Steem Backed Dollar
+         #
+         SBD = "SBD"
+
          public
-
-            ##
-            # Asset string for VESTS
-            #
-            VESTS = "VESTS"
-
-            ##
-            # Asset string for STEEM
-            #
-            STEEM = "STEEM"
-
-            ##
-            # Asset string for Steem Backed Dollar
-            #
-            SBD = "SBD"
-
             ##
             # return amount as float to be used for calculations
             #
@@ -117,7 +116,7 @@ module Radiator
                   when SBD
                      self.clone
                   when STEEM
-                     Amount.to_amount(@amount.to_f * SBD_Median_Price, SBD)
+                     Amount.to_amount(@amount.to_f * Amount.sbd_median_price, SBD)
                   when VESTS
                      self.to_steem.to_sbd
                   else
@@ -138,11 +137,11 @@ module Radiator
                return (
                case @asset
                   when SBD
-                     Amount.to_amount(@amount.to_f / SBD_Median_Price, STEEM)
+                     Amount.to_amount(@amount.to_f / Amount.sbd_median_price, STEEM)
                   when STEEM
                      self.clone
                   when VESTS
-                     Amount.to_amount(@amount.to_f * Conversion_Rate_Vests, STEEM)
+                     Amount.to_amount(@amount.to_f * Amount.conversion_rate_vests, STEEM)
                   else
                      raise ArgumentError, 'unknown asset type types'
                end)
@@ -163,7 +162,7 @@ module Radiator
                   when SBD
                      self.to_steem.to_vests
                   when STEEM
-                     Amount.to_amount(@amount.to_f / Conversion_Rate_Vests, VESTS)
+                     Amount.to_amount(@amount.to_f / Amount.conversion_rate_vests, VESTS)
                   when VESTS
                      self.clone
                   else
@@ -297,7 +296,72 @@ module Radiator
             def to_amount(value, asset)
                return Amount.new(value.to_s + " " + asset)
             end
-         end
+
+            ##
+            # create instance to the steem condenser API
+            # which will give us access to to the global
+            # properties and median history.
+            #
+            # return [Steem::CondenserApi]
+            #     The condensor API
+            #
+            Contract None => Radiator::CondenserApi
+            def condenser_api
+               if @condenser_api == nil then
+                  @condenser_api = Radiator::CondenserApi.new
+               end
+
+               return @condenser_api
+            rescue => error
+               # I am using Kernel::abort so the code
+               # snipped including error handler can be
+               # copy pasted into other scripts
+
+               Kernel::abort("Error creating condenser API :\n".red + error.to_s)
+            end # condenser_api
+
+            ##
+            # read the  median history value and Calculate
+            # the conversion Rate for Vests to steem backed
+            # dollar. We use the Amount class from Part 2
+            # to convert the string values into amounts.
+            #
+            # @return [Float]
+            #    Conversion rate Steem ⇔ SBD
+            #
+            Contract None => Num
+            def sbd_median_price
+               if @sbd_median_price == nil then
+                  _median_history_price = self.condenser_api.get_current_median_history_price.result
+                  _base                 = Radiator::Type::Amount.new _median_history_price.base
+                  _quote                = Radiator::Type::Amount.new _median_history_price.quote
+                  @sbd_median_price     = _base.to_f / _quote.to_f
+               end
+
+               return @sbd_median_price
+            end # sbd_median_price
+
+            ##
+            # read the global properties and calculate the
+            # conversion Rate for VESTS to steem. We use
+            # the Amount class from Part 2 to convert the
+            # string values into amounts.
+            #
+            # @return [Float]
+            #    Conversion rate Steem ⇔ VESTS
+            #
+            Contract None => Num
+            def conversion_rate_vests
+               if @conversion_rate_vests == nil then
+                  _global_properties        = self.condenser_api.get_dynamic_global_properties.result
+                  _total_vesting_fund_steem = Radiator::Type::Amount.new _global_properties.total_vesting_fund_steem
+                  _total_vesting_shares     = Radiator::Type::Amount.new _global_properties.total_vesting_shares
+                  @conversion_rate_vests    = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
+               end
+
+               return @conversion_rate_vests
+            end # conversion_rate_vests
+         end # self
       end # Amount
    end # Type
 end # Radiator

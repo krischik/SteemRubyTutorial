@@ -18,7 +18,7 @@
 
 require_relative '../Scripts/SCC/Contract'
 require "test/unit"
- 
+
 class Contract_Test < Test::Unit::TestCase
    def test_find_01
       _test = SCC::Contract.symbol "tokens"

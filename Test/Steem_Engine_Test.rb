@@ -16,16 +16,39 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-Test_All = ARGV[0] == "all"
+require_relative '../Scripts/SCC/Contract'
+require "test/unit"
+
+class Contract_Test < Test::Unit::TestCase
+   def test_new_01
+      _test = SCC::Steem_Engine.new(:test, "test")
+
+      assert_not_nil(_test, "Steem_Engine was createed" )
+      assert_instance_of(SCC::Steem_Engine, _test, "Result should be of type «SCC::Steem_Engine»")
+      assert_equal(:test, _test.key, "The key should be «:test»")
+      assert_equal("test", _test.value, "The value should be “test”")
+   end
+
+   def test_contracts_api_01
+      _test = SCC::Steem_Engine.contracts_api
+
+      assert_not_nil(_test, "Contracts API was createed" )
+      assert_instance_of(Radiator::SSC::Contracts, _test, "Contracts API should be of type «Radiator::SSC::Contracts»")
+   end
 
 
-require_relative '../Test/Radiator_Amount_Test.rb'
+   def test_query_limit_01
+      _test = SCC::Steem_Engine::QUERY_LIMIT
 
-require_relative '../Test/Steem_Engine_Test.rb'
-require_relative '../Test/Contract_Test.rb'
-require_relative '../Test/Token_Test.rb'
-require_relative '../Test/Balance_Test.rb'
-require_relative '../Test/Metric_Test.rb'
+      assert_equal(1000, _test, "The value of query_limit should be 1000")
+   end
+
+   def test_query_all_01
+      _test = SCC::Steem_Engine::QUERY_ALL
+
+      assert_equal({}, _test, "The value of query_all should be «{}»")
+   end
+end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
