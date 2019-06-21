@@ -52,15 +52,15 @@ else
    # read arguments from command line
 
    _contract = ARGV[0]
-   _table = ARGV[1]
+   _table    = ARGV[1]
 
    # the query attribute is mandantory, supply an empty query
    # to receive the first row.
 
    _row = Contracts.find_one(
       contract: _contract,
-      table: _table,
-      query: {
+      table:    _table,
+      query:    {
       }
    )
 

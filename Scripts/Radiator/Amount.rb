@@ -63,228 +63,239 @@ module Radiator
          SBD = "SBD"
 
          public
-            ##
-            # return amount as float to be used for calculations
-            #
-            # @return [Float]
-            #     actual amount as float
-            #
-            Contract None => Float
-            def to_f
-               return @amount.to_f
-            end
 
-            ##
-            # convert VESTS to level or "N/A" when the value
-            # isn't a VEST value.
-            #
-            # @return [String]
-            #     one of "Whale", "Orca", "Dolphin", "Minnow", "Plankton" or "N/A"
-            #
-            Contract None => String
-            def to_level
-               _value = @amount.to_f
+         ##
+         # return amount as float to be used for calculations
+         #
+         # @return [Float]
+         #     actual amount as float
+         #
+         Contract None => Float
 
-               return (
-               if @asset != VESTS then
-                  "N/A"
-               elsif _value > 1.0e9 then
-                  "Whale"
-               elsif _value > 1.0e8 then
-                  "Ocra"
-               elsif _value > 1.0e7 then
-                  "Dolphin"
-               elsif _value > 1.0e6 then
-                  "Minnow"
+         def to_f
+            return @amount.to_f
+         end
+
+         ##
+         # convert VESTS to level or "N/A" when the value
+         # isn't a VEST value.
+         #
+         # @return [String]
+         #     one of "Whale", "Orca", "Dolphin", "Minnow", "Plankton" or "N/A"
+         #
+         Contract None => String
+
+         def to_level
+            _value = @amount.to_f
+
+            return (
+            if @asset != VESTS then
+               "N/A"
+            elsif _value > 1.0e9 then
+               "Whale"
+            elsif _value > 1.0e8 then
+               "Ocra"
+            elsif _value > 1.0e7 then
+               "Dolphin"
+            elsif _value > 1.0e6 then
+               "Minnow"
+            else
+               "Plankton"
+            end)
+         end
+
+         ##
+         # Convert Amount to steem backed dollar
+         #
+         # @return [Amount]
+         #     the amount represented as steem backed dollar
+         # @raise [ArgumentError]
+         #     not a SBD, STEEM or VESTS value
+         #
+         Contract None => Amount
+
+         def to_sbd
+            return (
+            case @asset
+               when SBD
+                  self.clone
+               when STEEM
+                  Amount.to_amount(@amount.to_f * Amount.sbd_median_price, SBD)
+               when VESTS
+                  self.to_steem.to_sbd
                else
-                  "Plankton"
-               end)
-            end
+                  raise ArgumentError, 'unknown asset type types'
+            end)
+         end
 
-            ##
-            # Convert Amount to steem backed dollar
-            #
-            # @return [Amount]
-            #     the amount represented as steem backed dollar
-            # @raise [ArgumentError]
-            #     not a SBD, STEEM or VESTS value
-            #
-            Contract None => Amount
-            def to_sbd
-               return (
-               case @asset
-                  when SBD
-                     self.clone
-                  when STEEM
-                     Amount.to_amount(@amount.to_f * Amount.sbd_median_price, SBD)
-                  when VESTS
-                     self.to_steem.to_sbd
+         ##
+         # convert Vests to steem
+         #
+         # @return [Amount]
+         #    a value in VESTS value
+         # @raise [ArgumentError]
+         #    not a SBD, STEEM or VESTS value
+         #
+         Contract None => Amount
+
+         def to_steem
+            return (
+            case @asset
+               when SBD
+                  Amount.to_amount(@amount.to_f / Amount.sbd_median_price, STEEM)
+               when STEEM
+                  self.clone
+               when VESTS
+                  Amount.to_amount(@amount.to_f * Amount.conversion_rate_vests, STEEM)
+               else
+                  raise ArgumentError, 'unknown asset type types'
+            end)
+         end
+
+         ##
+         # convert Vests to steem
+         #
+         # @return [Amount]
+         #    a value in VESTS value
+         # @raise [ArgumentError]
+         #    not a SBD, STEEM or VESTS value
+         #
+         Contract None => Amount
+
+         def to_vests
+            return (
+            case @asset
+               when SBD
+                  self.to_steem.to_vests
+               when STEEM
+                  Amount.to_amount(@amount.to_f / Amount.conversion_rate_vests, VESTS)
+               when VESTS
+                  self.clone
+               else
+                  raise ArgumentError, 'unknown asset type types'
+            end)
+         end
+
+         ##
+         # create a colorized string showing the amount in
+         # SDB, STEEM and VESTS. The actual value is colorized
+         # in blue while the converted values are colorized in
+         # grey (aka dark white).
+         #
+         # @return [String]
+         #    formatted value
+         #
+         Contract None => String
+
+         def to_ansi_s
+            _sbd   = to_sbd
+            _steem = to_steem
+            _vests = to_vests
+
+            return (
+            "%1$15.3f %2$s".colorize(
+               if @asset == SBD then
+                  :blue
+               else
+                  :white
+               end
+            ) +
+               " " +
+               "%3$15.3f %4$s".colorize(
+                  if @asset == STEEM then
+                     :blue
                   else
-                     raise ArgumentError, 'unknown asset type types'
-               end)
-            end
-
-            ##
-            # convert Vests to steem
-            #
-            # @return [Amount]
-            #    a value in VESTS value
-            # @raise [ArgumentError]
-            #    not a SBD, STEEM or VESTS value
-            #
-            Contract None => Amount
-            def to_steem
-               return (
-               case @asset
-                  when SBD
-                     Amount.to_amount(@amount.to_f / Amount.sbd_median_price, STEEM)
-                  when STEEM
-                     self.clone
-                  when VESTS
-                     Amount.to_amount(@amount.to_f * Amount.conversion_rate_vests, STEEM)
+                     :white
+                  end
+               ) +
+               " " +
+               "%5$18.6f %6$s".colorize(
+                  if @asset == VESTS then
+                     :blue
                   else
-                     raise ArgumentError, 'unknown asset type types'
-               end)
-            end
+                     :white
+                  end
+               )) % [
+               _sbd.to_f,
+               _sbd.asset,
+               _steem.to_f,
+               _steem.asset,
+               _vests.to_f,
+               _vests.asset
+            ]
+         end
 
-            ##
-            # convert Vests to steem
-            #
-            # @return [Amount]
-            #    a value in VESTS value
-            # @raise [ArgumentError]
-            #    not a SBD, STEEM or VESTS value
-            #
-            Contract None => Amount
-            def to_vests
-               return (
-               case @asset
-                  when SBD
-                     self.to_steem.to_vests
-                  when STEEM
-                     Amount.to_amount(@amount.to_f / Amount.conversion_rate_vests, VESTS)
-                  when VESTS
-                     self.clone
-                  else
-                     raise ArgumentError, 'unknown asset type types'
-               end)
-            end
+         ##
+         # operator to add two balances
+         #
+         # @param [Amount]
+         #     amount to add
+         # @return [Amount]
+         #     result of addition
+         # @raise [ArgumentError]
+         #    values of different asset type
+         #
+         Contract Amount => Amount
 
-            ##
-            # create a colorized string showing the amount in
-            # SDB, STEEM and VESTS. The actual value is colorized
-            # in blue while the converted values are colorized in
-            # grey (aka dark white).
-            #
-            # @return [String]
-            #    formatted value
-            #
-            Contract None => String
-            def to_ansi_s
-               _sbd   = to_sbd
-               _steem = to_steem
-               _vests = to_vests
+         def +(right)
+            raise ArgumentError, 'asset types differ' if @asset != right.asset
 
-               return (
-                  "%1$15.3f %2$s".colorize(
-                     if @asset == SBD then
-                        :blue
-                     else
-                        :white
-                     end
-                  ) +
-                  " " +
-                  "%3$15.3f %4$s".colorize(
-                     if @asset == STEEM then
-                        :blue
-                     else
-                        :white
-                     end
-                  ) +
-                  " " +
-                  "%5$18.6f %6$s".colorize(
-                     if @asset == VESTS then
-                        :blue
-                     else
-                        :white
-                     end
-                  )) % [
-                     _sbd.to_f,
-                     _sbd.asset,
-                     _steem.to_f,
-                     _steem.asset,
-                     _vests.to_f,
-                     _vests.asset
-                  ]
-            end
+            return Amount.to_amount(@amount.to_f + right.to_f, @asset)
+         end
 
-            ##
-            # operator to add two balances
-            #
-            # @param [Amount]
-            #     amount to add
-            # @return [Amount]
-            #     result of addition
-            # @raise [ArgumentError]
-            #    values of different asset type
-            #
-            Contract Amount => Amount
-            def +(right)
-               raise ArgumentError, 'asset types differ' if @asset != right.asset
+         ##
+         # operator to subtract two balances
+         #
+         # @param [Amount]
+         #     amount to subtract
+         # @return [Amount]
+         #     result of subtraction
+         # @raise [ArgumentError]
+         #    values of different asset type
+         #
+         Contract Amount => Amount
 
-               return Amount.to_amount(@amount.to_f + right.to_f, @asset)
-            end
+         def -(right)
+            raise ArgumentError, 'asset types differ' if @asset != right.asset
 
-            ##
-            # operator to subtract two balances
-            #
-            # @param [Amount]
-            #     amount to subtract
-            # @return [Amount]
-            #     result of subtraction
-            # @raise [ArgumentError]
-            #    values of different asset type
-            #
-            Contract Amount => Amount
-            def -(right)
-               raise ArgumentError, 'asset types differ' if @asset != right.asset
+            return Amount.to_amount(@amount.to_f - right.to_f, @asset)
+         end
 
-               return Amount.to_amount(@amount.to_f - right.to_f, @asset)
-            end
+         ##
+         # operator to divert two balances
+         #
+         # @param [Amount]
+         #     amount to divert
+         # @return [Amount]
+         #     result of division
+         # @raise [ArgumentError]
+         #    values of different asset type
+         #
+         Contract Amount => Amount
 
-            ##
-            # operator to divert two balances
-            #
-            # @param [Amount]
-            #     amount to divert
-            # @return [Amount]
-            #     result of division
-            # @raise [ArgumentError]
-            #    values of different asset type
-            #
-            Contract Amount => Amount
-            def *(right)
-               raise ArgumentError, 'asset types differ' if @asset != right.asset
+         def *(right)
+            raise ArgumentError, 'asset types differ' if @asset != right.asset
 
-               return Amount.to_amount(@amount.to_f * right.to_f, @asset)
-            end
+            return Amount.to_amount(@amount.to_f * right.to_f, @asset)
+         end
 
-            ##
-            # operator to divert two balances
-            #
-            # @param [Amount]
-            #     amount to divert
-            # @return [Amount]
-            #     result of division
-            # @raise [ArgumentError]
-            #    values of different asset type
-            #
-            Contract Amount => Amount
-            def /(right)
-               raise ArgumentError, 'asset types differ' if @asset != right.asset
+         ##
+         # operator to divert two balances
+         #
+         # @param [Amount]
+         #     amount to divert
+         # @return [Amount]
+         #     result of division
+         # @raise [ArgumentError]
+         #    values of different asset type
+         #
+         Contract Amount => Amount
 
-               return Amount.to_amount(@amount.to_f / right.to_f, @asset)
-            end
+         def /(right)
+            raise ArgumentError, 'asset types differ' if @asset != right.asset
+
+            return Amount.to_amount(@amount.to_f / right.to_f, @asset)
+         end
 
          class << self
             ##
@@ -298,6 +309,7 @@ module Radiator
             # @return [Amount]
             #     the value as amount
             Contract Float, String => Amount
+
             def to_amount(value, asset)
                return Amount.new(value.to_s + " " + asset)
             end
@@ -311,6 +323,7 @@ module Radiator
             #     The condensor API
             #
             Contract None => Radiator::CondenserApi
+
             def condenser_api
                if @condenser_api == nil then
                   @condenser_api = Radiator::CondenserApi.new
@@ -323,7 +336,9 @@ module Radiator
                # copy pasted into other scripts
 
                Kernel::abort("Error creating condenser API :\n".red + error.to_s)
-            end # condenser_api
+            end
+
+            # condenser_api
 
             ##
             # read the  median history value and Calculate
@@ -335,6 +350,7 @@ module Radiator
             #    Conversion rate Steem ⇔ SBD
             #
             Contract None => Num
+
             def sbd_median_price
                if @sbd_median_price == nil then
                   _median_history_price = self.condenser_api.get_current_median_history_price.result
@@ -344,7 +360,9 @@ module Radiator
                end
 
                return @sbd_median_price
-            end # sbd_median_price
+            end
+
+            # sbd_median_price
 
             ##
             # read the global properties and calculate the
@@ -356,6 +374,7 @@ module Radiator
             #    Conversion rate Steem ⇔ VESTS
             #
             Contract None => Num
+
             def conversion_rate_vests
                if @conversion_rate_vests == nil then
                   _global_properties        = self.condenser_api.get_dynamic_global_properties.result

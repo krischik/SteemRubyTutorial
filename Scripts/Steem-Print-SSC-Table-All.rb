@@ -76,8 +76,8 @@ else
    #   rows from database which match the criteria given.
    #
    _contract = ARGV.shift
-   _table = ARGV.shift
-   _query = {}
+   _table    = ARGV.shift
+   _query    = {}
 
    while ARGV.length >= 2 do
       # the query parameter is a hash table with column
@@ -89,17 +89,17 @@ else
    _current = 0
    loop do
       _rows = Contracts.find(
-         contract: _contract,
-         table: _table,
-         query: _query,
-         limit: Query_Limit,
-         offset: _current,
+         contract:   _contract,
+         table:      _table,
+         query:      _query,
+         limit:      Query_Limit,
+         offset:     _current,
          descending: false
       )
 
       # Exit loop when no result set is returned.
       #
-   break if (not _rows) || (_rows.length == 0)
+      break if (not _rows) || (_rows.length == 0)
       pp _rows
 
       # Move current by the actual amount of rows returned

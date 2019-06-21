@@ -40,14 +40,14 @@ module SCC
       include Contracts::Builtin
 
       attr_reader :key, :value,
-         :symbol,
-         :account,
-         :balance,
-         :stake,
-         :delegatedStake,
-         :receivedStake,
-         :pendingUnstake,
-         :loki
+                  :symbol,
+                  :account,
+                  :balance,
+                  :stake,
+                  :delegated_Stake,
+                  :received_stake,
+                  :pending_unstake,
+                  :loki
 
       public
 
@@ -58,17 +58,18 @@ module SCC
          #    JSON object from contract API.
          #
          Contract Any => nil
+
          def initialize(balance)
             super(:symbol, balance.symbol)
 
-            @symbol              = balance.symbol
-            @account             = balance.account
-            @balance             = balance.balance.to_f
-            @stake               = balance.stake.to_f
-            @delegatedStake      = balance.delegatedStake.to_f
-            @receivedStake       = balance.receivedStake.to_f
-            @pendingUnstake      = balance.pendingUnstake.to_f
-            @loki                = balance["$loki"]
+            @symbol          = balance.symbol
+            @account         = balance.account
+            @balance         = balance.balance.to_f
+            @stake           = balance.stake.to_f
+            @delegated_stake = balance.delegatedStake.to_f
+            @received_stake  = balance.receivedStake.to_f
+            @pending_unstake = balance.pendingUnstake.to_f
+            @loki            = balance["$loki"]
 
             return
          end
@@ -80,17 +81,19 @@ module SCC
          #     the current value in steem
          #
          Contract None => Radiator::Type::Amount
+
          def to_steem
             _steem = if @symbol == "STEEMP" then
                @balance
             else
-               @balance * metric.lastPrice
+               @balance * metric.last_price
             end
 
             return Radiator::Type::Amount.to_amount(
                _steem,
                Radiator::Type::Amount::STEEM)
          end
+
          ##
          # balance in steem.
          #
@@ -98,6 +101,7 @@ module SCC
          #     the current value in steem
          #
          Contract None => Radiator::Type::Amount
+
          def to_sbd
             return to_steem.to_sbd
          end
@@ -109,13 +113,16 @@ module SCC
          #     the metrics instance
          #
          Contract None => SCC::Metric
+
          def metric
             if @metric == nil then
                @metric = SCC::Metric.symbol @symbol
             end
 
             return @metric
-         end # metric
+         end
+
+         # metric
 
          ##
          # create a colorized string showing the amount in
@@ -128,13 +135,14 @@ module SCC
          #    formatted value
          #
          Contract None => String
+
          def to_ansi_s
             begin
                _steem = to_steem
                _sbd   = to_sbd
 
                _retval = (
-                  "%1$15.3f %2$s".white +
+               "%1$15.3f %2$s".white +
                   " " +
                   "%3$15.3f %4$s".white +
                   " " +
@@ -149,7 +157,7 @@ module SCC
                _na = "N/A"
 
                _retval = (
-                  "%1$15s %2$s".white +
+               "%1$15s %2$s".white +
                   " " +
                   "%3$15s %4$5s".white +
                   " " +
@@ -165,120 +173,127 @@ module SCC
             return _retval
          end
 
-      class << self
-         ##
-         #
-         #  @param [String] name
-         #     name of contract
-         #  @return [Array<SCC::Balance>]
-         #     contract found
-         #
-         Contract String => ArrayOf[SCC::Balance]
-         def account (name)
-            _retval = []
-            _current = 0
-            _query = {
-               "account": name
-            }
+         class << self
+            ##
+            #
+            #  @param [String] name
+            #     name of contract
+            #  @return [Array<SCC::Balance>]
+            #     contract found
+            #
+            Contract String => ArrayOf[SCC::Balance]
 
-            loop do
-               _balances = Steem_Engine.contracts_api.find(
-                  contract: "tokens",
-                  table: "balances",
-                  query: _query,
-                  limit: SCC::Steem_Engine::QUERY_LIMIT,
-                  offset: _current,
-                  descending: false)
+            def account (name)
+               _retval  = []
+               _current = 0
+               _query   = {
+                  "account": name
+               }
 
-               # Exit loop when no result set is returned.
-               #
-            break if (not _balances) || (_balances.length == 0)
-               _retval += _balances.map do |_balance|
-                  SCC::Balance.new _balance
+               loop do
+                  _balances = Steem_Engine.contracts_api.find(
+                     contract:   "tokens",
+                     table:      "balances",
+                     query:      _query,
+                     limit:      SCC::Steem_Engine::QUERY_LIMIT,
+                     offset:     _current,
+                     descending: false)
+
+                  # Exit loop when no result set is returned.
+                  #
+                  break if (not _balances) || (_balances.length == 0)
+                  _retval += _balances.map do |_balance|
+                     SCC::Balance.new _balance
+                  end
+
+                  # Move current by the actual amount of rows returned
+                  #
+                  _current = _current + _balances.length
                end
 
-               # Move current by the actual amount of rows returned
-               #
-               _current = _current + _balances.length
+               return _retval
             end
 
-            return _retval
-         end # account
+            # account
 
-         ##
-         #
-         #  @param [String] name
-         #     name of contract
-         #  @return [Array<SCC::Balance>]
-         #     contract found
-         #
-         Contract String => ArrayOf[SCC::Balance]
-         def symbol (name)
-            _retval = []
-            _current = 0
-            _query = {
-               "symbol": name
-            }
+            ##
+            #
+            #  @param [String] name
+            #     name of contract
+            #  @return [Array<SCC::Balance>]
+            #     contract found
+            #
+            Contract String => ArrayOf[SCC::Balance]
 
-            loop do
-               _balances = Steem_Engine.contracts_api.find(
-                  contract: "tokens",
-                  table: "balances",
-                  query: _query,
-                  limit: Steem_Engine::QUERY_LIMIT,
-                  offset: _current,
-                  descending: false)
+            def symbol (name)
+               _retval  = []
+               _current = 0
+               _query   = {
+                  "symbol": name
+               }
 
-               # Exit loop when no result set is returned.
-               #
-            break if (not _balances) || (_balances.length == 0)
-               _retval += _balances.map do |_balance|
-                  SCC::Balance.new _balance
+               loop do
+                  _balances = Steem_Engine.contracts_api.find(
+                     contract:   "tokens",
+                     table:      "balances",
+                     query:      _query,
+                     limit:      Steem_Engine::QUERY_LIMIT,
+                     offset:     _current,
+                     descending: false)
+
+                  # Exit loop when no result set is returned.
+                  #
+                  break if (not _balances) || (_balances.length == 0)
+                  _retval += _balances.map do |_balance|
+                     SCC::Balance.new _balance
+                  end
+
+                  # Move current by the actual amount of rows returned
+                  #
+                  _current = _current + _balances.length
                end
 
-               # Move current by the actual amount of rows returned
-               #
-               _current = _current + _balances.length
+               return _retval
             end
 
-            return _retval
-         end # symbol
+            # symbol
 
-         ##
-         #  Get all blances
-         #
-         #  @return [SCC::Balance]
-         #     token found
-         #
-         Contract String => ArrayOf[SCC::Balance]
-         def all
-            _retval = []
-            _current = 0
+            ##
+            #  Get all blances
+            #
+            #  @return [SCC::Balance]
+            #     token found
+            #
+            Contract String => ArrayOf[SCC::Balance]
 
-            loop do
-               _balances = Steem_Engine.contracts_api.find(
-                  contract: "tokens",
-                  table: "balances",
-                  query: Steem_Engine::QUERY_ALL,
-                  limit: Steem_Engine::QUERY_LIMIT,
-                  offset: _current,
-                  descending: false)
+            def all
+               _retval  = []
+               _current = 0
 
-               # Exit loop when no result set is returned.
-               #
-            break if (not _balances) || (_balances.length == 0)
-               _retval += _balances.map do |_balance|
-                  SCC::Balance.new _balance
+               loop do
+                  _balances = Steem_Engine.contracts_api.find(
+                     contract:   "tokens",
+                     table:      "balances",
+                     query:      Steem_Engine::QUERY_ALL,
+                     limit:      Steem_Engine::QUERY_LIMIT,
+                     offset:     _current,
+                     descending: false)
+
+                  # Exit loop when no result set is returned.
+                  #
+                  break if (not _balances) || (_balances.length == 0)
+                  _retval += _balances.map do |_balance|
+                     SCC::Balance.new _balance
+                  end
+
+                  # Move current by the actual amount of rows returned
+                  #
+                  _current = _current + _balances.length
                end
 
-               # Move current by the actual amount of rows returned
-               #
-               _current = _current + _balances.length
-            end
-
-            return _retval
-         end # all
-      end # self
+               return _retval
+            end # all
+         end # self
    end # Balance
 end # SCC
 

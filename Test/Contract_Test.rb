@@ -23,7 +23,7 @@ class Contract_Test < Test::Unit::TestCase
    def test_find_01
       _test = SCC::Contract.symbol "tokens"
 
-      assert_not_nil(_test, "Contract “tokens” should exist" )
+      assert_not_nil(_test, "Contract “tokens” should exist")
       assert_instance_of(SCC::Contract, _test, "Result should be of type «SCC::Contract»")
       assert_equal(:name, _test.key, "The contract key should be «:name»")
       assert_equal("tokens", _test.value, "The contract value should be “tokens”")

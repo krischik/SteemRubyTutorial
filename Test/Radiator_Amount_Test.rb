@@ -23,133 +23,151 @@ class Radiator_Amount_Test < Test::Unit::TestCase
    def test_to_amount_01
       _test = Radiator::Type::Amount.to_amount(1.0, Radiator::Type::Amount::STEEM)
 
-      assert_not_nil(_test, "An amount should be created" )
+      assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Radiator::Type::Amount, _test, "The amount should be of type «Radiator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::STEEM, _test.asset, "The amount is if a «STEEEM» asset")
-   end # test_to_amount_01
+   end
+
+   # test_to_amount_01
 
    def test_to_steem_01
       _test = Radiator::Type::Amount.to_amount(1.0, Radiator::Type::Amount::STEEM)
 
-      assert_not_nil(_test, "An amount should be created" )
+      assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Radiator::Type::Amount, _test, "The amount should be of type «Radiator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::STEEM, _test.asset, "The amount is if a «STEEEM» asset")
 
       _steem = _test.to_steem
 
-      assert_not_nil(_steem, "A vests amount should be created" )
+      assert_not_nil(_steem, "A vests amount should be created")
       assert_instance_of(Radiator::Type::Amount, _steem, "The amount should be of type «Rator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::STEEM, _steem.asset, "The amount is if a «STEEM» asset")
-   end # test_to_steem_01
+   end
+
+   # test_to_steem_01
 
    def test_to_steem_02
       _test = Radiator::Type::Amount.to_amount(1.0, Radiator::Type::Amount::SBD)
 
-      assert_not_nil(_test, "An amount should be created" )
+      assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Radiator::Type::Amount, _test, "The amount should be of type «Radiator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::SBD, _test.asset, "The amount is if a «SBD» asset")
 
       _steem = _test.to_steem
 
-      assert_not_nil(_steem, "A vests amount should be created" )
+      assert_not_nil(_steem, "A vests amount should be created")
       assert_instance_of(Radiator::Type::Amount, _steem, "The amount should be of type «Rator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::STEEM, _steem.asset, "The amount is if a «STEEM» asset")
-   end # test_to_steem_02
+   end
+
+   # test_to_steem_02
 
    def test_to_steem_03
       _test = Radiator::Type::Amount.to_amount(1.0, Radiator::Type::Amount::VESTS)
 
-      assert_not_nil(_test, "An amount should be created" )
+      assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Radiator::Type::Amount, _test, "The amount should be of type «Radiator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::VESTS, _test.asset, "The amount is if a «VESTS» asset")
 
       _steem = _test.to_steem
 
-      assert_not_nil(_steem, "A vests amount should be created" )
+      assert_not_nil(_steem, "A vests amount should be created")
       assert_instance_of(Radiator::Type::Amount, _steem, "The amount should be of type «Rator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::STEEM, _steem.asset, "The amount is if a «STEEM» asset")
-   end # test_to_steem_03
+   end
+
+   # test_to_steem_03
 
    def test_to_sbd_01
       _test = Radiator::Type::Amount.to_amount(1.0, Radiator::Type::Amount::STEEM)
 
-      assert_not_nil(_test, "An amount should be created" )
+      assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Radiator::Type::Amount, _test, "The amount should be of type «Radiator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::STEEM, _test.asset, "The amount is if a «STEEEM» asset")
 
       _sbd = _test.to_sbd
 
-      assert_not_nil(_sbd, "A sbd amount should be created" )
+      assert_not_nil(_sbd, "A sbd amount should be created")
       assert_instance_of(Radiator::Type::Amount, _sbd, "The amount should be of type «Radiator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::SBD, _sbd.asset, "The amount is if a «SBD» asset")
-   end # test_to_sbd_01
+   end
+
+   # test_to_sbd_01
 
    def test_to_sbd_02
       _test = Radiator::Type::Amount.to_amount(1.0, Radiator::Type::Amount::SBD)
 
-      assert_not_nil(_test, "An amount should be created" )
+      assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Radiator::Type::Amount, _test, "The amount should be of type «Radiator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::SBD, _test.asset, "The amount is if a «SBD» asset")
 
       _sbd = _test.to_sbd
 
-      assert_not_nil(_sbd, "A sbd amount should be created" )
+      assert_not_nil(_sbd, "A sbd amount should be created")
       assert_instance_of(Radiator::Type::Amount, _sbd, "The amount should be of type «Radiator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::SBD, _sbd.asset, "The amount is if a «SBD» asset")
-   end # test_to_sbd_02
+   end
+
+   # test_to_sbd_02
 
    def test_to_sbd_03
       _test = Radiator::Type::Amount.to_amount(1.0, Radiator::Type::Amount::VESTS)
 
-      assert_not_nil(_test, "An amount should be created" )
+      assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Radiator::Type::Amount, _test, "The amount should be of type «Radiator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::VESTS, _test.asset, "The amount is if a «VESTS» asset")
 
       _sbd = _test.to_sbd
 
-      assert_not_nil(_sbd, "A sbd amount should be created" )
+      assert_not_nil(_sbd, "A sbd amount should be created")
       assert_instance_of(Radiator::Type::Amount, _sbd, "The amount should be of type «Radiator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::SBD, _sbd.asset, "The amount is if a «SBD» asset")
-   end # test_to_sbd_03
+   end
+
+   # test_to_sbd_03
 
    def test_to_vests_01
       _test = Radiator::Type::Amount.to_amount(1.0, Radiator::Type::Amount::STEEM)
 
-      assert_not_nil(_test, "An amount should be created" )
+      assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Radiator::Type::Amount, _test, "The amount should be of type «Radiator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::STEEM, _test.asset, "The amount is if a «STEEEM» asset")
 
       _vests = _test.to_vests
 
-      assert_not_nil(_vests, "A vests amount should be created" )
+      assert_not_nil(_vests, "A vests amount should be created")
       assert_instance_of(Radiator::Type::Amount, _vests, "The amount should be of type «Rator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::VESTS, _vests.asset, "The amount is if a «VESTS» asset")
-   end # test_to_vests_01
+   end
+
+   # test_to_vests_01
 
    def test_to_vests_02
       _test = Radiator::Type::Amount.to_amount(1.0, Radiator::Type::Amount::SBD)
 
-      assert_not_nil(_test, "An amount should be created" )
+      assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Radiator::Type::Amount, _test, "The amount should be of type «Radiator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::SBD, _test.asset, "The amount is if a «SBD» asset")
 
       _vests = _test.to_vests
 
-      assert_not_nil(_vests, "A vests amount should be created" )
+      assert_not_nil(_vests, "A vests amount should be created")
       assert_instance_of(Radiator::Type::Amount, _vests, "The amount should be of type «Rator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::VESTS, _vests.asset, "The amount is if a «VESTS» asset")
-   end # test_to_vests_02
+   end
+
+   # test_to_vests_02
 
    def test_to_vests_03
       _test = Radiator::Type::Amount.to_amount(1.0, Radiator::Type::Amount::VESTS)
 
-      assert_not_nil(_test, "An amount should be created" )
+      assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Radiator::Type::Amount, _test, "The amount should be of type «Radiator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::VESTS, _test.asset, "The amount is if a «VESTS» asset")
 
       _vests = _test.to_vests
 
-      assert_not_nil(_vests, "A vests amount should be created" )
+      assert_not_nil(_vests, "A vests amount should be created")
       assert_instance_of(Radiator::Type::Amount, _vests, "The amount should be of type «Rator::Type::Amount»")
       assert_equal(Radiator::Type::Amount::VESTS, _vests.asset, "The amount is if a «VESTS» asset")
    end # test_to_vests_03

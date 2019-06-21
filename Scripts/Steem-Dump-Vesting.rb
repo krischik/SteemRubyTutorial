@@ -39,7 +39,7 @@ Max_Retry_Count = 3
 ##
 # Delete the current line on the console.
 #
-Delete_Line     = "\e[1K\r"
+Delete_Line = "\e[1K\r"
 
 ##
 # Class to hold a vesting delegation
@@ -70,7 +70,8 @@ class Vesting < Steem::Type::BaseType
    #     `get_vesting_delegations` or
    #     `list_vesting_delegations`.
    #
-   Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]] ]] => nil
+   Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]] => nil
+
    def initialize(value)
       super(:id, value)
 
@@ -78,7 +79,7 @@ class Vesting < Steem::Type::BaseType
       @delegator           = value.delegator
       @delegatee           = value.delegatee
       @vesting_shares      = Steem::Type::Amount.new (value.vesting_shares)
-      @min_delegation_time = Time.strptime(value.min_delegation_time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
+      @min_delegation_time = Time.strptime(value.min_delegation_time + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
 
       return
    end
@@ -94,21 +95,22 @@ class Vesting < Steem::Type::BaseType
    #    formatted value
    #
    Contract None => String
+
    def to_ansi_s
       # All the magic happens in the `%` operators which
       # calls sprintf which in turn formats the string.
       return (
-         "%1$10d | " +
+      "%1$10d | " +
          "%2$-16s ⇒ " +
          "%3$-16s | " +
          "%4$-68s | " +
          "%5$20s | ") % [
-            @id,
-            @delegator,
-            @delegatee,
-            @vesting_shares.to_ansi_s,
-            @min_delegation_time.strftime("%Y-%m-%d %H:%M:%S")
-         ]
+         @id,
+         @delegator,
+         @delegatee,
+         @vesting_shares.to_ansi_s,
+         @min_delegation_time.strftime("%Y-%m-%d %H:%M:%S")
+      ]
    end
 
    ##
@@ -122,6 +124,7 @@ class Vesting < Steem::Type::BaseType
    #     or delegatee.
    #
    Contract ArrayOf[String] => Bool
+
    def is_accounts (accounts)
       return (accounts.include? @delegator) || (accounts.include? @delegatee)
    end
@@ -141,7 +144,8 @@ class Vesting < Steem::Type::BaseType
       # @param [Array<Hash>] vesting
       #     list of vesting
       #
-      Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]] ]] ], ArrayOf[String] => nil
+      Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]]], ArrayOf[String] => nil
+
       def print_list (vesting, accounts)
          vesting.each do |vest|
             _vest = Vesting.new vest
@@ -152,7 +156,9 @@ class Vesting < Steem::Type::BaseType
          end
 
          return
-      end # print_list
+      end
+
+      # print_list
 
       ##
       # Fetches all the vestings form the database and prints
@@ -162,6 +168,7 @@ class Vesting < Steem::Type::BaseType
       #     the accounts to search.
       #
       Contract ArrayOf[String] => nil
+
       def print_accounts (accounts)
 
          puts ("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
@@ -197,12 +204,12 @@ class Vesting < Steem::Type::BaseType
             # happens when the initial delegator / delegatee
             # pair doesn't exist.
 
-         break if _vesting == nil || _vesting.result.length == 0
+            break if _vesting == nil || _vesting.result.length == 0
 
             # get the delegator / delegatee pair of the last
             #  element
 
-            _last_vest = Vesting.new _vesting.result.delegations.pop
+            _last_vest   = Vesting.new _vesting.result.delegations.pop
             _current_end = [_last_vest.delegator, _last_vest.delegatee]
 
             # Delete the progress indicator.
@@ -250,12 +257,12 @@ class Vesting < Steem::Type::BaseType
             # progress indicator for the user.
 
             print (
-               "%1$10d | " +
-               "%2$-16s ⇒ " +
-               "%3$-16s ") % [
-                  _last_vest.id,
-                  _last_vest.delegator,
-                  _last_vest.delegatee]
+                     "%1$10d | " +
+                        "%2$-16s ⇒ " +
+                        "%3$-16s ") % [
+               _last_vest.id,
+               _last_vest.delegator,
+               _last_vest.delegatee]
 
             # Throttle to 20 http requests per second. That
             # seem to be the acceptable upper limit for

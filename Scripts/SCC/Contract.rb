@@ -36,7 +36,7 @@ module SCC
       include Contracts::Core
       include Contracts::Builtin
 
-      attr_reader :key, :value, :name, :owner, :code, :codeHash, :tables
+      attr_reader :key, :value, :name, :owner, :code, :code_hash, :tables
 
       public
 
@@ -47,33 +47,35 @@ module SCC
          #    JSON object from contract API.
          #
          Contract Any => nil
+
          def initialize(contract)
             super(:name, contract.name)
 
-            @name     = contract.name
-            @owner    = contract.owner
-            @code     = contract.code
-            @codeHash = contract.codeHash
-            @tables   = contract.tables
+            @name      = contract.name
+            @owner     = contract.owner
+            @code      = contract.code
+            @code_hash = contract.codeHash
+            @tables    = contract.tables
 
             return
          end
 
-      class << self
-         ##
-         #
-         #  @param [String] name
-         #     name of contract
-         #  @return [SCC::Contract]
-         #     contract found
-         #
-         Contract String => SCC::Contract
-         def symbol (name)
-            _contract = Steem_Engine.contracts_api.contract name
+         class << self
+            ##
+            #
+            #  @param [String] name
+            #     name of contract
+            #  @return [SCC::Contract]
+            #     contract found
+            #
+            Contract String => SCC::Contract
 
-            return SCC::Contract.new _contract
-         end
-      end # self
+            def symbol (name)
+               _contract = Steem_Engine.contracts_api.contract name
+
+               return SCC::Contract.new _contract
+            end
+         end # self
    end # Token
 end # SCC
 

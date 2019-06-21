@@ -27,6 +27,8 @@ require 'colorize'
 require 'contracts'
 require 'radiator'
 
+require_relative 'Amount'
+
 ##
 # steem-ruby comes with a helpful Radiator::Type::Price
 # class to handle the SDB price. However
@@ -35,7 +37,7 @@ require 'radiator'
 #
 # This class expands Radiator::Type::Price to add the
 # missing functions making it super convenient.
-
+#
 module Radiator
    module Type
       class Price
@@ -45,14 +47,58 @@ module Radiator
          ##
          # add the missing attribute reader.
          #
-         attr_reader :amount, :base, :quote
+         attr_reader :base, :quote
 
-         public
+         ##
+         #
+         Contract None => Num
 
-            def sbd_median_price ()
-               return @base.amount.to_f / @quote.amount.to_f
+         def to_f
+            return @base.amount.to_f / @quote.amount.to_f
+         end
+
+         class << self
+            ##
+            # create instance to the steem condenser API
+            # which will give us access to to the global
+            # properties and median history.
+            #
+            # return [Steem::CondenserApi]
+            #     The condenser API
+            #
+            Contract None => Radiator::CondenserApi
+
+            def condenser_api
+               if @condenser_api == nil then
+                  @condenser_api = Radiator::CondenserApi.new
+               end
+
+               return @condenser_api
+            rescue => error
+               # I am using Kernel::abort so the code
+               # snipped including error handler can be
+               # copy pasted into other scripts
+
+               Kernel::abort("Error creating condenser API :\n".red + error.to_s)
             end
 
+            ##
+            # read the  median history value and Calculate
+            # the conversion Rate for Vests to steem backed
+            # dollar. We use the Amount class from Part 2
+            # to convert the string values into amounts.
+            #
+            # @return [Float]
+            #    Conversion rate Steem ⇔ SBD
+            #
+            Contract None => Num
+
+            def get
+               _median_history_price = self.condenser_api.get_current_median_history_price.result
+
+               return Radiator::Type::Price.new _median_history_price
+            end
+         end # self
       end # Price
    end # Type
 end # Radiator

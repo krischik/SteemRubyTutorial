@@ -65,6 +65,7 @@ module Steem
             #     actual amount as float
             #
             Contract None => Float
+
             def to_f
                return @amount.to_f
             end
@@ -77,6 +78,7 @@ module Steem
             #     one of "Whale", "Orca", "Dolphin", "Minnow", "Plankton" or "N/A"
             #
             Contract None => String
+
             def to_level
                _value = @amount.to_f
 
@@ -105,6 +107,7 @@ module Steem
             #     not a SBD, STEEM or VESTS value
             #
             Contract None => Amount
+
             def to_sbd
                return (
                case @asset
@@ -128,6 +131,7 @@ module Steem
             #    not a SBD, STEEM or VESTS value
             #
             Contract None => Amount
+
             def to_steem
                return (
                case @asset
@@ -151,6 +155,7 @@ module Steem
             #    not a SBD, STEEM or VESTS value
             #
             Contract None => Amount
+
             def to_vests
                return (
                case @asset
@@ -175,6 +180,7 @@ module Steem
             #    formatted value
             #
             Contract None => String
+
             def to_ansi_s
                _sbd   = to_sbd
                _steem = to_steem
@@ -219,6 +225,7 @@ module Steem
             #    values of different asset type
             #
             Contract Amount => Amount
+
             def +(right)
                raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -236,6 +243,7 @@ module Steem
             #    values of different asset type
             #
             Contract Amount => Amount
+
             def -(right)
                raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -253,6 +261,7 @@ module Steem
             #    values of different asset type
             #
             Contract Amount => Amount
+
             def *(right)
                raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -270,28 +279,30 @@ module Steem
             #    values of different asset type
             #
             Contract Amount => Amount
+
             def /(right)
                raise ArgumentError, 'asset types differ' if @asset != right.asset
 
                return Amount.to_amount(@amount.to_f / right.to_f, @asset)
             end
 
-         class << self
-            ##
-            # Helper factory method to create a new Amount from
-            # an value and asset type.
-            #
-            # @param [Float] value
-            #     the numeric value to create an amount from
-            # @param [String] asset
-            #     the asset type which should be STEEM, SBD or VESTS
-            # @return [Amount]
-            #     the value as amount
-            Contract Float, String => Amount
-            def to_amount(value, asset)
-               return Amount.new(value.to_s + " " + asset)
-            end # to_amount
-         end # self
+            class << self
+               ##
+               # Helper factory method to create a new Amount from
+               # an value and asset type.
+               #
+               # @param [Float] value
+               #     the numeric value to create an amount from
+               # @param [String] asset
+               #     the asset type which should be STEEM, SBD or VESTS
+               # @return [Amount]
+               #     the value as amount
+               Contract Float, String => Amount
+
+               def to_amount(value, asset)
+                  return Amount.new(value.to_s + " " + asset)
+               end # to_amount
+            end # self
       end # Amount
    end # Type
 end # Steem

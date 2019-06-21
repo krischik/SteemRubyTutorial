@@ -39,15 +39,15 @@ module SCC
       include Contracts::Builtin
 
       attr_reader :key, :value,
-         :symbol,
-         :issuer,
-         :name,
-         :metadata,
-         :precision,
-         :maxSupply,
-         :supply,
-         :circulatingSupply,
-         :loki
+                  :symbol,
+                  :issuer,
+                  :name,
+                  :metadata,
+                  :precision,
+                  :max_supply,
+                  :supply,
+                  :circulating_supply,
+                  :loki
 
       public
 
@@ -58,18 +58,19 @@ module SCC
          #    JSON object from contract API.
          #
          Contract Any => nil
+
          def initialize(token)
             super(:symbol, token.symbol)
 
-            @symbol              = token.symbol
-            @issuer              = token.issuer
-            @name                = token.name
-            @metadata            = JSON.parse(token.metadata)
-            @precision           = token.precision
-            @maxSupply           = token.maxSupply
-            @supply              = token.supply
-            @circulatingSupply   = token.circulatingSupply
-            @loki                = token["$loki"]
+            @symbol             = token.symbol
+            @issuer             = token.issuer
+            @name               = token.name
+            @metadata           = JSON.parse(token.metadata)
+            @precision          = token.precision
+            @max_supply         = token.maxSupply
+            @supply             = token.supply
+            @circulating_supply = token.circulatingSupply
+            @loki               = token["$loki"]
 
             return
          end
@@ -80,76 +81,83 @@ module SCC
          # @return [SCC::Metric]
          #     the metrics instance
          Contract None => SCC::Metric
+
          def metric
             if @metric == nil then
                @metric = SCC::Metric.symbol @symbol
             end
 
             return @metric
-         end # metric
+         end
+
+         # metric
 
       private
 
          metric = nil
 
-      class << self
-         ##
-         #  Get contract for given symbol
-         #
-         #  @param [String] name
-         #     name of contract
-         #  @return [SCC::Contract]
-         #     contract found
-         #
-         Contract String => SCC::Token
-         def symbol (name)
-            _token = Steem_Engine.contracts_api.find_one(
-               contract: "tokens",
-               table: "tokens",
-               query: {
-                  "symbol": name
-               })
+         class << self
+            ##
+            #  Get contract for given symbol
+            #
+            #  @param [String] name
+            #     name of contract
+            #  @return [SCC::Contract]
+            #     contract found
+            #
+            Contract String => SCC::Token
 
-            return SCC::Token.new _token
-         end # find
-
-         ##
-         #  Get all token
-         #
-         #  @param [String] name
-         #     name of contract
-         #  @return [SCC::Contract]
-         #     contract found
-         #
-         Contract String => ArrayOf[SCC::Token]
-         def all
-            _retval = []
-            _current = 0
-
-            loop do
-               _tokens = Steem_Engine.contracts_api.find(
+            def symbol (name)
+               _token = Steem_Engine.contracts_api.find_one(
                   contract: "tokens",
-                  table: "tokens",
-                  query: Steem_Engine::QUERY_ALL,
-                  limit: Steem_Engine::QUERY_LIMIT,
-                  offset: _current,
-                  descending: false)
+                  table:    "tokens",
+                  query:    {
+                     "symbol": name
+                  })
 
-               # Exit loop when no result set is returned.
-               #
-            break if (not _tokens) || (_tokens.length == 0)
-               _retval += _tokens.map do |_token|
-                  SCC::Token.new _token
-               end
-
-               # Move current by the actual amount of rows returned
-               #
-               _current = _current + _tokens.length
+               return SCC::Token.new _token
             end
 
-            return _retval
-         end # all
-      end # self
+            # find
+
+            ##
+            #  Get all token
+            #
+            #  @param [String] name
+            #     name of contract
+            #  @return [SCC::Contract]
+            #     contract found
+            #
+            Contract String => ArrayOf[SCC::Token]
+
+            def all
+               _retval  = []
+               _current = 0
+
+               loop do
+                  _tokens = Steem_Engine.contracts_api.find(
+                     contract:   "tokens",
+                     table:      "tokens",
+                     query:      Steem_Engine::QUERY_ALL,
+                     limit:      Steem_Engine::QUERY_LIMIT,
+                     offset:     _current,
+                     descending: false)
+
+                  # Exit loop when no result set is returned.
+                  #
+                  break if (not _tokens) || (_tokens.length == 0)
+                  _retval += _tokens.map do |_token|
+                     SCC::Token.new _token
+                  end
+
+                  # Move current by the actual amount of rows returned
+                  #
+                  _current = _current + _tokens.length
+               end
+
+               return _retval
+            end # all
+         end # self
    end # Token
 end # SCC
 

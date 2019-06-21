@@ -28,12 +28,12 @@ class Tokent_Test < Test::Unit::TestCase
       if Test_All then
          _test = SCC::Token.all
 
-         assert_not_nil(_test, "There should be tokens" )
+         assert_not_nil(_test, "There should be tokens")
          assert_instance_of(Array, _test, "Tokens should be an array")
 
          _token = _test[0]
 
-         assert_not_nil(_token, "First token should exist" )
+         assert_not_nil(_token, "First token should exist")
          assert_instance_of(SCC::Token, _token, "First token should be of type «SCC::Token»")
          assert_equal(:symbol, _token.key, "First token key should be «:symbol»")
          assert_equal("ENG", _token.value, "First token value should be “ENG”")
@@ -43,7 +43,7 @@ class Tokent_Test < Test::Unit::TestCase
    def test_symbol_01
       _test = SCC::Token.symbol "BEER"
 
-      assert_not_nil(_test, "Token “BEER” should exist" )
+      assert_not_nil(_test, "Token “BEER” should exist")
       assert_instance_of(SCC::Token, _test, "Result should be of type «SCC::Token»")
       assert_equal(:symbol, _test.key, "The token key should be «:symbol»")
       assert_equal("BEER", _test.value, "The value value should be “BEER”")
@@ -52,14 +52,14 @@ class Tokent_Test < Test::Unit::TestCase
    def test_metric_01
       _test = SCC::Token.symbol "BEER"
 
-      assert_not_nil(_test, "Token “BEER” should exist" )
+      assert_not_nil(_test, "Token “BEER” should exist")
       assert_instance_of(SCC::Token, _test, "Result should be of type «SCC::Token»")
       assert_equal(:symbol, _test.key, "The token key should be «:symbol»")
       assert_equal("BEER", _test.value, "The value value should be “BEER”")
 
       _metric = _test.metric
 
-      assert_not_nil(_metric, "Metric for token “BEER” should exist" )
+      assert_not_nil(_metric, "Metric for token “BEER” should exist")
       assert_instance_of(SCC::Metric, _metric, "Metric should be of type «SCC::Metric»")
       assert_equal(:symbol, _metric.key, "The metric key should be «:symbol»")
       assert_equal("BEER", _metric.value, "The metric value should be “BEER”")

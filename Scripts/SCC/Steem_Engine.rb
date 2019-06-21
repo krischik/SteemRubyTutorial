@@ -62,6 +62,7 @@ module SCC
          #     the contracts API.
          #
          Contract None => Radiator::SSC::Contracts
+
          def contracts_api
             if @api == nil then
                @api = Radiator::SSC::Contracts.new

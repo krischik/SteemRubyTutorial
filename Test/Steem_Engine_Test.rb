@@ -23,7 +23,7 @@ class Contract_Test < Test::Unit::TestCase
    def test_new_01
       _test = SCC::Steem_Engine.new(:test, "test")
 
-      assert_not_nil(_test, "Steem_Engine was createed" )
+      assert_not_nil(_test, "Steem_Engine was createed")
       assert_instance_of(SCC::Steem_Engine, _test, "Result should be of type «SCC::Steem_Engine»")
       assert_equal(:test, _test.key, "The key should be «:test»")
       assert_equal("test", _test.value, "The value should be “test”")
@@ -32,10 +32,9 @@ class Contract_Test < Test::Unit::TestCase
    def test_contracts_api_01
       _test = SCC::Steem_Engine.contracts_api
 
-      assert_not_nil(_test, "Contracts API was createed" )
+      assert_not_nil(_test, "Contracts API was createed")
       assert_instance_of(Radiator::SSC::Contracts, _test, "Contracts API should be of type «Radiator::SSC::Contracts»")
    end
-
 
    def test_query_limit_01
       _test = SCC::Steem_Engine::QUERY_LIMIT

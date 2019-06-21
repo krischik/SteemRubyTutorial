@@ -79,6 +79,7 @@ class Vote < Steem::Type::BaseType
    #     the data hash from the get_active_votes
    #
    Contract HashOf[String => Or[String, Num]] => nil
+
    def initialize(value)
       super(:vote, value)
 
@@ -87,7 +88,7 @@ class Vote < Steem::Type::BaseType
       @weight     = value.weight.to_i
       @rshares    = value.rshares.to_i
       @reputation = value.reputation.to_i
-      @time       = Time.strptime(value.time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
+      @time       = Time.strptime(value.time + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
 
       return
    end
@@ -99,6 +100,7 @@ class Vote < Steem::Type::BaseType
    #    the vote estimate in SBD
    #
    Contract None => Num
+
    def estimate
       return @rshares.to_f / Recent_Claims * Reward_Balance.to_f * SBD_Median_Price
    end
@@ -114,15 +116,16 @@ class Vote < Steem::Type::BaseType
    #    formatted value
    #
    Contract None => String
+
    def to_ansi_s
       # multipy percent with 100 for human readability
-      _percent = @percent * 100.0
+      _percent  = @percent * 100.0
       _estimate = estimate
 
       # All the magic happens in the `%` operators which
       # calls sprintf which in turn formats the string.
       return (
-         "%1$-16s | " +
+      "%1$-16s | " +
          "%2$7.2f%%".colorize(
             if _percent > 0.0 then
                :green
@@ -143,13 +146,13 @@ class Vote < Steem::Type::BaseType
             end
          ) +
          " |%4$10d |%5$16d |%6$20s |") % [
-            @voter,
-            _percent,
-            _estimate,
-            @weight,
-            @rshares,
-            @time.strftime("%Y-%m-%d %H:%M:%S")
-         ]
+         @voter,
+         _percent,
+         _estimate,
+         @weight,
+         @rshares,
+         @time.strftime("%Y-%m-%d %H:%M:%S")
+      ]
    end
 
    class << self
@@ -164,7 +167,8 @@ class Vote < Steem::Type::BaseType
       # @param [Array<Hash>] votes
       #     list of votes
       #
-      Contract ArrayOf[HashOf[String => Or[String, Num]] ] => nil
+      Contract ArrayOf[HashOf[String => Or[String, Num]]] => nil
+
       def print_list (votes)
          # used to calculate the total vote value
          _total_estimate = 0.0
@@ -180,22 +184,24 @@ class Vote < Steem::Type::BaseType
 
          # print the total estimate after the last vote
          puts (
-            "Total vote value |          |" +
-            "%1$10.3f SBD".colorize(
-               if _total_estimate > 0.0005 then
-                  :green
-               elsif _total_estimate < -0.0005 then
-                  :red
-               else
-                  :white
-               end
-            ) +
-            " |           |                 |                     |") % [
-               _total_estimate
-            ]
+                 "Total vote value |          |" +
+                    "%1$10.3f SBD".colorize(
+                       if _total_estimate > 0.0005 then
+                          :green
+                       elsif _total_estimate < -0.0005 then
+                          :red
+                       else
+                          :white
+                       end
+                    ) +
+                    " |           |                 |                     |") % [
+            _total_estimate
+         ]
 
          return
-      end # print_list
+      end
+
+      # print_list
 
       ##
       # Print the votes from a postings given as URLs:
@@ -211,6 +217,7 @@ class Vote < Steem::Type::BaseType
       #     URL of the posting.
       #
       Contract String => nil
+
       def print_url (url)
          _slug              = url.split('@').last
          _author, _permlink = _slug.split('/')

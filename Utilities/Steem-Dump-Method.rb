@@ -28,7 +28,7 @@ require 'steem'
 
 begin
    Condenser_Api = Radiator::CondenserApi.new
-   Database_Api = Radiator::DatabaseApi.new
+   Database_Api  = Radiator::DatabaseApi.new
 
 rescue => error
    # I am using `Kernel::abort` so the script ends when
@@ -59,7 +59,7 @@ elsif ARGV.length == 1 then
 else
    # read arguments from command line
 
-   Query_Class = ARGV[0]
+   Query_Class  = ARGV[0]
    Query_Method = ARGV[1]
 
    # create instance to the steem database API

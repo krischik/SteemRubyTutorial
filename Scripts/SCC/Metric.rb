@@ -38,17 +38,17 @@ module SCC
       include Contracts::Builtin
 
       attr_reader :key, :value,
-         :symbol,
-         :volume,
-         :volumeExpiration,
-         :lastPrice,
-         :lowestAsk,
-         :highestBid,
-         :lastDayPrice,
-         :lastDayPriceExpiration,
-         :priceChangeSteem,
-         :priceChangePercent,
-         :loki
+                  :symbol,
+                  :volume,
+                  :volume_expiration,
+                  :lastPrice,
+                  :lowestAsk,
+                  :highest_bid,
+                  :last_day_price,
+                  :last_day_price_expiration,
+                  :price_change_steem,
+                  :price_change_percent,
+                  :loki
 
       public
 
@@ -59,19 +59,20 @@ module SCC
          #    JSON object from contract API.
          #
          Contract Any => nil
+
          def initialize(metric)
             super(:symbol, metric.symbol)
 
             @symbol                    = metric.symbol
             @volume                    = metric.volume.to_f
-            @volumeExpiration          = metric.volumeExpiration
-            @lastPrice                 = metric.lastPrice.to_f
-            @lowestAsk                 = metric.lowestAsk.to_f
-            @highestBid                = metric.highestBid.to_f
-            @lastDayPrice              = metric.lastPrice.to_f
-            @lastDayPriceExpiration    = metric.lastDayPriceExpiration
-            @priceChangeSteem          = metric.priceChangeSteem.to_f
-            @priceChangePercent        = metric.priceChangePercent
+            @volume_expiration         = metric.volumeExpiration
+            @last_price                = metric.lastPrice.to_f
+            @lowest_ask                = metric.lowestAsk.to_f
+            @highest_bid               = metric.highestBid.to_f
+            @last_day_price            = metric.lastDayPrice.to_f
+            @last_day_price_expiration = metric.lastDayPriceExpiration
+            @price_change_steem        = metric.priceChangeSteem.to_f
+            @price_change_percent      = metric.priceChangePercent
             @loki                      = metric["$loki"]
 
             return
@@ -88,102 +89,109 @@ module SCC
          #    formatted value
          #
          Contract None => String
+
          def to_ansi_s
             begin
-               return (
-                  "%1$-12s" +
+               _retval = (
+               "%1$-12s" +
                   " | " +
                   "%2$18.6f STEEM".colorize(
-                     if @highestBid > 0.000001 then
+                     if @highest_bid > 0.000001 then
                         :green
                      else
                         :white
                      end
-                   ) +
-                   " | " +
-                   "%3$18.6f STEEM".colorize(
-                     if @lastPrice > 0.000001 then
+                  ) +
+                  " | " +
+                  "%3$18.6f STEEM".colorize(
+                     if @last_price > 0.000001 then
                         :blue
                      else
                         :white
                      end
-                   ) +
-                   " | " +
-                   "%4$18.6f STEEM".colorize(
-                     if @lowestAsk > 0.000001 then
+                  ) +
+                  " | " +
+                  "%4$18.6f STEEM".colorize(
+                     if @lowest_ask > 0.000001 then
                         :red
                      else
                         :white
-                     end )+
-                   " | "
-                   ) % [
-                     @symbol,
-                     @highestBid,
-                     @lastPrice,
-                     @lowestAsk
-                  ]
+                     end) +
+                  " | "
+               ) % [
+                  @symbol,
+                  @highest_bid,
+                  @last_price,
+                  @lowest_ask
+               ]
+            rescue
+               _retval = ""
             end
 
             return _retval
          end
 
-      class << self
-         ##
-         #
-         #  @param [String] name
-         #     name of symbol
-         #  @return [Array<SCC::Metric>]
-         #     metric found
-         #
-         Contract String => Or[SCC::Metric, nil]
-         def symbol (name)
-            _metric = Steem_Engine.contracts_api.find_one(
-               contract: "market",
-               table: "metrics",
-               query: {
-                  "symbol": name
-               })
+         class << self
+            ##
+            #
+            #  @param [String] name
+            #     name of symbol
+            #  @return [Array<SCC::Metric>]
+            #     metric found
+            #
+            Contract String => Or[SCC::Metric, nil]
 
-            raise KeyError, "Symbol «" + name + "» not found" if _metric == nil
-
-            return SCC::Metric.new _metric
-         end # symbol
-
-         ##
-         #  Get all token
-         #
-         #  @return [SCC::Metric]
-         #     metric found
-         #
-         Contract String => ArrayOf[SCC::Metric]
-         def all
-            _retval = []
-            _current = 0
-
-            loop do
-               _metric = Steem_Engine.contracts_api.find(
+            def symbol (name)
+               _metric = Steem_Engine.contracts_api.find_one(
                   contract: "market",
-                  table: "metrics",
-                  query: Steem_Engine::QUERY_ALL,
-                  limit: Steem_Engine::QUERY_LIMIT,
-                  offset: _current,
-                  descending: false)
+                  table:    "metrics",
+                  query:    {
+                     "symbol": name
+                  })
 
-               # Exit loop when no result set is returned.
-               #
-            break if (not _metric) || (_metric.length == 0)
-               _retval += _metric.map do |_token|
-                  SCC::Metric.new _token
-               end
+               raise KeyError, "Symbol «" + name + "» not found" if _metric == nil
 
-               # Move current by the actual amount of rows returned
-               #
-               _current = _current + _metric.length
+               return SCC::Metric.new _metric
             end
 
-            return _retval
-         end # all
-      end # self
+            # symbol
+
+            ##
+            #  Get all token
+            #
+            #  @return [SCC::Metric]
+            #     metric found
+            #
+            Contract String => ArrayOf[SCC::Metric]
+
+            def all
+               _retval  = []
+               _current = 0
+
+               loop do
+                  _metric = Steem_Engine.contracts_api.find(
+                     contract:   "market",
+                     table:      "metrics",
+                     query:      Steem_Engine::QUERY_ALL,
+                     limit:      Steem_Engine::QUERY_LIMIT,
+                     offset:     _current,
+                     descending: false)
+
+                  # Exit loop when no result set is returned.
+                  #
+                  break if (not _metric) || (_metric.length == 0)
+                  _retval += _metric.map do |_token|
+                     SCC::Metric.new _token
+                  end
+
+                  # Move current by the actual amount of rows returned
+                  #
+                  _current = _current + _metric.length
+               end
+
+               return _retval
+            end # all
+         end # self
    end # Metric
 end # SCC
 

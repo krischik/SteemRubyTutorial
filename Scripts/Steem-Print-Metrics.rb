@@ -36,11 +36,11 @@ require_relative 'SCC/Metric'
 
 _metrics = SCC::Metric.all
 
-puts ("Token        |               highes Bid |               last price |            lowest asking |")
-puts ("-------------+--------------------------+--------------------------+--------------------------+")
+puts("Token        |               highes Bid |               last price |            lowest asking |")
+puts("-------------+--------------------------+--------------------------+--------------------------+")
 
-_metrics.each do |_metrics|
-   puts _metrics.to_ansi_s
+_metrics.each do |_metric|
+   puts _metric.to_ansi_s
 end
 
 ############################################################ {{{1 ###########

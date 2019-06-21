@@ -62,7 +62,8 @@ class Vesting < Radiator::Type::Serializer
    #     `get_vesting_delegations` or
    #     `list_vesting_delegations`.
    #
-   Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]] ]] => nil
+   Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]] => nil
+
    def initialize(value)
       super(:id, value)
 
@@ -70,7 +71,7 @@ class Vesting < Radiator::Type::Serializer
       @delegator           = value.delegator
       @delegatee           = value.delegatee
       @vesting_shares      = Radiator::Type::Amount.new (value.vesting_shares)
-      @min_delegation_time = Time.strptime(value.min_delegation_time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
+      @min_delegation_time = Time.strptime(value.min_delegation_time + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
 
       return
    end
@@ -86,22 +87,25 @@ class Vesting < Radiator::Type::Serializer
    #    formatted value
    #
    Contract None => String
+
    def to_ansi_s
       # All the magic happens in the `%` operators which
       # calls sprintf which in turn formats the string.
       return (
-         "%1$10d | " +
+      "%1$10d | " +
          "%2$-16s ⇒ " +
          "%3$-16s | " +
          "%4$-68s | " +
          "%5$20s | ") % [
-            @id,
-            @delegator,
-            @delegatee,
-            @vesting_shares.to_ansi_s,
-            @min_delegation_time.strftime("%Y-%m-%d %H:%M:%S")
-         ]
-   end # to_ansi_s
+         @id,
+         @delegator,
+         @delegatee,
+         @vesting_shares.to_ansi_s,
+         @min_delegation_time.strftime("%Y-%m-%d %H:%M:%S")
+      ]
+   end
+
+   # to_ansi_s
 
    class << self
       ##
@@ -115,7 +119,8 @@ class Vesting < Radiator::Type::Serializer
       # @param [Array<Hash>] vesting
       #     list of vesting
       #
-      Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]] ]] ] => nil
+      Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]]] => nil
+
       def print_list (vesting)
          vesting.each do |vest|
             _vest = Vesting.new vest
@@ -133,6 +138,7 @@ class Vesting < Radiator::Type::Serializer
       #     account of the posting.
       #
       Contract String => nil
+
       def print_account (account)
 
          puts ("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
@@ -160,7 +166,7 @@ class Vesting < Radiator::Type::Serializer
             # no elements found, end loop now. This only
             # happens when the account doesn't exist.
 
-         break if _vesting.result.length == 0
+            break if _vesting.result.length == 0
 
             # get and remove the last element. The last
             # element meeds to be removed as it will be
