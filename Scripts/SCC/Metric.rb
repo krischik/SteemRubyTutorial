@@ -41,7 +41,7 @@ module SCC
                   :symbol,
                   :volume,
                   :volume_expiration,
-                  :lastPrice,
+                  :last_price,
                   :lowestAsk,
                   :highest_bid,
                   :last_day_price,

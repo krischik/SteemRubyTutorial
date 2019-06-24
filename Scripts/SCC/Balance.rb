@@ -138,8 +138,8 @@ module SCC
 
          def to_ansi_s
             begin
-               _steem = to_steem
-               _sbd   = to_sbd
+               _steem = self.to_steem
+               _sbd   = self.to_sbd
 
                _retval = (
                "%1$15.3f %2$s".white +
