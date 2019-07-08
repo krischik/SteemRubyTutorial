@@ -25,7 +25,6 @@ require 'pp'
 require 'colorize'
 require 'radiator'
 
-
 begin
    Condenser_Api = Radiator::CondenserApi.new
    Database_Api  = Radiator::DatabaseApi.new

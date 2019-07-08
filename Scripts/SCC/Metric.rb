@@ -32,6 +32,8 @@ require_relative 'Steem_Engine'
 
 module SCC
    ##
+   # Holds the metrics of Steem Engine Token that is the
+   # recent prices a steem engine token was traded.
    #
    class Metric < SCC::Steem_Engine
       include Contracts::Core
@@ -58,8 +60,7 @@ module SCC
          # @param [Hash]
          #    JSON object from contract API.
          #
-         Contract Any => nil
-
+         Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]] => nil
          def initialize(metric)
             super(:symbol, metric.symbol)
 
@@ -80,16 +81,20 @@ module SCC
 
          ##
          # create a colorized string showing the amount in
-         # SDB, STEEM and the steem engine token. The
-         # actual value is colorized in blue while the
-         # converted values are colorized in grey (aka dark
-         # white).
+         # SDB, STEEM and the steem engine token.
+         #
+         # The current highest bid is printed green, the
+         # current lowest asking price us printed in red
+         # and the last price of an actual transaction is
+         # printed on blue.
+         #
+         # Unless the value is close to 0, then the value
+         # is greyed out.
          #
          # @return [String]
          #    formatted value
          #
          Contract None => String
-
          def to_ansi_s
             begin
                _retval = (
@@ -133,6 +138,7 @@ module SCC
 
          class << self
             ##
+            #  Get the metric of a single token.
             #
             #  @param [String] name
             #     name of symbol
@@ -140,7 +146,6 @@ module SCC
             #     metric found
             #
             Contract String => Or[SCC::Metric, nil]
-
             def symbol (name)
                _metric = Steem_Engine.contracts_api.find_one(
                   contract: "market",
@@ -154,8 +159,6 @@ module SCC
                return SCC::Metric.new _metric
             end
 
-            # symbol
-
             ##
             #  Get all token
             #
@@ -163,7 +166,6 @@ module SCC
             #     metric found
             #
             Contract String => ArrayOf[SCC::Metric]
-
             def all
                _retval  = []
                _current = 0

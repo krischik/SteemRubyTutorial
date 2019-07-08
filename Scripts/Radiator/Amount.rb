@@ -84,7 +84,6 @@ module Radiator
          #     one of "Whale", "Orca", "Dolphin", "Minnow", "Plankton" or "N/A"
          #
          Contract None => String
-
          def to_level
             _value = @amount.to_f
 
@@ -186,7 +185,6 @@ module Radiator
          #    formatted value
          #
          Contract None => String
-
          def to_ansi_s
             _sbd   = to_sbd
             _steem = to_steem

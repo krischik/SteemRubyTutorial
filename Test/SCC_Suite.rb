@@ -18,9 +18,7 @@
 
 Test_All = ARGV[0] == "all"
 
-
 require_relative '../Test/Radiator_Amount_Test.rb'
-
 require_relative '../Test/Steem_Engine_Test.rb'
 require_relative '../Test/Contract_Test.rb'
 require_relative '../Test/Token_Test.rb'

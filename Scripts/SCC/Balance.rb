@@ -135,7 +135,6 @@ module SCC
          #    formatted value
          #
          Contract None => String
-
          def to_ansi_s
             begin
                _steem = self.to_steem

@@ -27,9 +27,6 @@ require 'colorize'
 require 'contracts'
 require 'radiator'
 
-# The Amount class is used in most Scripts so it was
-# moved into a separate file.
-
 require_relative 'Radiator/Amount'
 require_relative 'Radiator/Price'
 require_relative 'SCC/Metric'

@@ -36,15 +36,15 @@ require_relative 'Radiator/Price'
 # Class to hold a vesting delegation. The vesting holds the
 # following values
 #
-# @attrib [Number] id
+# @property [Number] id
 #     ID unique to all delegations.
-# @attrib [String] delegator
+# @property [String] delegator
 #     Account name of the account who delegates
-# @attrib [String] delegatee
+# @property [String] delegatee
 #     Account name of the account who is delegates to
-# @attrib [Amount] vesting_shares
+# @property [Amount] vesting_shares
 #     Amount
-# @attrib [Time] min_delegation_time
+# @property [Time] min_delegation_time
 #     Start of delegation
 #
 class Vesting < Radiator::Type::Serializer

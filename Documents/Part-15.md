@@ -1,4 +1,4 @@
-# Using Steem-API with Ruby Part XXXXX — XXXXX
+# Using Steem-API with Ruby Part 15 — Print Steem Engine Token values
 
 utopian-io tutorials ruby steem-api programming
 utopian.pay
@@ -58,14 +58,207 @@ For reader with programming experience this tutorial is **basic level**.
 
 ## Implementation using radiator
 
------
+### [SCC/Metric.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/SCC/Metric.rb)
+
+Most of the actual functionality is part of a new `SCC:Metric` class so it can be reused in further part of the tutorial.
 
 ```ruby
+require 'pp'
+require 'colorize'
+require 'contracts'
+require 'radiator'
+require 'json'
+
+require_relative 'Steem_Engine'
+
+module SCC
+   ##
+   # Holds the metrics of Steem Engine Token that is the
+   # recent prices a steem engine token was traded.
+   #
+   class Metric < SCC::Steem_Engine
+      include Contracts::Core
+      include Contracts::Builtin
+
+      attr_reader :key, :value,
+                  :symbol,
+                  :volume,
+                  :volume_expiration,
+                  :last_price,
+                  :lowestAsk,
+                  :highest_bid,
+                  :last_day_price,
+                  :last_day_price_expiration,
+                  :price_change_steem,
+                  :price_change_percent,
+                  :loki
+
+      public
 ```
 
------
+The class contructor create instance form Steem Engine JSON object. Numeric data in strings are converted.
 
-**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-XXXXX.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-XXXXX.rb).
+```ruby
+         Contract Any => nil
+         def initialize(metric)
+            super(:symbol, metric.symbol)
+
+            @symbol                    = metric.symbol
+            @volume                    = metric.volume.to_f
+            @volume_expiration         = metric.volumeExpiration
+            @last_price                = metric.lastPrice.to_f
+            @lowest_ask                = metric.lowestAsk.to_f
+            @highest_bid               = metric.highestBid.to_f
+            @last_day_price            = metric.lastDayPrice.to_f
+            @last_day_price_expiration = metric.lastDayPriceExpiration
+            @price_change_steem        = metric.priceChangeSteem.to_f
+            @price_change_percent      = metric.priceChangePercent
+            @loki                      = metric["$loki"]
+
+            return
+         end
+```
+
+Create a colorized string showing the amount in SDB, STEEM and the steem engine token.
+
+The current highest bid is printed green, the current lowest asking price us printed in red and the last price of an actual transaction is printed on blue.
+
+Unless the value is close to 0, then the value is greyed out.
+
+```ruby
+         Contract None => String
+         def to_ansi_s
+            begin
+               _retval = (
+               "%1$-12s" +
+                  " | " +
+                  "%2$18.6f STEEM".colorize(
+                     if @highest_bid > 0.000001 then
+                        :green
+                     else
+                        :white
+                     end
+                  ) +
+                  " | " +
+                  "%3$18.6f STEEM".colorize(
+                     if @last_price > 0.000001 then
+                        :blue
+                     else
+                        :white
+                     end
+                  ) +
+                  " | " +
+                  "%4$18.6f STEEM".colorize(
+                     if @lowest_ask > 0.000001 then
+                        :red
+                     else
+                        :white
+                     end) +
+                  " | "
+               ) % [
+                  @symbol,
+                  @highest_bid,
+                  @last_price,
+                  @lowest_ask
+               ]
+            rescue
+               _retval = ""
+            end
+
+            return _retval
+         end
+```
+
+Read the metric of a single token form the Steem Engine database and convert it into a `SCC::Metric` instance. The method `Steem_Engine.contracts_api.find_one` method is described in [Part 13](https://steemit.com/@krischik/using-steem-api-with-ruby-part-13). 
+
+```ruby
+         class << self
+            ##
+            #
+            #  @param [String] name
+            #     name of symbol
+            #  @return [Array<SCC::Metric>]
+            #     metric found
+            #
+            Contract String => Or[SCC::Metric, nil]
+            def symbol (name)
+               _metric = Steem_Engine.contracts_api.find_one(
+                  contract: "market",
+                  table:    "metrics",
+                  query:    {
+                     "symbol": name
+                  })
+
+               raise KeyError, "Symbol «" + name + "» not found" if _metric == nil
+
+               return SCC::Metric.new _metric
+            end
+```
+
+```ruby
+            ##
+            #  Get all token
+            #
+            #  @return [SCC::Metric]
+            #     metric found
+            #
+            Contract String => ArrayOf[SCC::Metric]
+
+            def all
+               _retval  = []
+               _current = 0
+
+               loop do
+                  _metric = Steem_Engine.contracts_api.find(
+                     contract:   "market",
+                     table:      "metrics",
+                     query:      Steem_Engine::QUERY_ALL,
+                     limit:      Steem_Engine::QUERY_LIMIT,
+                     offset:     _current,
+                     descending: false)
+
+                  # Exit loop when no result set is returned.
+                  #
+                  break if (not _metric) || (_metric.length == 0)
+                  _retval += _metric.map do |_token|
+                     SCC::Metric.new _token
+                  end
+
+                  # Move current by the actual amount of rows returned
+                  #
+                  _current = _current + _metric.length
+               end
+
+               return _retval
+            end # all
+         end # self
+   end # Metric
+end # SCC
+```
+
+**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [SCC/Metric.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/SCC/Metric.rb).
+
+
+### [Steem-Print-Metrics.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Metrics.rb)
+
+With all the functionality in classes the actual implementation is just a few lines:
+
+```ruby
+require_relative 'SCC/Metric'
+
+_metrics = SCC::Metric.all
+
+puts("Token        |               highes Bid |               last price |            lowest asking |")
+puts("-------------+--------------------------+--------------------------+--------------------------+")
+
+_metrics.each do |_metric|
+   puts _metric.to_ansi_s
+end
+```
+
+**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Metrics.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Metrics.rb).
+
+-----
 
 The output of the command (for the steem account) looks identical to the previous output:
 
