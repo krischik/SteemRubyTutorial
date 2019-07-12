@@ -25,10 +25,9 @@ require 'pp'
 require 'colorize'
 require 'steem'
 
-
 begin
    Condenser_Api = Radiator::CondenserApi.new
-   Database_Api = Radiator::DatabaseApi.new
+   Database_Api  = Radiator::DatabaseApi.new
 
 rescue => error
    # I am using `Kernel::abort` so the script ends when
@@ -54,12 +53,12 @@ elsif ARGV.length == 1 then
    # x = JsonRpc.get_methods(Query_Class)
    # x = JsonRpc.get_methods("Radiator::DatabaseApi")
 
-   pp Database_Api.methods 
+   pp Database_Api.methods
 
 else
    # read arguments from command line
 
-   Query_Class = ARGV[0]
+   Query_Class  = ARGV[0]
    Query_Method = ARGV[1]
 
    # create instance to the steem database API
@@ -68,10 +67,10 @@ else
 
    # x = JsonRpc.get_signature(Query_Class)
    # x = JsonRpc.get_signature(Steem::DatabaseApi)
-   
+
 end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: spell spelllang=en_gb fileencoding=utf-8 :

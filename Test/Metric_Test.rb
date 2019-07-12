@@ -16,53 +16,37 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the radiator gem. This is
-# only needed if you have both steem-api and radiator
-# installed.
+require_relative '../Scripts/SCC/Metric'
+require "test/unit"
 
-gem "radiator", :require => "steem"
+class Metric_Test < Test::Unit::TestCase
+   def test_all_01
+      # Thee “all” tests but considerable strain on the
+      # Steem Engine server so we only do them when
+      # explicitly requested
+      #
+      if Test_All then
+         _test = SCC::Metric.all
 
-require 'pp'
-require 'colorize'
-require 'radiator'
+         assert_not_nil(_test, "There should be metrics")
+         assert_instance_of(Array, _test, "metric should be an array")
 
-begin
-   # create an instance to the radiator contracts API which
-   # will give us access to steem engine contracts
+         _metric = _test[0]
 
-   Contracts = Radiator::SSC::Contracts.new
+         assert_not_nil(_metric, "First metric should exist")
+         assert_instance_of(SCC::Metric, _metric, "First metric should be of type «SCC::Metric»")
+         assert_equal(:symbol, _metric.key, "First metric key should be «:symbol»")
+         assert_equal("ENG", _metric.value, "First metric value should be “ENG”")
+      end
+   end
 
-rescue => error
-   # I am using Kernel::abort so the code snipped including
-   # error handler can be copy pasted into other scripts
+   def test_symbol_01
+      _test = SCC::Metric.symbol "BEER"
 
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
-end
-
-if ARGV.length == 0 then
-   puts "
-Steem-Print-SSC-Contract — Print steem engine contracts.
-
-Usage:
-   Steem-Print-SSC-Contract contract_name …
-"
-else
-   # read arguments from command line
-
-   _names = ARGV
-
-   # Loop over provided contact names and print the steen
-   # engine contracts.
-
-   _names.each do |_name|
-
-      # read the contract
-
-      _contract = Contracts.contract _name
-
-      # print the contract
-
-      pp _contract
+      assert_not_nil(_test, "There should be a metric for metric “BEER”")
+      assert_instance_of(SCC::Metric, _test, "Result should be of type «SCC::Metric»")
+      assert_equal(:symbol, _test.key, "The metric key should be «:symbol»")
+      assert_equal("BEER", _test.value, "The metric value should be “BEER”")
    end
 end
 

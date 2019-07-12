@@ -68,8 +68,8 @@ else
    # from Part 2 to convert the sting values into amounts.
 
    _total_vesting_fund_steem = Steem::Type::Amount.new Global_Properties.total_vesting_fund_steem
-   _total_vesting_shares = Steem::Type::Amount.new Global_Properties.total_vesting_shares
-   _conversion_rate = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
+   _total_vesting_shares     = Steem::Type::Amount.new Global_Properties.total_vesting_shares
+   _conversion_rate          = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 
    # iterate over the valued passed in the command line
 
@@ -85,5 +85,5 @@ end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :

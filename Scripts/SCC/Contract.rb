@@ -24,47 +24,58 @@ gem "radiator", :require => "steem"
 
 require 'pp'
 require 'colorize'
+require 'contracts'
 require 'radiator'
 
-begin
-   # create an instance to the radiator contracts API which
-   # will give us access to steem engine contracts
+require_relative 'Steem_Engine'
 
-   Contracts = Radiator::SSC::Contracts.new
+module SCC
+   ##
+   #
+   class Contract < SCC::Steem_Engine
+      include Contracts::Core
+      include Contracts::Builtin
 
-rescue => error
-   # I am using Kernel::abort so the code snipped including
-   # error handler can be copy pasted into other scripts
+      attr_reader :key, :value, :name, :owner, :code, :code_hash, :tables
 
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
-end
+      public
 
-if ARGV.length == 0 then
-   puts "
-Steem-Print-SSC-Contract — Print steem engine contracts.
+         ##
+         # create instance form Steem Engine JSON object.
+         #
+         # @param [Hash]
+         #    JSON object from contract API.
+         #
+         Contract Any => nil
+         def initialize(contract)
+            super(:name, contract.name)
 
-Usage:
-   Steem-Print-SSC-Contract contract_name …
-"
-else
-   # read arguments from command line
+            @name      = contract.name
+            @owner     = contract.owner
+            @code      = contract.code
+            @code_hash = contract.codeHash
+            @tables    = contract.tables
 
-   _names = ARGV
+            return
+         end
 
-   # Loop over provided contact names and print the steen
-   # engine contracts.
+         class << self
+            ##
+            #
+            #  @param [String] name
+            #     name of contract
+            #  @return [SCC::Contract]
+            #     contract found
+            #
+            Contract String => SCC::Contract
+            def symbol (name)
+               _contract = Steem_Engine.contracts_api.contract name
 
-   _names.each do |_name|
-
-      # read the contract
-
-      _contract = Contracts.contract _name
-
-      # print the contract
-
-      pp _contract
-   end
-end
+               return SCC::Contract.new _contract
+            end
+         end # self
+   end # Token
+end # SCC
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

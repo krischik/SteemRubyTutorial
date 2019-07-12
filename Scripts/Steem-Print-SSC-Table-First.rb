@@ -52,15 +52,15 @@ else
    # read arguments from command line
 
    _contract = ARGV[0]
-   _table = ARGV[1]
+   _table    = ARGV[1]
 
    # the query attribute is mandantory, supply an empty query
    # to receive the first row.
 
    _row = Contracts.find_one(
       contract: _contract,
-      table: _table,
-      query: {
+      table:    _table,
+      query:    {
       }
    )
 
@@ -78,5 +78,5 @@ end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :
