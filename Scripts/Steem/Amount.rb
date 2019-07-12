@@ -37,7 +37,7 @@ require 'steem'
 #
 module Steem
    module Type
-      class Amount 
+      class Amount
          include Contracts::Core
          include Contracts::Builtin
 
@@ -276,27 +276,27 @@ module Steem
                return Amount.to_amount(@amount.to_f / right.to_f, @asset)
             end
 
-         private
-
-            ##
-            # Helper factory method to create a new Amount from
-            # an value and asset type.
-            #
-            # @param [Float] value
-            #     the numeric value to create an amount from
-            # @param [String] asset
-            #     the asset type which should be STEEM, SBD or VESTS
-            # @return [Amount]
-            #     the value as amount
-            Contract Float, String => Amount
-            def self.to_amount(value, asset)
-               return Amount.new(value.to_s + " " + asset)
-            end
+            class << self
+               ##
+               # Helper factory method to create a new Amount from
+               # an value and asset type.
+               #
+               # @param [Float] value
+               #     the numeric value to create an amount from
+               # @param [String] asset
+               #     the asset type which should be STEEM, SBD or VESTS
+               # @return [Amount]
+               #     the value as amount
+               Contract Float, String => Amount
+               def to_amount(value, asset)
+                  return Amount.new(value.to_s + " " + asset)
+               end # to_amount
+            end # self
       end # Amount
    end # Type
 end # Steem
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :

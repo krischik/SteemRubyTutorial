@@ -1,4 +1,3 @@
-#!/opt/local/bin/ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -24,47 +23,61 @@ gem "radiator", :require => "steem"
 
 require 'pp'
 require 'colorize'
+require 'contracts'
 require 'radiator'
 
-begin
-   # create an instance to the radiator contracts API which
-   # will give us access to steem engine contracts
+module SCC
+   ##
+   #  Base class for all steem engine classes. This cales
+   #  holds an general constants and a lazy initialization
+   #  to the contracts API.
+   #
+   class Steem_Engine < Radiator::Type::Serializer
+      include Contracts::Core
+      include Contracts::Builtin
 
-   Contracts = Radiator::SSC::Contracts.new
+      attr_reader :key, :value
 
-rescue => error
-   # I am using Kernel::abort so the code snipped including
-   # error handler can be copy pasted into other scripts
+      ##
+      # amount of rows read from database in a single query. If
+      # the overall results exceeds this limit then make multiple
+      # queries. 1000 seem to be the standard for Steem queries.
+      #
+      QUERY_LIMIT = 1000
 
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
-end
+      ##
+      # query all rows of an table.
+      #
+      QUERY_ALL = {}
 
-if ARGV.length == 0 then
-   puts "
-Steem-Print-SSC-Contract — Print steem engine contracts.
+      class << self
+         attr_reader :QUERY_ALL, :QUERY_LIMIT
 
-Usage:
-   Steem-Print-SSC-Contract contract_name …
-"
-else
-   # read arguments from command line
+         @api = nil
 
-   _names = ARGV
+         ##
+         # Access to contracts interface
+         #
+         # @return [Radiator::SSC::Contracts]
+         #     the contracts API.
+         #
+         Contract None => Radiator::SSC::Contracts
+         def contracts_api
+            if @api == nil then
+               @api = Radiator::SSC::Contracts.new
+            end
 
-   # Loop over provided contact names and print the steen
-   # engine contracts.
+            return @api
+         rescue => error
+            # I am using Kernel::abort so the code snipped
+            # including error handler can be copy pasted into other
+            # scripts
 
-   _names.each do |_name|
-
-      # read the contract
-
-      _contract = Contracts.contract _name
-
-      # print the contract
-
-      pp _contract
-   end
-end
+            Kernel::abort("Error creating contracts API :\n".red + error.to_s)
+         end #contracts
+      end # self
+   end # Token
+end # SCC
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

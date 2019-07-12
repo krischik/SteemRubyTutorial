@@ -16,53 +16,17 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the radiator gem. This is
-# only needed if you have both steem-api and radiator
-# installed.
+require_relative '../Scripts/SCC/Contract'
+require "test/unit"
 
-gem "radiator", :require => "steem"
+class Contract_Test < Test::Unit::TestCase
+   def test_find_01
+      _test = SCC::Contract.symbol "tokens"
 
-require 'pp'
-require 'colorize'
-require 'radiator'
-
-begin
-   # create an instance to the radiator contracts API which
-   # will give us access to steem engine contracts
-
-   Contracts = Radiator::SSC::Contracts.new
-
-rescue => error
-   # I am using Kernel::abort so the code snipped including
-   # error handler can be copy pasted into other scripts
-
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
-end
-
-if ARGV.length == 0 then
-   puts "
-Steem-Print-SSC-Contract — Print steem engine contracts.
-
-Usage:
-   Steem-Print-SSC-Contract contract_name …
-"
-else
-   # read arguments from command line
-
-   _names = ARGV
-
-   # Loop over provided contact names and print the steen
-   # engine contracts.
-
-   _names.each do |_name|
-
-      # read the contract
-
-      _contract = Contracts.contract _name
-
-      # print the contract
-
-      pp _contract
+      assert_not_nil(_test, "Contract “tokens” should exist")
+      assert_instance_of(SCC::Contract, _test, "Result should be of type «SCC::Contract»")
+      assert_equal(:name, _test.key, "The contract key should be «:name»")
+      assert_equal("tokens", _test.value, "The contract value should be “tokens”")
    end
 end
 

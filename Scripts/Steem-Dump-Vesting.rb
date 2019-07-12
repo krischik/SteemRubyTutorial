@@ -39,20 +39,20 @@ Max_Retry_Count = 3
 ##
 # Delete the current line on the console.
 #
-Delete_Line     = "\e[1K\r"
+Delete_Line = "\e[1K\r"
 
 ##
 # Class to hold a vesting delegation
 #
-# @attrib [Number] id
+# @property [Number] id
 #     ID unique to all delegations.
-# @attrib [String] delegator
+# @property [String] delegator
 #     Account name of the account who delegates
-# @attrib [String] delegatee
+# @property [String] delegatee
 #     Account name of the account who is delegates to
-# @attrib [Amount] vesting_shares
+# @property [Amount] vesting_shares
 #     Amount
-# @attrib [Time] min_delegation_time
+# @property [Time] min_delegation_time
 #     Start of delegation
 #
 class Vesting < Steem::Type::BaseType
@@ -70,7 +70,7 @@ class Vesting < Steem::Type::BaseType
    #     `get_vesting_delegations` or
    #     `list_vesting_delegations`.
    #
-   Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]] ]] => nil
+   Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]] => nil
    def initialize(value)
       super(:id, value)
 
@@ -78,7 +78,7 @@ class Vesting < Steem::Type::BaseType
       @delegator           = value.delegator
       @delegatee           = value.delegatee
       @vesting_shares      = Steem::Type::Amount.new (value.vesting_shares)
-      @min_delegation_time = Time.strptime(value.min_delegation_time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
+      @min_delegation_time = Time.strptime(value.min_delegation_time + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
 
       return
    end
@@ -98,17 +98,17 @@ class Vesting < Steem::Type::BaseType
       # All the magic happens in the `%` operators which
       # calls sprintf which in turn formats the string.
       return (
-         "%1$10d | " +
+      "%1$10d | " +
          "%2$-16s ⇒ " +
          "%3$-16s | " +
          "%4$-68s | " +
          "%5$20s | ") % [
-            @id,
-            @delegator,
-            @delegatee,
-            @vesting_shares.to_ansi_s,
-            @min_delegation_time.strftime("%Y-%m-%d %H:%M:%S")
-         ]
+         @id,
+         @delegator,
+         @delegatee,
+         @vesting_shares.to_ansi_s,
+         @min_delegation_time.strftime("%Y-%m-%d %H:%M:%S")
+      ]
    end
 
    ##
@@ -126,163 +126,165 @@ class Vesting < Steem::Type::BaseType
       return (accounts.include? @delegator) || (accounts.include? @delegatee)
    end
 
-   ##
-   # Prints all vesting values which are related to given
-   # list of accounts:
-   #
-   # 1. Loop over all vesting.
-   # 2. Checks is vesting is related to the list of
-   #    accounts
-   # 3. Convert the vote JSON object into the ruby
-   #    `Vesting` class.
-   # 4. Print as ansi strings.
-   #
-   # @param [Array<Hash>] vesting
-   #     list of vesting
-   #
-   Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]] ]] ], ArrayOf[String] => nil
-   def self.print_list (vesting, accounts)
-      vesting.each do |vest|
-         _vest = Vesting.new vest
+   class << self
+      ##
+      # Prints all vesting values which are related to given
+      # list of accounts:
+      #
+      # 1. Loop over all vesting.
+      # 2. Checks is vesting is related to the list of
+      #    accounts
+      # 3. Convert the vote JSON object into the ruby
+      #    `Vesting` class.
+      # 4. Print as ansi strings.
+      #
+      # @param [Array<Hash>] vesting
+      #     list of vesting
+      #
+      Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]]], ArrayOf[String] => nil
+      def print_list (vesting, accounts)
+         vesting.each do |vest|
+            _vest = Vesting.new vest
 
-         if _vest.is_accounts accounts then
-            puts _vest.to_ansi_s
+            if _vest.is_accounts accounts then
+               puts _vest.to_ansi_s
+            end
          end
+
+         return
       end
 
-      return
-   end
-
-   ##
-   # Fetches all the vestings form the database and prints
-   # those who are related to the given list of accounts
-   #
-   # @param [Array<String>] accounts
-   #     the accounts to search.
-   #
-   Contract ArrayOf[String] => nil
-   def self.print_accounts (accounts)
-
-      puts ("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
-
-      # `get_vesting_delegations` returns the delegations
-      # of multiple accounts at once. Useful if you want
-      # to iterate over all existing delegations. It's also
-      # the only way to find delegatees.
+      ##
+      # Fetches all the vestings form the database and prints
+      # those who are related to the given list of accounts
       #
-      # The start parameter takes the delegator / delegatee
-      # pair to start the search, limit is the maximum
-      # amount of results to be returned (less then 1000)
-      # and order is always "by_delegation".
+      # @param [Array<String>] accounts
+      #     the accounts to search.
       #
-      # The loop needed is pretty complicated as the last
-      # element on each iteration is duplicated as first
-      # element of the next iteration.
+      Contract ArrayOf[String] => nil
+      def print_accounts (accounts)
 
-      # empty strings denotes start of list
+         puts ("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
 
-      _previous_end = ["", ""]
+         # `get_vesting_delegations` returns the delegations
+         # of multiple accounts at once. Useful if you want
+         # to iterate over all existing delegations. It's also
+         # the only way to find delegatees.
+         #
+         # The start parameter takes the delegator / delegatee
+         # pair to start the search, limit is the maximum
+         # amount of results to be returned (less then 1000)
+         # and order is always "by_delegation".
+         #
+         # The loop needed is pretty complicated as the last
+         # element on each iteration is duplicated as first
+         # element of the next iteration.
 
-      # counter keep track of the amount of retries left
+         # empty strings denotes start of list
 
-      _retry_count = Max_Retry_Count
+         _previous_end = ["", ""]
 
-      loop do
-         # get the next 1000 items.
+         # counter keep track of the amount of retries left
 
-         _vesting = Database_Api.list_vesting_delegations(start: _previous_end, limit: 10, order: "by_delegation")
+         _retry_count = Max_Retry_Count
 
-         # no elements found, end loop now. This only
-         # happens when the initial delegator / delegatee
-         # pair doesn't exist.
+         loop do
+            # get the next 1000 items.
 
-      break if _vesting == nil || _vesting.result.length == 0
+            _vesting = Database_Api.list_vesting_delegations(start: _previous_end, limit: 10, order: "by_delegation")
 
-         # get the delegator / delegatee pair of the last
-         #  element
+            # no elements found, end loop now. This only
+            # happens when the initial delegator / delegatee
+            # pair doesn't exist.
 
-         _last_vest = Vesting.new _vesting.result.delegations.pop
-         _current_end = [_last_vest.delegator, _last_vest.delegatee]
+            break if _vesting == nil || _vesting.result.length == 0
 
-         # Delete the progress indicator.
+            # get the delegator / delegatee pair of the last
+            #  element
 
-         print Delete_Line
+            _last_vest   = Vesting.new _vesting.result.delegations.pop
+            _current_end = [_last_vest.delegator, _last_vest.delegatee]
 
-         # check of the delegatee of the current last
-         # element is the same as the last element of the
-         # previous literation. If this happens we have
-         # reached the end of the list
+            # Delete the progress indicator.
 
-         if _previous_end == _current_end then
-            # In the last iteration there will also be only
-            # one element which we need to print.
+            print Delete_Line
 
-            if _last_vest.is_accounts accounts then
-               puts _last_vest.to_ansi_s
-            end
+            # check of the delegatee of the current last
+            # element is the same as the last element of the
+            # previous literation. If this happens we have
+            # reached the end of the list
 
-            break
-         else
-            # Print the list.
+            if _previous_end == _current_end then
+               # In the last iteration there will also be only
+               # one element which we need to print.
 
-            Vesting.print_list(_vesting.result.delegations, accounts)
+               if _last_vest.is_accounts accounts then
+                  puts _last_vest.to_ansi_s
+               end
 
-            if _previous_end[0] != "steem" && _current_end[0] == "steem" then
-               # The large mayority of delegations are done
-               # by the steem account. Not only will it
-               # take more then an hour to iterate over the
-               # steem delegations there is also a very
-               # high likelihood of a network error
-               # preventing the iteration from finishing.
-               # For this we skip over the steem account.
-
-               _previous_end = ["steem", "zzzzzzj"]
+               break
             else
-               # remember the delegator / delegatee pair for
-               # the next iteration.
+               # Print the list.
 
-               _previous_end = _current_end
+               Vesting.print_list(_vesting.result.delegations, accounts)
+
+               if _previous_end[0] != "steem" && _current_end[0] == "steem" then
+                  # The large mayority of delegations are done
+                  # by the steem account. Not only will it
+                  # take more then an hour to iterate over the
+                  # steem delegations there is also a very
+                  # high likelihood of a network error
+                  # preventing the iteration from finishing.
+                  # For this we skip over the steem account.
+
+                  _previous_end = ["steem", "zzzzzzj"]
+               else
+                  # remember the delegator / delegatee pair for
+                  # the next iteration.
+
+                  _previous_end = _current_end
+               end
             end
-         end
 
-         # Print the current position of the iteration as
-         # progress indicator for the user.
+            # Print the current position of the iteration as
+            # progress indicator for the user.
 
-         print (
-            "%1$10d | " +
-            "%2$-16s ⇒ " +
-            "%3$-16s ") % [
+            print (
+                     "%1$10d | " +
+                        "%2$-16s ⇒ " +
+                        "%3$-16s ") % [
                _last_vest.id,
                _last_vest.delegator,
                _last_vest.delegatee]
 
-         # Throttle to 20 http requests per second. That
-         # seem to be the acceptable upper limit for
-         # https://api.steemit.com
+            # Throttle to 20 http requests per second. That
+            # seem to be the acceptable upper limit for
+            # https://api.steemit.com
 
-         sleep 0.05 
+            sleep 0.05
 
-         # resets the counter that keeps track of the
-         # retries.
+            # resets the counter that keeps track of the
+            # retries.
 
-         _retry_count = Max_Retry_Count
-      rescue => error
-         if _retry_count == 0 then
-            # We made Max_Retry_Count repeats ⇒ giving up.
+            _retry_count = Max_Retry_Count
+         rescue => error
+            if _retry_count == 0 then
+               # We made Max_Retry_Count repeats ⇒ giving up.
 
-            print Delete_Line
-            Kernel::abort ("\nCould not read %1$s with %2$d retrys :\n%3$s".red) % [_previous_end, Max_Retry_Count, error.to_s]
+               print Delete_Line
+               Kernel::abort ("\nCould not read %1$s with %2$d retrys :\n%3$s".red) % [_previous_end, Max_Retry_Count, error.to_s]
+            end
+
+            # wait one second before making the next retry
+
+            _retry_count = _retry_count - 1
+            sleep 1.0
          end
 
-         # wait one second before making the next retry
-
-         _retry_count = _retry_count - 1
-         sleep 1.0
-      end
-
-      return
-   end
-end
+         return
+      end # print_accounts
+   end # self
+end # Vesting
 
 begin
    # create instance to the steem condenser API which
@@ -337,5 +339,5 @@ end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :

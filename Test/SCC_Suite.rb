@@ -16,55 +16,14 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the radiator gem. This is
-# only needed if you have both steem-api and radiator
-# installed.
+Test_All = ARGV[0] == "all"
 
-gem "radiator", :require => "steem"
-
-require 'pp'
-require 'colorize'
-require 'radiator'
-
-begin
-   # create an instance to the radiator contracts API which
-   # will give us access to steem engine contracts
-
-   Contracts = Radiator::SSC::Contracts.new
-
-rescue => error
-   # I am using Kernel::abort so the code snipped including
-   # error handler can be copy pasted into other scripts
-
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
-end
-
-if ARGV.length == 0 then
-   puts "
-Steem-Print-SSC-Contract — Print steem engine contracts.
-
-Usage:
-   Steem-Print-SSC-Contract contract_name …
-"
-else
-   # read arguments from command line
-
-   _names = ARGV
-
-   # Loop over provided contact names and print the steen
-   # engine contracts.
-
-   _names.each do |_name|
-
-      # read the contract
-
-      _contract = Contracts.contract _name
-
-      # print the contract
-
-      pp _contract
-   end
-end
+require_relative '../Test/Radiator_Amount_Test.rb'
+require_relative '../Test/Steem_Engine_Test.rb'
+require_relative '../Test/Contract_Test.rb'
+require_relative '../Test/Token_Test.rb'
+require_relative '../Test/Balance_Test.rb'
+require_relative '../Test/Metric_Test.rb'
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

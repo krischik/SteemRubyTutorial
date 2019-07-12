@@ -24,46 +24,20 @@ gem "radiator", :require => "steem"
 
 require 'pp'
 require 'colorize'
+require 'contracts'
 require 'radiator'
 
-begin
-   # create an instance to the radiator contracts API which
-   # will give us access to steem engine contracts
+require_relative 'Radiator/Amount'
+require_relative 'Radiator/Price'
+require_relative 'SCC/Metric'
 
-   Contracts = Radiator::SSC::Contracts.new
+_metrics = SCC::Metric.all
 
-rescue => error
-   # I am using Kernel::abort so the code snipped including
-   # error handler can be copy pasted into other scripts
+puts("Token        |               highes Bid |               last price |            lowest asking |")
+puts("-------------+--------------------------+--------------------------+--------------------------+")
 
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
-end
-
-if ARGV.length == 0 then
-   puts "
-Steem-Print-SSC-Contract — Print steem engine contracts.
-
-Usage:
-   Steem-Print-SSC-Contract contract_name …
-"
-else
-   # read arguments from command line
-
-   _names = ARGV
-
-   # Loop over provided contact names and print the steen
-   # engine contracts.
-
-   _names.each do |_name|
-
-      # read the contract
-
-      _contract = Contracts.contract _name
-
-      # print the contract
-
-      pp _contract
-   end
+_metrics.each do |_metric|
+   puts _metric.to_ansi_s
 end
 
 ############################################################ {{{1 ###########
