@@ -58,9 +58,71 @@ For reader with programming experience this tutorial is **basic level**.
 
 ## Implementation using radiator
 
+### [SCC/Steem_Engine.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/SCC/Steem_Engine.rb)
+
+Base class for all steem engine classes. This class holds general constants and a lazy initialization to the contracts API.
+
+```ruby
+module SCC
+   class Steem_Engine < Radiator::Type::Serializer
+      include Contracts::Core
+      include Contracts::Builtin
+
+      attr_reader :key, :value
+```
+
+Amount of rows read from database in a single query. If the overall results exceeds this limit then make multiple queries. 1000 seem to be the standard for Steem queries.
+
+```ruby
+      QUERY_LIMIT = 1000
+
+```
+
+To query all rows of an table an empty query and not a `nil` must be provided.
+
+```ruby
+      QUERY_ALL = {}
+```
+
+Provide an instance to access the Steem Engine API. The attribute is lazy initialized when first used and the script will abort when this fails. Note that this is only ok for simple scripts. If you write a complex web app you spould implement a more elaborate error handler.
+
+```ruby
+
+      class << self
+         attr_reader :QUERY_ALL, :QUERY_LIMIT
+         @api = nil
+
+         ##
+         # Access to contracts interface
+         #
+         # @return [Radiator::SSC::Contracts]
+         #     the contracts API.
+         #
+         Contract None => Radiator::SSC::Contracts
+         def contracts_api
+            if @api == nil then
+               @api = Radiator::SSC::Contracts.new
+            end
+
+            return @api
+         rescue => error
+            # I am using Kernel::abort so the code snipped
+            # including error handler can be copy pasted into other
+            # scripts
+
+            Kernel::abort("Error creating contracts API :\n".red + error.to_s)
+         end #contracts
+      end # self
+   end # Token
+end # SCC
+
+```
+
+**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [SCC/Steem_Engine.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/SCC/Steem_Engine.rb).
+
 ### [SCC/Metric.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/SCC/Metric.rb)
 
-Most of the actual functionality is part of a new `SCC:Metric` class so it can be reused in further part of the tutorial.
+Most of the actual functionality is part of a new `SCC:Metric` class so it can be reused in further parts of the tutorial.
 
 ```ruby
 require 'pp'
@@ -96,7 +158,7 @@ module SCC
       public
 ```
 
-The class contructor create instance form Steem Engine JSON object. Numeric data in strings are converted.
+The class contructor create instance form Steem Engine JSON object. Numeric data in strings are converted floating point values.
 
 ```ruby
          Contract Any => nil
@@ -119,11 +181,11 @@ The class contructor create instance form Steem Engine JSON object. Numeric data
          end
 ```
 
-Create a colorized string showing the amount in SDB, STEEM and the steem engine token.
+Create a colorized string showing the current STEEMP value of the token. STEEMP us a steem engie token that can be exchanged 1:1, minus a 1% transaction fee, to STEEM. It's STEEMP which gives the token on Steem Engine it's value. 
 
 The current highest bid is printed green, the current lowest asking price us printed in red and the last price of an actual transaction is printed on blue.
 
-Unless the value is close to 0, then the value is greyed out.
+Unless the value is close to 0, then the value is greyed out. Reminder: Never use equality for floating point values to 0. Always use some ε value.
 
 ```ruby
          Contract None => String
@@ -195,6 +257,8 @@ Read the metric of a single token form the Steem Engine database and convert it 
             end
 ```
 
+Read the metrics of all tokens form the Steem Engine database and convert it into a `SCC::Metric` instance. The method `Steem_Engine.contracts_api.find_one` method is described in [Part 14](https://steemit.com/@krischik/using-steem-api-with-ruby-part-14). 
+
 ```ruby
             ##
             #  Get all token
@@ -238,8 +302,7 @@ end # SCC
 
 **Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [SCC/Metric.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/SCC/Metric.rb).
 
-
-### [Steem-Print-Metrics.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Metrics.rb)
+### [Steem-Print-SCC-Metrics.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-SCC-Metrics.rb)
 
 With all the functionality in classes the actual implementation is just a few lines:
 
@@ -256,7 +319,7 @@ _metrics.each do |_metric|
 end
 ```
 
-**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Metrics.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Metrics.rb).
+**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-SCC-Metrics.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-SCC-Metrics.rb).
 
 -----
 

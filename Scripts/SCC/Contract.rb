@@ -47,7 +47,6 @@ module SCC
          #    JSON object from contract API.
          #
          Contract Any => nil
-
          def initialize(contract)
             super(:name, contract.name)
 
@@ -69,7 +68,6 @@ module SCC
             #     contract found
             #
             Contract String => SCC::Contract
-
             def symbol (name)
                _contract = Steem_Engine.contracts_api.contract name
 

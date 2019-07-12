@@ -71,7 +71,6 @@ module Radiator
          #     actual amount as float
          #
          Contract None => Float
-
          def to_f
             return @amount.to_f
          end
@@ -112,7 +111,6 @@ module Radiator
          #     not a SBD, STEEM or VESTS value
          #
          Contract None => Amount
-
          def to_sbd
             return (
             case @asset
@@ -136,7 +134,6 @@ module Radiator
          #    not a SBD, STEEM or VESTS value
          #
          Contract None => Amount
-
          def to_steem
             return (
             case @asset
@@ -160,7 +157,6 @@ module Radiator
          #    not a SBD, STEEM or VESTS value
          #
          Contract None => Amount
-
          def to_vests
             return (
             case @asset
@@ -234,7 +230,6 @@ module Radiator
          #    values of different asset type
          #
          Contract Amount => Amount
-
          def +(right)
             raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -252,7 +247,6 @@ module Radiator
          #    values of different asset type
          #
          Contract Amount => Amount
-
          def -(right)
             raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -270,7 +264,6 @@ module Radiator
          #    values of different asset type
          #
          Contract Amount => Amount
-
          def *(right)
             raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -288,7 +281,6 @@ module Radiator
          #    values of different asset type
          #
          Contract Amount => Amount
-
          def /(right)
             raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -307,7 +299,6 @@ module Radiator
             # @return [Amount]
             #     the value as amount
             Contract Float, String => Amount
-
             def to_amount(value, asset)
                return Amount.new(value.to_s + " " + asset)
             end
@@ -321,7 +312,6 @@ module Radiator
             #     The condensor API
             #
             Contract None => Radiator::CondenserApi
-
             def condenser_api
                if @condenser_api == nil then
                   @condenser_api = Radiator::CondenserApi.new
@@ -335,8 +325,6 @@ module Radiator
 
                Kernel::abort("Error creating condenser API :\n".red + error.to_s)
             end
-
-            # condenser_api
 
             ##
             # read the  median history value and Calculate
@@ -359,8 +347,6 @@ module Radiator
 
                return @sbd_median_price
             end
-
-            # sbd_median_price
 
             ##
             # read the global properties and calculate the

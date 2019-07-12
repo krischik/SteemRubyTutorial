@@ -79,7 +79,6 @@ class Vote < Radiator::Type::Serializer
    #     the data hash from the get_active_votes
    #
    Contract HashOf[String => Or[String, Num]] => nil
-
    def initialize(value)
       super(:vote, value)
 
@@ -100,7 +99,6 @@ class Vote < Radiator::Type::Serializer
    #    the vote estimate in SBD
    #
    Contract None => Num
-
    def estimate
       return @rshares.to_f / Recent_Claims * Reward_Balance.to_f * SBD_Median_Price
    end
@@ -116,7 +114,6 @@ class Vote < Radiator::Type::Serializer
    #    formatted value
    #
    Contract None => String
-
    def to_ansi_s
       _percent  = @percent * 100.0
       _estimate = estimate

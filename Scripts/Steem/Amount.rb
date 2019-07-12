@@ -65,7 +65,6 @@ module Steem
             #     actual amount as float
             #
             Contract None => Float
-
             def to_f
                return @amount.to_f
             end
@@ -106,7 +105,6 @@ module Steem
             #     not a SBD, STEEM or VESTS value
             #
             Contract None => Amount
-
             def to_sbd
                return (
                case @asset
@@ -130,7 +128,6 @@ module Steem
             #    not a SBD, STEEM or VESTS value
             #
             Contract None => Amount
-
             def to_steem
                return (
                case @asset
@@ -154,7 +151,6 @@ module Steem
             #    not a SBD, STEEM or VESTS value
             #
             Contract None => Amount
-
             def to_vests
                return (
                case @asset
@@ -223,7 +219,6 @@ module Steem
             #    values of different asset type
             #
             Contract Amount => Amount
-
             def +(right)
                raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -241,7 +236,6 @@ module Steem
             #    values of different asset type
             #
             Contract Amount => Amount
-
             def -(right)
                raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -259,7 +253,6 @@ module Steem
             #    values of different asset type
             #
             Contract Amount => Amount
-
             def *(right)
                raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -277,7 +270,6 @@ module Steem
             #    values of different asset type
             #
             Contract Amount => Amount
-
             def /(right)
                raise ArgumentError, 'asset types differ' if @asset != right.asset
 
@@ -296,7 +288,6 @@ module Steem
                # @return [Amount]
                #     the value as amount
                Contract Float, String => Amount
-
                def to_amount(value, asset)
                   return Amount.new(value.to_s + " " + asset)
                end # to_amount

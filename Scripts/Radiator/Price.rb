@@ -52,7 +52,6 @@ module Radiator
          ##
          #
          Contract None => Num
-
          def to_f
             return @base.amount.to_f / @quote.amount.to_f
          end
@@ -67,7 +66,6 @@ module Radiator
             #     The condenser API
             #
             Contract None => Radiator::CondenserApi
-
             def condenser_api
                if @condenser_api == nil then
                   @condenser_api = Radiator::CondenserApi.new
@@ -92,7 +90,6 @@ module Radiator
             #    Conversion rate Steem ⇔ SBD
             #
             Contract None => Num
-
             def get
                _median_history_price = self.condenser_api.get_current_median_history_price.result
 

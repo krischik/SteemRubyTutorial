@@ -79,7 +79,6 @@ class Vote < Steem::Type::BaseType
    #     the data hash from the get_active_votes
    #
    Contract HashOf[String => Or[String, Num]] => nil
-
    def initialize(value)
       super(:vote, value)
 
@@ -100,7 +99,6 @@ class Vote < Steem::Type::BaseType
    #    the vote estimate in SBD
    #
    Contract None => Num
-
    def estimate
       return @rshares.to_f / Recent_Claims * Reward_Balance.to_f * SBD_Median_Price
    end
@@ -116,7 +114,6 @@ class Vote < Steem::Type::BaseType
    #    formatted value
    #
    Contract None => String
-
    def to_ansi_s
       # multipy percent with 100 for human readability
       _percent  = @percent * 100.0
@@ -168,7 +165,6 @@ class Vote < Steem::Type::BaseType
       #     list of votes
       #
       Contract ArrayOf[HashOf[String => Or[String, Num]]] => nil
-
       def print_list (votes)
          # used to calculate the total vote value
          _total_estimate = 0.0
@@ -217,7 +213,6 @@ class Vote < Steem::Type::BaseType
       #     URL of the posting.
       #
       Contract String => nil
-
       def print_url (url)
          _slug              = url.split('@').last
          _author, _permlink = _slug.split('/')

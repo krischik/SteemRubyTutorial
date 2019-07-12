@@ -63,7 +63,6 @@ class Vesting < Radiator::Type::Serializer
    #     `list_vesting_delegations`.
    #
    Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]] => nil
-
    def initialize(value)
       super(:id, value)
 
@@ -87,7 +86,6 @@ class Vesting < Radiator::Type::Serializer
    #    formatted value
    #
    Contract None => String
-
    def to_ansi_s
       # All the magic happens in the `%` operators which
       # calls sprintf which in turn formats the string.
@@ -120,7 +118,6 @@ class Vesting < Radiator::Type::Serializer
       #     list of vesting
       #
       Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]]] => nil
-
       def print_list (vesting)
          vesting.each do |vest|
             _vest = Vesting.new vest
@@ -138,7 +135,6 @@ class Vesting < Radiator::Type::Serializer
       #     account of the posting.
       #
       Contract String => nil
-
       def print_account (account)
 
          puts ("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")

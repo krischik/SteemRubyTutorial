@@ -58,7 +58,6 @@ module SCC
          #    JSON object from contract API.
          #
          Contract Any => nil
-
          def initialize(token)
             super(:symbol, token.symbol)
 
@@ -81,7 +80,6 @@ module SCC
          # @return [SCC::Metric]
          #     the metrics instance
          Contract None => SCC::Metric
-
          def metric
             if @metric == nil then
                @metric = SCC::Metric.symbol @symbol
@@ -106,7 +104,6 @@ module SCC
             #     contract found
             #
             Contract String => SCC::Token
-
             def symbol (name)
                _token = Steem_Engine.contracts_api.find_one(
                   contract: "tokens",
@@ -129,7 +126,6 @@ module SCC
             #     contract found
             #
             Contract String => ArrayOf[SCC::Token]
-
             def all
                _retval  = []
                _current = 0

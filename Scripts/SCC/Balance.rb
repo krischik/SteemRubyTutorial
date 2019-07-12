@@ -58,7 +58,6 @@ module SCC
          #    JSON object from contract API.
          #
          Contract Any => nil
-
          def initialize(balance)
             super(:symbol, balance.symbol)
 
@@ -81,7 +80,6 @@ module SCC
          #     the current value in steem
          #
          Contract None => Radiator::Type::Amount
-
          def to_steem
             _steem = if @symbol == "STEEMP" then
                @balance
@@ -101,7 +99,6 @@ module SCC
          #     the current value in steem
          #
          Contract None => Radiator::Type::Amount
-
          def to_sbd
             return to_steem.to_sbd
          end
@@ -113,7 +110,6 @@ module SCC
          #     the metrics instance
          #
          Contract None => SCC::Metric
-
          def metric
             if @metric == nil then
                @metric = SCC::Metric.symbol @symbol
@@ -121,8 +117,6 @@ module SCC
 
             return @metric
          end
-
-         # metric
 
          ##
          # create a colorized string showing the amount in
@@ -181,7 +175,6 @@ module SCC
             #     contract found
             #
             Contract String => ArrayOf[SCC::Balance]
-
             def account (name)
                _retval  = []
                _current = 0
@@ -213,8 +206,6 @@ module SCC
                return _retval
             end
 
-            # account
-
             ##
             #
             #  @param [String] name
@@ -223,7 +214,6 @@ module SCC
             #     contract found
             #
             Contract String => ArrayOf[SCC::Balance]
-
             def symbol (name)
                _retval  = []
                _current = 0
@@ -255,8 +245,6 @@ module SCC
                return _retval
             end
 
-            # symbol
-
             ##
             #  Get all blances
             #
@@ -264,7 +252,6 @@ module SCC
             #     token found
             #
             Contract String => ArrayOf[SCC::Balance]
-
             def all
                _retval  = []
                _current = 0
