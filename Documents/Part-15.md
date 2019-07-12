@@ -12,7 +12,7 @@ utopian.pay
 All examples from this tutorial can be found as fully functional scripts on GitHub:
 
 * [SteemRubyTutorial](https://github.com/krischik/SteemRubyTutorial)
-* radiator sample code: [Steem-Print-XXXXX.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-XXXXX.rb).
+* radiator sample code: [Steem-Print-SCC-Metrics.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-SCC-Metrics.rb).
 
 ### radiator
 
@@ -323,9 +323,9 @@ end
 
 -----
 
-The output of the command (for the steem account) looks identical to the previous output:
+The output of the command looks like this:
 
-<center>![Screenshot at XXXXX.png](https://files.steempeak.com/file/steempeak/krischik/3dURm96L-ScreenshotXXXXX.png)</center>
+<center>![Screenshot at Jul 12 11-03-41.png](https://cdn.steemitimages.com/DQmYBXgGadLiCz86Adfjtp4jiPL5DUULzJN12mYV652Su24/Screenshot%20at%20Jul%2012%2011-03-41.png)</center>
 
 # Curriculum
 
@@ -354,9 +354,9 @@ The output of the command (for the steem account) looks identical to the previou
 
 ## Beneficiary
 
-<center>![Beneficiary.png](https://cdn.steemitimages.com/DQmYnQfCi8Z12jkaNqADKc37gZ89RKdvdLzp7uXRjbo1AHy/image.png)</center>
+<center>![](https://cdn.steemitimages.com/DQmNXFyZpUJYvdKZWxSrU99EFHSdyqaPUErirkWZ7Zet4Ar/image.png)</center>
 
-<center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png)</center>
+<center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png?2) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png?2) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png?2) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png?2) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png?2) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png?2) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png?2)</center>
 
 <!-- vim: set wrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab : -->
 <!-- vim: set textwidth=0 filetype=markdown foldmethod=marker nospell : -->
