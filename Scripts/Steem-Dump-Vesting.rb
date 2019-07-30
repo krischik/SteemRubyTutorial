@@ -197,7 +197,7 @@ class Vesting < Steem::Type::BaseType
             # happens when the initial delegator / delegatee
             # pair doesn't exist.
 
-            break if _vesting == nil || _vesting.result.length == 0
+         break if _vesting == nil || _vesting.result.length == 0
 
             # get the delegator / delegatee pair of the last
             #  element

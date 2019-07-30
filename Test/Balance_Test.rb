@@ -19,6 +19,10 @@
 require_relative '../Scripts/SCC/Balance'
 require "test/unit"
 
+if not defined?(Test_All) then
+   Test_All = ARGV[0] == "all"
+end
+
 class Balance_Test < Test::Unit::TestCase
    def test_all_01
       # Thee “all” tests but considerable strain on the
@@ -34,7 +38,9 @@ class Balance_Test < Test::Unit::TestCase
          _balance = _test[0]
 
          assert_not_nil(_balance, "First balance should exist")
-         assert_instance_of(SCC::Balance, _balance, "First balance should be of type «SCC::balance»")
+         assert_instance_of(SCC::Balance, _balance, "First balance should be of type «SCC::Balance»")
+         assert_instance_of(SCC::Metric, _balance.metric, "First balance metric should be of type «SCC::Metric»")
+         assert_instance_of(SCC::Token, _balance.token,  "First balance token should be of type «SCC::Token»")
          assert_equal(:symbol, _balance.key, "First balance key should be «:symbol»")
          assert_equal("ENG", _balance.value, "First balance value should be “ENG”")
       end
@@ -50,6 +56,8 @@ class Balance_Test < Test::Unit::TestCase
 
       assert_not_nil(_balance, "First balance should exist")
       assert_instance_of(SCC::Balance, _balance, "First balance should be of type «SCC::Balance»")
+      assert_instance_of(SCC::Metric, _balance.metric, "First balance metric should be of type «SCC::Metric»")
+      assert_instance_of(SCC::Token, _balance.token,  "First balance token should be of type «SCC::Token»")
       assert_equal("krischik", _balance.account, "First balance  value should be “krischik”")
    end
 
@@ -63,6 +71,8 @@ class Balance_Test < Test::Unit::TestCase
 
       assert_not_nil(_balance, "First balance should exist")
       assert_instance_of(SCC::Balance, _balance, "First balance should be of type «SCC::Balance»")
+      assert_instance_of(SCC::Metric, _balance.metric, "First balance metric should be of type «SCC::Metric»")
+      assert_instance_of(SCC::Token, _balance.token,  "First balance token should be of type «SCC::Token»")
       assert_equal(:symbol, _balance.key, "First balance  key should be «:symbol»")
       assert_equal("BEER", _balance.value, "First balance  value should be “BEER”")
    end
@@ -88,6 +98,27 @@ class Balance_Test < Test::Unit::TestCase
       assert_equal("BEER", _metric.value, "The metric value for first balance should be “BEER”")
    end
 
+   def test_token_01
+      _test = SCC::Balance.symbol "BEER"
+
+      assert_not_nil(_test, "There should be ballaces for token “BEER”")
+      assert_instance_of(Array, _test, "Result should be of type «SCC::Balance»")
+
+      _balance = _test[0]
+
+      assert_not_nil(_balance, "First balance should exist")
+      assert_instance_of(SCC::Balance, _balance, "First balance should be of type «SCC::Balance»")
+      assert_equal(:symbol, _balance.key, "First balance  key should be «:symbol»")
+      assert_equal("BEER", _balance.value, "First balance  value should be “BEER”")
+
+      _token = _balance.token
+
+      assert_not_nil(_token, "Metric for first balance should exist")
+      assert_instance_of(SCC::Token, _token, "Metric for first balance should be of type «SCC::Token»")
+      assert_equal(:symbol, _token.key, "The metric key for first balance should be «:symbol»")
+      assert_equal("BEER", _token.value, "The metric value for first balance should be “BEER”")
+   end
+
    def test_to_steem_01
       _test = SCC::Balance.account "krischik"
 
@@ -98,6 +129,8 @@ class Balance_Test < Test::Unit::TestCase
 
       assert_not_nil(_balance, "First balance should exist")
       assert_instance_of(SCC::Balance, _balance, "First balance should be of type «SCC::Balance»")
+      assert_instance_of(SCC::Metric, _balance.metric, "First balance metric should be of type «SCC::Metric»")
+      assert_instance_of(SCC::Token, _balance.token,  "First balance token should be of type «SCC::Token»")
       assert_equal("krischik", _balance.account, "First balance  value should be “krischik”")
 
       _steem = _balance.to_steem

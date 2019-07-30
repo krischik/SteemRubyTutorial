@@ -99,7 +99,7 @@ else
 
       # Exit loop when no result set is returned.
       #
-      break if (not _rows) || (_rows.length == 0)
+   break if (not _rows) || (_rows.length == 0)
       pp _rows
 
       # Move current by the actual amount of rows returned

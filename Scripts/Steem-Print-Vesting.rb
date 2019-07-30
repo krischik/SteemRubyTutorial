@@ -162,7 +162,7 @@ class Vesting < Radiator::Type::Serializer
             # no elements found, end loop now. This only
             # happens when the account doesn't exist.
 
-            break if _vesting.result.length == 0
+         break if _vesting.result.length == 0
 
             # get and remove the last element. The last
             # element meeds to be removed as it will be
