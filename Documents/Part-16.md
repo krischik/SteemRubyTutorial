@@ -12,7 +12,7 @@ utopian.pay
 All examples from this tutorial can be found as fully functional scripts on GitHub:
 
 * [SteemRubyTutorial](https://github.com/krischik/SteemRubyTutorial)
-* radiator sample code: [Steem-Print-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-Balances.rb).
+* radiator sample code: [Steem-Print-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb).
 
 ### radiator
 
@@ -37,7 +37,7 @@ This tutorial shows how to interact with the Steem blockchain, Steem database an
 
 <center>![img_train-dark.png](https://cdn.steemitimages.com/DQmQjPngbfPaKwQ9VEjZcGQPWkFsSXPbvssuPGzuasmDjzA/img_train-dark.png)</center>
 
-In this particular chapter you learn how to access the current steem engine token balances of any users. FF
+In this particular chapter you learn how to access the current steem engine token balances of any account.
 
 ## Requirements
 
@@ -61,7 +61,7 @@ For reader with programming experience this tutorial is **basic level**.
 
 ## Tutorial Contents
 
-As in the last tutorial a class is used for the majority of the work.
+Just like the last tutorial the majority of the work is done inside a newly written class. This class can read the ballances from the database and converts the JSON ovjects returned into propper ruby classes.
 
 ## Implementation using radiator
 
@@ -70,7 +70,7 @@ As in the last tutorial a class is used for the majority of the work.
 A simple standard constructor for the various properties a balance holds:
 
 |                |                                          |
-+----------------+------------------------------------------+
+|----------------|------------------------------------------|
 |symbol          | ID of token held                         |
 |account         | ID of account holding                    |
 |balance         | balance held                             |
@@ -78,7 +78,7 @@ A simple standard constructor for the various properties a balance holds:
 |delegated_stake | stake delegated                          |
 |received_stake  | stake stake                              |
 |pending_unstake | delegated stake to be returned to owner. |
-|loki            |                                          |
+|loki            | some internal informations               |
 
 ```ruby
 module SCC
@@ -132,7 +132,7 @@ Convert the current balance into steem using the metric class from the last tuto
          end
 ```
 
-Convert the current balance into steem using the amount class from the print balances tutorial.
+Convert the current balance into SBD using the amount class from the print balances tutorial.
 
 ```ruby
          Contract None => Radiator::Type::Amount
@@ -154,7 +154,7 @@ The metrics of the balance as lazy initialized property. The metric is used to c
          end
 ```
 
-The token information of the balance also as lazy initialized property. The token informations contain, among other, the display name of the token.
+The token information of the balance also as lazy initialized property. The token informations contain, among other, the display name of the token which we will later use.
 
 ```ruby
          Contract None => SCC::Token
@@ -168,6 +168,8 @@ The token information of the balance also as lazy initialized property. The toke
 ```
 
 Create a colourised string showing the amount in SDB, STEEM and the steem engine token. The actual value is colourised in blue while the converted values are colourised in grey (aka dark white).
+
+A try catch is used for token which have no metics and therefore no steem value.
 
 ```ruby
          Contract None => String
@@ -209,7 +211,7 @@ Create a colourised string showing the amount in SDB, STEEM and the steem engine
          end
 ```
 
-Get balances for gives account name using the find function from 
+Get the list of balances for a gives account using the find function from contracs API. The find function has been explained in the previous chapter.
 
 ```ruby
          class << self
@@ -258,13 +260,15 @@ Get balances for gives account name using the find function from
 end # SCC
 ```
 
-The balance class committed to git also has examples for getting the balances for a given token and all balances store. All three methods are very similar so .
+In addition to this method the [balance class](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/SCC/Balance.rb) committed to git has examples for retriving the balances for a given token and all balances in the database. All three methods are very similar. For this only one method has been described.
+
+**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Balance.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/SCC/Balance.rb).
 
 -----
 
-Mots of the Steem-Print-Balances.rb has already been described in [Print Account Balances improved](Documents/Part-06.md) and there are only few changes needed to print the steem engine balances as well:
+Most of the [Steem-Print-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb) script has already been described in [Print Account Balances improved](Documents/Part-06.md) and there are only few changes needed to print the steem engine balances as well:
 
-Most of the functionality is not encapsulated in classes which have been explained previously.
+Most of the functionality is not encapsulated in classes which have been explained previously. All that is needed is to `require` those classes. 
 
 ```ruby
 require_relative 'Radiator/Amount'
@@ -273,7 +277,7 @@ require_relative 'SCC/Balance'
 require_relative 'SCC/Token'
 ```
 
-Print the account value without the steem engine token.
+Frist print the account value without the steem engine token added.
 
 ```ruby
       puts(("  Account Value (steem)= " + "%1$15.3f %2$s".green) % [
@@ -281,9 +285,15 @@ Print the account value without the steem engine token.
          _account_value.asset])
 ```
 
+Then retrieve all balances for the currently account from the steem engine database
 
 ```ruby
       _scc_balances = SCC::Balance.account account.name
+```
+
+Loop over all balances printing the balance and adding the value (in SBD) to the account value. For the latter a try catch is used for token which don't have a Steem value.
+
+```ruby
       _scc_balances.each do |_scc_balance|
          token = _scc_balance.token
 
@@ -298,7 +308,7 @@ Print the account value without the steem engine token.
       end
 ```
 
-Print the account value with the value of the steem engine token added.
+Lastly print the account value with the value of the steem engine token added.
 
 ```ruby
       puts(("  Account Value (total)= " + "%1$15.3f %2$s".green) % [
@@ -306,17 +316,17 @@ Print the account value with the value of the steem engine token added.
          _account_value.asset])
 ```
 
------
-
 **Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb).
 
-The output of the command changes from previous:
+-----
+
+The output of the command changes from previous only printing the steem token:
 
 <center>![Screenshot at Mar 14 10-58-50.png](https://cdn.steemitimages.com/DQmU7AAEiA9XHChBabWqBzgQrmBstymxv2HDXz4i1HcTsL5/Screenshot%20at%20Mar%2014%2010-58-50.png)</center>
 
-to now containing the Steem Engine Token values:
+to now printing the values of the Steem Engine Token as well:
 
-<center>![Screenshot at XXXXX.png](https://files.steempeak.com/file/steempeak/krischik/3dURm96L-ScreenshotXXXXX.png)</center>
+<center>![Screenshot at Jul 30 15-23-14.png](https://cdn.steemitimages.com/DQmWdg5GNopbmWUHBuEeaYuGmSc4bPYxR3XFymfMWoxLQ4F/Screenshot%20at%20Jul%2030%2015-23-14.png)</center>
 
 # Curriculum
 
@@ -345,9 +355,9 @@ to now containing the Steem Engine Token values:
 
 ## Beneficiary
 
-<center>![Beneficiary.png](https://cdn.steemitimages.com/DQmYnQfCi8Z12jkaNqADKc37gZ89RKdvdLzp7uXRjbo1AHy/image.png)</center>
+<center>![](https://cdn.steemitimages.com/DQmbkTVsZGEe1QUK12yfKYi6tb94zR5nm6VCzW6PVaJWcZZ/image.png)</center>
 
-<center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png)</center>
+<center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png?4) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png?4) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png?4) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png?4) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png?4) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png?4) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png?4)</center>
 
 <!-- vim: set wrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab : -->
 <!-- vim: set textwidth=0 filetype=markdown foldmethod=marker nospell : -->

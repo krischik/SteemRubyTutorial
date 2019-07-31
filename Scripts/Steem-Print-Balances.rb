@@ -211,8 +211,12 @@ def print_account_balances(accounts)
          puts("  %1$-20.20s = %2$s" % [token.name, _scc_balance.to_ansi_s])
 
          # Add token value (in SDB to the account value.
-         _sbd           = _scc_balance.to_sbd
-         _account_value = _account_value + _sbd
+         begin
+            _sbd           = _scc_balance.to_sbd
+            _account_value = _account_value + _sbd
+         rescue KeyError
+            # do nothing.
+         end
       end
 
       puts(("  Account Value (total)= " + "%1$15.3f %2$s".green) % [
