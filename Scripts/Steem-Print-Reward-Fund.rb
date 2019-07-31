@@ -16,16 +16,42 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-if not defined?(Test_All) then
-   Test_All = ARGV[0] == "all"
+# use the "steem.rb" file from the radiator gem. This is
+# only needed if you have both steem-api and radiator
+# installed.
+
+gem "radiator", :require => "steem"
+
+require 'pp'
+require 'colorize'
+require 'radiator'
+
+begin
+   # create instance to the steem condenser API which
+   # will give us access to the median history price
+
+   Condenser_Api = Radiator::CondenserApi.new
+
+   # read the reward funds. `get_reward_fund` takes one
+   # parameter is always "post".
+
+   Reward_fund = Condenser_Api.get_reward_fund("post").result
+rescue => error
+   # I am using Kernel::abort so the code snipped
+   # including error handler can be copy pasted into other
+   # scripts
+
+   Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
 
-require_relative '../Test/Radiator_Amount_Test.rb'
-require_relative '../Test/Steem_Engine_Test.rb'
-require_relative '../Test/Contract_Test.rb'
-require_relative '../Test/Token_Test.rb'
-require_relative '../Test/Balance_Test.rb'
-require_relative '../Test/Metric_Test.rb'
+# pretty print the result. It might look strange to do so
+# outside the begin / rescue but the value is now available
+# in constant for the rest of the script. Do note that
+# using constant is only suitable for short running script.
+# Long running scripts would need to re-read the value
+# on a regular basis.
+
+pp Reward_fund
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

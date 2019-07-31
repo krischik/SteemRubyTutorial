@@ -255,9 +255,9 @@ begin
    # here to reduce the amount of string parsing needed.
    # `get_reward_fund` takes one parameter is always "post".
 
-   _reward_fund   = Condenser_Api.get_reward_fund("post").result
-   Recent_Claims  = _reward_fund.recent_claims.to_i
-   Reward_Balance = Radiator::Type::Amount.new _reward_fund.reward_balance
+   _reward_fund   = Radiator::Type::Reward_Fund.get
+   Recent_Claims  = _reward_fund.recent_claims
+   Reward_Balance = _reward_fund.reward_balance
 
 rescue => error
    # I am using `Kernel::abort` so the script ends when

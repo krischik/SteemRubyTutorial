@@ -30,10 +30,28 @@ require 'json'
 
 require_relative 'Steem_Engine'
 require_relative 'Metric'
+require_relative 'Token'
 require_relative '../Radiator/Amount'
 
 module SCC
    ##
+   # Holds the balances of Steem Engine Token.
+   #
+   # @property [String] symbol
+   #     ID of token held
+   # @property [String] account
+   #     ID of account holding
+   # @property [Number] balance
+   #     balance held
+   # @property [Number] stake
+   #     balance staked
+   # @property [Number] delegated_stake
+   #     stake delegated
+   # @property [Number] received_stake
+   #     stake stake
+   # @property [Number] pending_unstake
+   #     delegated stake to be returned to owner.
+   # @property [String] loki
    #
    class Balance < SCC::Steem_Engine
       include Contracts::Core
@@ -93,7 +111,7 @@ module SCC
          end
 
          ##
-         # balance in steem.
+         # balance in steem backed dollar.
          #
          # @return [Radiator::Amount]
          #     the current value in steem
@@ -104,7 +122,9 @@ module SCC
          end
 
          ##
-         # The balance current market value
+         # The metrics of the balance as lazy initialized
+         # property. The metric is used to convert the
+         # balance into Steem.
          #
          # @return [SCC::Metric]
          #     the metrics instance
@@ -119,10 +139,28 @@ module SCC
          end
 
          ##
-         # create a colorized string showing the amount in
+         # The token information of the balance also as
+         # lazy initialized property. The token
+         # informations contain, among other, the display
+         # name of the token.
+         #
+         # @return [SCC::Metric]
+         #     the metrics instance
+         #
+         Contract None => SCC::Token
+         def token
+            if @token == nil then
+               @token = SCC::Token.symbol @symbol
+            end
+
+            return @token
+         end
+
+         ##
+         # create a colourised string showing the amount in
          # SDB, STEEM and the steem engine token. The
-         # actual value is colorized in blue while the
-         # converted values are colorized in grey (aka dark
+         # actual value is colourised in blue while the
+         # converted values are colourised in grey (aka dark
          # white).
          #
          # @return [String]
@@ -168,6 +206,7 @@ module SCC
 
          class << self
             ##
+            #  Get balances for gives account name
             #
             #  @param [String] name
             #     name of contract
@@ -183,6 +222,9 @@ module SCC
                }
 
                loop do
+                  # Read the next batch of balances using
+                  # the find function.
+                  #
                   _balances = Steem_Engine.contracts_api.find(
                      contract:   "tokens",
                      table:      "balances",
@@ -193,7 +235,11 @@ module SCC
 
                   # Exit loop when no result set is returned.
                   #
-                  break if (not _balances) || (_balances.length == 0)
+               break if (not _balances) || (_balances.length == 0)
+
+                  # convert each returned JSON object into
+                  # a class instacnce.
+                  #
                   _retval += _balances.map do |_balance|
                      SCC::Balance.new _balance
                   end
@@ -207,6 +253,7 @@ module SCC
             end
 
             ##
+            #  Get balances for one token
             #
             #  @param [String] name
             #     name of contract
@@ -222,6 +269,9 @@ module SCC
                }
 
                loop do
+                  # Read the next batch of balances using
+                  # the find function.
+                  #
                   _balances = Steem_Engine.contracts_api.find(
                      contract:   "tokens",
                      table:      "balances",
@@ -230,14 +280,20 @@ module SCC
                      offset:     _current,
                      descending: false)
 
-                  # Exit loop when no result set is returned.
+                  # Exit loop when no result set is
+                  # returned.
                   #
-                  break if (not _balances) || (_balances.length == 0)
+               break if (not _balances) || (_balances.length == 0)
+
+                  # convert each returned JSON object into
+                  # a class instacnce.
+                  #
                   _retval += _balances.map do |_balance|
                      SCC::Balance.new _balance
                   end
 
-                  # Move current by the actual amount of rows returned
+                  # Move current by the actual amount of
+                  # rows returned
                   #
                   _current = _current + _balances.length
                end
@@ -246,7 +302,7 @@ module SCC
             end
 
             ##
-            #  Get all blances
+            #  Get all balances
             #
             #  @return [SCC::Balance]
             #     token found
@@ -257,6 +313,9 @@ module SCC
                _current = 0
 
                loop do
+                  # Read the next batch of balances using
+                  # the find function.
+                  #
                   _balances = Steem_Engine.contracts_api.find(
                      contract:   "tokens",
                      table:      "balances",
@@ -265,14 +324,20 @@ module SCC
                      offset:     _current,
                      descending: false)
 
-                  # Exit loop when no result set is returned.
+                  # Exit loop when no result set is
+                  # returned.
                   #
-                  break if (not _balances) || (_balances.length == 0)
+               break if (not _balances) || (_balances.length == 0)
+
+                  # convert each returned JSON object into
+                  # a class instacnce.
+                  #
                   _retval += _balances.map do |_balance|
                      SCC::Balance.new _balance
                   end
 
-                  # Move current by the actual amount of rows returned
+                  # Move current by the actual amount of
+                  # rows returned
                   #
                   _current = _current + _balances.length
                end

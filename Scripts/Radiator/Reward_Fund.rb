@@ -40,22 +40,45 @@ require_relative 'Amount'
 #
 module Radiator
    module Type
-      class Price
+      class Reward_Fund < Serializer
          include Contracts::Core
          include Contracts::Builtin
 
          ##
          # add the missing attribute reader.
          #
-         attr_reader :base, :quote
+         attr_reader :base, :quote,
+            :name,
+            :reward_balance,
+            :recent_claims,
+            :last_update,
+            :content_constant,
+            :percent_curation_rewards,
+            :percent_content_rewards,
+            :author_reward_curve,
+            :curation_reward_curve
 
          ##
-         # the actual conversion rate between Steem and
-         # SBD.
+         # create instance form Steem JSON object.
          #
-         Contract None => Num
-         def to_f
-            return @base.amount.to_f / @quote.amount.to_f
+         # @param [Hash]
+         #    JSON object from condenser_api API.
+         #
+         Contract Any => nil
+         def initialize(value)
+            super(:name, value)
+
+            @name                      = value.name
+            @reward_balance            = Radiator::Type::Amount.new value.reward_balance
+            @recent_claims             = value.recent_claims.to_i
+            @last_update               = Time.strptime(value.last_update + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
+            @content_constant          = value.content_constant
+            @percent_curation_rewards  = value.percent_curation_rewards
+            @percent_content_rewards   = value.percent_content_rewards
+            @author_reward_curve       = value.author_reward_curve
+            @curation_reward_curve     = value.curation_reward_curve
+
+            return
          end
 
          class << self
@@ -83,19 +106,21 @@ module Radiator
             end
 
             ##
-            # read the  median history value and Calculate
-            # the conversion Rate for Vests to steem backed
-            # dollar. We use the Amount class from Part 2
-            # to convert the string values into amounts.
+            # read the reward funds used to
+            # calcualte the voting values
             #
-            # @return [Float]
+            # @return [Radiator::Type::Reward_Fund]
             #    Conversion rate Steem ⇔ SBD
             #
-            Contract None => Radiator::Type::Price
+            Contract None => Radiator::Type::Reward_Fund
             def get
-               _median_history_price = self.condenser_api.get_current_median_history_price.result
+               # read the reward funds. `get_reward_fund` takes one
+               # parameter is always "post".
+               #
 
-               return Radiator::Type::Price.new _median_history_price
+               _reward_fund = self.condenser_api.get_reward_fund("post").result
+
+               return Radiator::Type::Reward_Fund.new _reward_fund
             end
          end # self
       end # Price

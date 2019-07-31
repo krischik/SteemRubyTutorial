@@ -63,19 +63,19 @@ begin
    # read the reward funds. `get_reward_fund` takes one
    # parameter is always "post".
 
-   _reward_fund = _condenser_api.get_reward_fund("post").result
+   _reward_fund = Radiator::Type::Reward_Fund.get
 
    # extract variables needed for the vote estimate. This
    # is done just once here to reduce the amount of string
    # parsing needed.
 
-   Recent_Claims  = _reward_fund.recent_claims.to_i
-   Reward_Balance = Radiator::Type::Amount.new _reward_fund.reward_balance
-   # rescue => error
+   Recent_Claims  = _reward_fund.recent_claims
+   Reward_Balance = _reward_fund.reward_balance
+rescue => error
    # I am using `Kernel::abort` so the script ends when
    # data can't be loaded
 
-   # Kernel::abort("Error reading global properties:\n".red + error.to_s)
+   Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
 
 ##

@@ -141,7 +141,7 @@ module SCC
 
                   # Exit loop when no result set is returned.
                   #
-                  break if (not _tokens) || (_tokens.length == 0)
+               break if (not _tokens) || (_tokens.length == 0)
                   _retval += _tokens.map do |_token|
                      SCC::Token.new _token
                   end
