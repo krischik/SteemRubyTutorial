@@ -3,7 +3,7 @@
 utopian-io tutorials ruby steem-api programming
 utopian.pay
 
-<center>![Steemit_Ruby_Engine.png](https://cdn.steemitimages.com/DQmR1jWexK1B1gGwUgcVdGtwRkAZPZ5rUwBXBt6x55TMPjY/Steemit_Ruby_Engine.png)</center>
+<center>!<center>![Steemit_Ruby_Engine.png](https://cdn.steemitimages.com/DQmR1jWexK1B1gGwUgcVdGtwRkAZPZ5rUwBXBt6x55TMPjY/Steemit_Ruby_Engine.png)</center>
 
 ## Repositories
 
@@ -15,6 +15,8 @@ All examples from this tutorial can be found as fully functional scripts on GitH
 * radiator sample code: [Steem-Print-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb).
 
 ### radiator
+
+Radiator is one of the tree Ruby APIs to the Steem Blockchain.
 
 * Project Name: Radiator
 * Repository: [https://github.com/inertia186/radiator](https://github.com/inertia186/radiator)
@@ -33,11 +35,11 @@ All examples from this tutorial can be found as fully functional scripts on GitH
 
 ## What Will I Learn?
 
-This tutorial shows how to interact with the Steem blockchain, Steem database and Steem Engine using Ruby. When accessing Steem Engine using Ruby their only one APIs available to chose: **radiator**.
+This tutorial shows how to interact with the Steem blockchain, Steem database and Steem Engine using Ruby. When accessing Steem Engine using Ruby their only the radiator APIs available.
 
 <center>![img_train-dark.png](https://cdn.steemitimages.com/DQmQjPngbfPaKwQ9VEjZcGQPWkFsSXPbvssuPGzuasmDjzA/img_train-dark.png)</center>
 
-In this particular chapter you learn how to access the current steem engine token balances of any account.
+In this particular chapter you learn how extend [Steem-Print-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb) from the [Print Account Balances improved](Documents/Part-06.md) tutorial so it prints the steem engine token as well.
 
 ## Requirements
 
@@ -52,8 +54,8 @@ gem install radiator
 
 The tutorial build on top of the following previous chapters:
 
-* [Print Steem Engine Token values](Documents/Part-15.md)
-* [Print Account Balances improved](Documents/Part-06.md)
+* [Print Steem Engine Token values](https://steemit.com/@krischik/using-steem-api-with-ruby-part-15)
+* [Print Account Balances improved](https://steemit.com/@krischik/using-steem-api-with-ruby-part-06)
 
 ## Difficulty
 
@@ -61,7 +63,7 @@ For reader with programming experience this tutorial is **basic level**.
 
 ## Tutorial Contents
 
-Just like the last tutorial the majority of the work is done inside a newly written class. This class can read the ballances from the database and converts the JSON ovjects returned into propper ruby classes.
+Just like the last tutorial the majority of the work is done inside a newly written class. This class can read the ballances from the database and converts the JSON objects returned into propper ruby classes.
 
 ## Implementation using radiator
 
@@ -69,7 +71,7 @@ Just like the last tutorial the majority of the work is done inside a newly writ
 
 A simple standard constructor for the various properties a balance holds:
 
-|                |                                          |
+| Property       | Description                              |
 |----------------|------------------------------------------|
 |symbol          | ID of token held                         |
 |account         | ID of account holding                    |
@@ -115,7 +117,7 @@ module SCC
          end
 ```
 
-Convert the current balance into steem using the metric class from the last tutorial.
+Convert the balance into steem using the [Metric](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/SCC/Metric.rb) class from [Print Steem Engine Token values](https://steemit.com/@krischik/using-steem-api-with-ruby-part-15-) tutorial.
 
 ```ruby
          Contract None => Radiator::Type::Amount
@@ -132,7 +134,7 @@ Convert the current balance into steem using the metric class from the last tuto
          end
 ```
 
-Convert the current balance into SBD using the amount class from the print balances tutorial.
+Convert the current balance into SBD using the [Amount](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Radiator/Amount.rb) class from the [Print Account Balances improved](https://steemit.com/@krischik/using-steem-api-with-ruby-part-06) tutorial.
 
 ```ruby
          Contract None => Radiator::Type::Amount
@@ -141,7 +143,7 @@ Convert the current balance into SBD using the amount class from the print balan
          end
 ```
 
-The metrics of the balance as lazy initialized property. The metric is used to convert the balance into Steem.
+The metrics for the balance as lazy initialised property. The metric is used to convert the balance into Steem.
 
 ```ruby
          Contract None => SCC::Metric
@@ -154,7 +156,7 @@ The metrics of the balance as lazy initialized property. The metric is used to c
          end
 ```
 
-The token information of the balance also as lazy initialized property. The token informations contain, among other, the display name of the token which we will later use.
+The token information of the balance also as lazy initialised property. The token informations contain, among other, the display name of the token which we will later use.
 
 ```ruby
          Contract None => SCC::Token
@@ -169,7 +171,7 @@ The token information of the balance also as lazy initialized property. The toke
 
 Create a colourised string showing the amount in SDB, STEEM and the steem engine token. The actual value is colourised in blue while the converted values are colourised in grey (aka dark white).
 
-A try catch is used for token which have no metics and therefore no steem value.
+A try catch is used for token which have no metics and therefore no steem value. "N/A" is then printed instead of the steem values.
 
 ```ruby
          Contract None => String
@@ -211,7 +213,7 @@ A try catch is used for token which have no metics and therefore no steem value.
          end
 ```
 
-Get the list of balances for a gives account using the find function from contracs API. The find function has been explained in the previous chapter.
+Get the list of balances for a gives account using the find function from contracs API. The find function has been explained in the  [Print Steem Engine Token values](https://steemit.com/@krischik/using-steem-api-with-ruby-part-15) tutorial.
 
 ```ruby
          class << self
@@ -241,7 +243,7 @@ Get the list of balances for a gives account using the find function from contra
                break if (not _balances) || (_balances.length == 0)
 
                   # convert each returned JSON object into
-                  # a class instacnce.
+                  # a class instance.
                   #
                   _retval += _balances.map do |_balance|
                      SCC::Balance.new _balance
@@ -260,7 +262,7 @@ Get the list of balances for a gives account using the find function from contra
 end # SCC
 ```
 
-In addition to this method the [balance class](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/SCC/Balance.rb) committed to git has examples for retriving the balances for a given token and all balances in the database. All three methods are very similar. For this only one method has been described.
+In addition to this method the [balance class](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/SCC/Balance.rb) committed to git has examples for retrieving the balances for a given token and all balances in the database. All three methods are very similar. For this only  the one method which is actually needed for the final script  has been described.
 
 **Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Balance.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/SCC/Balance.rb).
 
@@ -268,7 +270,7 @@ In addition to this method the [balance class](https://github.com/krischik/Steem
 
 Most of the [Steem-Print-Balances.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Balances.rb) script has already been described in [Print Account Balances improved](Documents/Part-06.md) and there are only few changes needed to print the steem engine balances as well:
 
-Most of the functionality is not encapsulated in classes which have been explained previously. All that is needed is to `require` those classes. 
+Most of the functionality is not encapsulated in classes which have been explained previously. All that is needed is too `require` those classes. 
 
 ```ruby
 require_relative 'Radiator/Amount'
@@ -277,7 +279,7 @@ require_relative 'SCC/Balance'
 require_relative 'SCC/Token'
 ```
 
-Frist print the account value without the steem engine token added.
+First print the account value without the steem engine token added.
 
 ```ruby
       puts(("  Account Value (steem)= " + "%1$15.3f %2$s".green) % [
@@ -352,10 +354,6 @@ to now printing the values of the Steem Engine Token as well:
 * Steemit logo [Wikimedia](https://commons.wikimedia.org/wiki/File:Steemit_New_Logo.png), CC BY-SA 4.0.
 * Steem Engine logo [Steem Engine](https://steem-engine.com)
 * Screenshots: @krischik, CC BY-NC-SA 4.0
-
-## Beneficiary
-
-<center>![](https://cdn.steemitimages.com/DQmbkTVsZGEe1QUK12yfKYi6tb94zR5nm6VCzW6PVaJWcZZ/image.png)</center>
 
 <center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png?4) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png?4) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png?4) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png?4) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png?4) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png?4) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png?4)</center>
 
