@@ -30,7 +30,12 @@ git config "push.default"       "current"
 git branch --set-upstream-to="remotes/origin/master"            "master"
 git branch --set-upstream-to="remotes/origin/develop"           "develop"
 
-git submodule add -b master "https://github.com/krischik/SteemRubyTutorial.wiki.git" "Wiki"
+if test -d "Wiki"; then
+    git submodule init
+    git submodule update
+else
+    git submodule add -b master "https://github.com/krischik/SteemRubyTutorial.wiki.git" "Wiki"
+popd
 
 pushd "Wiki"
     git config "user.name"          "Martin Krischik"
