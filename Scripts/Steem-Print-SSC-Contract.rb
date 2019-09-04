@@ -31,7 +31,6 @@ begin
    # will give us access to steem engine contracts
 
    Contracts = Radiator::SSC::Contracts.new
-
 rescue => error
    # I am using Kernel::abort so the code snipped including
    # error handler can be copy pasted into other scripts

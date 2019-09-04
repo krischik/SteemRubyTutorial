@@ -77,7 +77,7 @@ class Vesting < Steem::Type::BaseType
       @id                  = value.id
       @delegator           = value.delegator
       @delegatee           = value.delegatee
-      @vesting_shares      = Steem::Type::Amount.new (value.vesting_shares)
+      @vesting_shares      = Steem::Type::Amount.new(value.vesting_shares)
       @min_delegation_time = Time.strptime(value.min_delegation_time + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
 
       return
@@ -164,7 +164,7 @@ class Vesting < Steem::Type::BaseType
       Contract ArrayOf[String] => nil
       def print_accounts (accounts)
 
-         puts ("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
+         puts("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
 
          # `get_vesting_delegations` returns the delegations
          # of multiple accounts at once. Useful if you want
@@ -197,7 +197,7 @@ class Vesting < Steem::Type::BaseType
             # happens when the initial delegator / delegatee
             # pair doesn't exist.
 
-         break if _vesting == nil || _vesting.result.length == 0
+            break if _vesting == nil || _vesting.result.length == 0
 
             # get the delegator / delegatee pair of the last
             #  element
@@ -249,10 +249,10 @@ class Vesting < Steem::Type::BaseType
             # Print the current position of the iteration as
             # progress indicator for the user.
 
-            print (
-                     "%1$10d | " +
-                        "%2$-16s ⇒ " +
-                        "%3$-16s ") % [
+            print(
+               "%1$10d | " +
+                  "%2$-16s ⇒ " +
+                  "%3$-16s ") % [
                _last_vest.id,
                _last_vest.delegator,
                _last_vest.delegatee]
@@ -272,7 +272,8 @@ class Vesting < Steem::Type::BaseType
                # We made Max_Retry_Count repeats ⇒ giving up.
 
                print Delete_Line
-               Kernel::abort ("\nCould not read %1$s with %2$d retrys :\n%3$s".red) % [_previous_end, Max_Retry_Count, error.to_s]
+               Kernel::abort(
+                  "\nCould not read %1$s with %2$d retrys :\n%3$s".red) % [_previous_end, Max_Retry_Count, error.to_s]
             end
 
             # wait one second before making the next retry
@@ -332,7 +333,7 @@ else
 
    Account_Names = ARGV
 
-   puts ("        id | delegator        | delegatee        |                                                     vesting shares |  min delegation time |")
+   puts("        id | delegator        | delegatee        |                                                     vesting shares |  min delegation time |")
 
    Vesting.print_accounts Account_Names
 end

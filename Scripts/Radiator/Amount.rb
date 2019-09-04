@@ -336,7 +336,6 @@ module Radiator
             #    Conversion rate Steem ⇔ SBD
             #
             Contract None => Num
-
             def sbd_median_price
                if @sbd_median_price == nil then
                   _median_history_price = self.condenser_api.get_current_median_history_price.result
@@ -358,7 +357,6 @@ module Radiator
             #    Conversion rate Steem ⇔ VESTS
             #
             Contract None => Num
-
             def conversion_rate_vests
                if @conversion_rate_vests == nil then
                   _global_properties        = self.condenser_api.get_dynamic_global_properties.result
