@@ -28,7 +28,6 @@ require 'steem'
 begin
    Condenser_Api = Radiator::CondenserApi.new
    Database_Api  = Radiator::DatabaseApi.new
-
 rescue => error
    # I am using `Kernel::abort` so the script ends when
    # data can't be loaded
@@ -67,7 +66,6 @@ else
 
    # x = JsonRpc.get_signature(Query_Class)
    # x = JsonRpc.get_signature(Steem::DatabaseApi)
-
 end
 
 ############################################################ {{{1 ###########

@@ -69,7 +69,7 @@ class Vesting < Radiator::Type::Serializer
       @id                  = value.id
       @delegator           = value.delegator
       @delegatee           = value.delegatee
-      @vesting_shares      = Radiator::Type::Amount.new (value.vesting_shares)
+      @vesting_shares      = Radiator::Type::Amount.new(value.vesting_shares)
       @min_delegation_time = Time.strptime(value.min_delegation_time + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
 
       return
@@ -137,7 +137,7 @@ class Vesting < Radiator::Type::Serializer
       Contract String => nil
       def print_account (account)
 
-         puts ("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
+         puts("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
 
          # `get_vesting_delegations` returns a subset of an
          # accounts delegation. This is helpful for accounts
@@ -162,7 +162,7 @@ class Vesting < Radiator::Type::Serializer
             # no elements found, end loop now. This only
             # happens when the account doesn't exist.
 
-         break if _vesting.result.length == 0
+            break if _vesting.result.length == 0
 
             # get and remove the last element. The last
             # element meeds to be removed as it will be
@@ -244,7 +244,7 @@ else
 
    Account_Names = ARGV
 
-   puts ("        id | delegator        | delegatee        |                                                     vesting shares |  min delegation time |")
+   puts("        id | delegator        | delegatee        |                                                     vesting shares |  min delegation time |")
 
    Account_Names.each do |account|
       Vesting.print_account account

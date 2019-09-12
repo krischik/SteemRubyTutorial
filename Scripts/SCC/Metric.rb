@@ -181,7 +181,7 @@ module SCC
 
                   # Exit loop when no result set is returned.
                   #
-               break if (not _metric) || (_metric.length == 0)
+                  break if (not _metric) || (_metric.length == 0)
                   _retval += _metric.map do |_token|
                      SCC::Metric.new _token
                   end

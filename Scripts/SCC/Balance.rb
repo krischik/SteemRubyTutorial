@@ -235,7 +235,7 @@ module SCC
 
                   # Exit loop when no result set is returned.
                   #
-               break if (not _balances) || (_balances.length == 0)
+                  break if (not _balances) || (_balances.length == 0)
 
                   # convert each returned JSON object into
                   # a class instacnce.
@@ -283,7 +283,7 @@ module SCC
                   # Exit loop when no result set is
                   # returned.
                   #
-               break if (not _balances) || (_balances.length == 0)
+                  break if (not _balances) || (_balances.length == 0)
 
                   # convert each returned JSON object into
                   # a class instacnce.
@@ -327,7 +327,7 @@ module SCC
                   # Exit loop when no result set is
                   # returned.
                   #
-               break if (not _balances) || (_balances.length == 0)
+                  break if (not _balances) || (_balances.length == 0)
 
                   # convert each returned JSON object into
                   # a class instacnce.

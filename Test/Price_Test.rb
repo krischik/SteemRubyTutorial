@@ -28,8 +28,6 @@ class Price_Test < Test::Unit::TestCase
       assert_instance_of(Radiator::Type::Amount, _test.base, "base should be an Amount")
       assert_instance_of(Radiator::Type::Amount, _test.quote, "quote should be an Amount")
       assert_instance_of(Float, _test.to_f, "to_f should be a Number")
-
-      # pp _test
    end
 end
 

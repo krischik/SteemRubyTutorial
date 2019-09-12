@@ -20,6 +20,7 @@ set |PROJECT HOME| to (system attribute "PROJECT_HOME")
 
 tell application "Terminal"
     set |Tab| to do script "
+source \"" & |PROJECT HOME| & "/Utilities/Setup.command\";
 cd \"" & |PROJECT HOME| & "\""
     set current settings of |Tab| to settings set ("MacPorts")
     set background color of |Tab| to {57344, 57344, 65535}

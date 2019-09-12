@@ -16,7 +16,7 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-if not defined?(Test_All) then
+unless defined?(Test_All) then
    Test_All = ARGV[0] == "all"
 end
 

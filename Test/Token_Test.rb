@@ -19,7 +19,7 @@
 require_relative '../Scripts/SCC/Token'
 require "test/unit"
 
-if not defined?(Test_All) then
+unless defined?(Test_All) then
    Test_All = ARGV[0] == "all"
 end
 

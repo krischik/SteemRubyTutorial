@@ -28,8 +28,6 @@ class Reward_Fund_Test < Test::Unit::TestCase
       assert_instance_of(String, _test.name, "name should be a String")
       assert_instance_of(Radiator::Type::Amount, _test.reward_balance, "reward_balance should be an Amount")
       assert_instance_of(Integer, _test.recent_claims, "recent_claims should be a Number")
-
-      # pp _test
    end
 end
 

@@ -212,8 +212,8 @@ def print_account_balances(accounts)
 
          # Add token value (in SDB to the account value.
          begin
-            _sbd           = _scc_balance.to_sbd
-            _account_value = _account_value + _sbd
+            _sbd             = _scc_balance.to_sbd
+            _account_value   = _account_value + _sbd
          rescue KeyError
             # do nothing.
          end
