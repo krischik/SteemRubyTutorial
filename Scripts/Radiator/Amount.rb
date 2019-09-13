@@ -215,8 +215,7 @@ module Radiator
                _steem.to_f,
                _steem.asset,
                _vests.to_f,
-               _vests.asset
-            ]
+               _vests.asset]
          end
 
          ##

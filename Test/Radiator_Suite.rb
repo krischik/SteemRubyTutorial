@@ -17,8 +17,8 @@
 ############################################################# }}}1 ##########
 
 require_relative '../Test/Radiator_Amount_Test.rb'
-require_relative '../Test/Reward_Fund_Test.rb'
-require_relative '../Test/Price_Test.rb'
+require_relative '../Test/Radiator_Reward_Fund_Test.rb'
+require_relative '../Test/Radiator_Price_Test.rb'
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

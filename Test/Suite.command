@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/opt/local/bin/zsh
 ############################################################# {{{1 ##########
 #  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -16,14 +16,14 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-unless defined?(Test_All) then
-   Test_All = ARGV[0] == "all"
-end
-
-require_relative '../Test/SCC_Suite'
-require_relative '../Test/Radiator_Suite'
+# Since radiator and steem library are incompatible they can't be tested inside
+# one Ruby session the top level test script is written as a shell script.
+#
+Test/SCC_Suite.rb       "${1}"
+Test/Radiator_Suite.rb  "${1}"
+Test/Steem_Suite.rb     "${1}"
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
+# vim: set textwidth=0 filetype=zsh foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :

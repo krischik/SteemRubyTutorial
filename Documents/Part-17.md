@@ -1,9 +1,8 @@
 # Using Steem-API with Ruby Part 17 — Bonus: Unit Testing
 
-utopian-io tutorials ruby steem-api programming
+utopian-io tutorials ruby steem-api programming palnet neoxian marlians stem
 utopian.pay
 
-<center>![Steemit_Ruby.png](https://steemitimages.com/500x270/https://ipfs.busy.org/ipfs/QmSDiHZ9ng7BfYFMkvwYtNVPrw3nvbzKBA1gEj3y9vU6qN)</center>
 <center>![Steemit_Ruby_Engine.png](https://cdn.steemitimages.com/DQmR1jWexK1B1gGwUgcVdGtwRkAZPZ5rUwBXBt6x55TMPjY/Steemit_Ruby_Engine.png)</center>
 
 ## Repositories
@@ -49,7 +48,7 @@ All examples from this tutorial can be found as fully functional scripts on GitH
 
 ## What Will I Learn?
 
-This tutorial shows how to interact with the Steem blockchain and Steem database using Ruby. When using Ruby you have three APIs available to chose: **steem-api**, **steem-mechanize** and **radiator** which differentiates in how return values and errors are handled:
+This tutorial shows how to write unit tests for Steem blockchain and Steem database using Ruby. When using Ruby you have three APIs available to chose: **steem-api**, **steem-mechanize** and **radiator** which differentiates in how return values and errors are handled:
 
 * **steem-api** uses closures and exceptions and provides low level computer readable data.
 * **steem-mechanize** drop in replacement for steem-api with more performat network I/O
@@ -62,6 +61,7 @@ Since both APIs have advantages and disadvantages sample code for both APIs will
 Basic knowledge of Ruby programming is needed. It is necessary to install at least Ruby 2.5 as well as the following ruby gems:
 
 ```sh
+gem install test-unit
 gem install bundler
 gem install colorize
 gem install contracts
@@ -83,7 +83,25 @@ For reader with programming experience this tutorial is **basic level**.
 
 ## Tutorial Contents
 
+The various classes in described in this tutorial need trough testing. For this a variety of Test classes where created:
+
+* [Test/Steem_Suite.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/Steem_Suite.rb)
+    * [Test/Steem\_Amount\_Test.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/Steem_Amount_Test.rb)
+* [Test/Radiator_Suite.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/Radiator_Suite.rb)
+    * [Test/Radiator\_Amount\_Test.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/Radiator_Amount_Test.rb)
+    * [Test/Radiator\_Reward\_Fund_Test.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/Radiator_Reward_Fund_Test.rb)
+    * [Test/Radiator\_Price\_Test.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/Price_Test.rb)
+* [Test/SCC_Suite.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/SCC_Suite.rb)
+    * [Test/SCC_Test.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/SCC_Test.rb)
+    * [Test/SCC\_Contract\_Test.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/Contract_Test.rb)
+    * [Test/SCC\_Token\_Test.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/SCC_Token_Test.rb)
+    * [Test/SCC\_Balance\_Test.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/SCC_Balance_Test.rb)
+    * [Test/SCC\_Metric\_Test.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/SCC_Metric_Test.rb)
+* [Test/Suite.command](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/Suite.command)
+
 ## Implementation using steem-ruby
+
+### Tests
 
 -----
 
@@ -92,26 +110,25 @@ For reader with programming experience this tutorial is **basic level**.
 
 -----
 
-**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting: [Steem-Dump-XXXXX.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-XXXXX.rb).
+### Suites
+
+A collection of tests can be grouped to a test suite. All that is needed is to `require` the individual tests.
+
+```ruby
+```
+
+### All tests
+
+A test suite can call futher suites to create a hirachy of tests. However,  steem-ruby, steem-mechanize and radiator are incompatibel with each other so at the top level a shell script is used.
+
+```sh
+```
+
+**Hint:** Follow this link to Github for the complete scripts with comments and syntax highlighting: [Test/](https://github.com/krischik/SteemRubyTutorial/blob/master/Test).
 
 The output of the command (for the steem account) looks like this:
 
 <center>![Screenshot at Feb 13 145331.png](https://files.steempeak.com/file/steempeak/krischik/bj5gfctG-Screenshot20at20Feb20132014-53-31.png)</center>
-
-## Implementation using radiator
-
------
-
-```ruby
-```
-
------
-
-**Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-XXXXX.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-XXXXX.rb).
-
-The output of the command (for the steem account) looks identical to the previous output:
-
-<center>![Screenshot at XXXXX.png](https://files.steempeak.com/file/steempeak/krischik/3dURm96L-ScreenshotXXXXX.png)</center>
 
 # Curriculum
 
