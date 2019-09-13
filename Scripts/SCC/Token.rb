@@ -47,6 +47,10 @@ module SCC
                   :max_supply,
                   :supply,
                   :circulating_supply,
+                  :stakingEnabled,
+                  :unstakingCooldown,
+                  :delegationEnabled,
+                  :undelegationCooldown,
                   :loki
 
       public
@@ -61,15 +65,20 @@ module SCC
          def initialize(token)
             super(:symbol, token.symbol)
 
-            @symbol             = token.symbol
-            @issuer             = token.issuer
-            @name               = token.name
-            @metadata           = JSON.parse(token.metadata)
-            @precision          = token.precision
-            @max_supply         = token.maxSupply
-            @supply             = token.supply
-            @circulating_supply = token.circulatingSupply
-            @loki               = token["$loki"]
+            @symbol               = token.symbol
+            @issuer               = token.issuer
+            @name                 = token.name
+            @metadata             = JSON.parse(token.metadata)
+            @precision            = token.precision
+            @max_supply           = token.maxSupply
+            @supply               = token.supply
+            @circulating_supply   = token.circulatingSupply
+            @stakingEnabled       = token.stakingEnabled     
+            @totalStaked          = token.totalStaked
+            @unstakingCooldown    = token.unstakingCooldown   
+            @delegationEnabled    = token.delegationEnabled   
+            @undelegationCooldown = token.undelegationCooldown
+            @loki                 = token["$loki"]
 
             return
          end # initialize
