@@ -214,11 +214,9 @@ Test/Radiator_Suite.rb  "${1}"
 Test/Steem_Suite.rb     "${1}"
 ```
 
-**Hint:** Follow this link to Github for the complete scripts with comments and syntax highlighting: [Test/](https://github.com/krischik/SteemRubyTutorial/blob/master/Test).
+The output of the [Test/Suite.command](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/Suite.command) command looks like this:
 
-The output of the command (for the steem account) looks like this:
-
-<center>![Screenshot at Feb 13 145331.png](https://files.steempeak.com/file/steempeak/krischik/bj5gfctG-Screenshot20at20Feb20132014-53-31.png)</center>
+<center>![Screenshot at Sep 16 112224.png](https://files.steempeak.com/file/steempeak/krischik/7TH9CfnZ-Screenshot20at20Sep20162011-22-24.png)</center>
 
 # Curriculum
 
