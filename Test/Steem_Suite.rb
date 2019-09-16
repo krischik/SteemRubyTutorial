@@ -16,12 +16,7 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-unless defined?(Test_All) then
-   Test_All = ARGV[0] == "all"
-end
-
-require_relative '../Test/SCC_Suite'
-require_relative '../Test/Radiator_Suite'
+require_relative '../Test/Steem_Amount_Test.rb'
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

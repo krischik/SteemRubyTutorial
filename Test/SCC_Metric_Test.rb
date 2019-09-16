@@ -24,12 +24,12 @@ unless defined?(Test_All) then
 end
 
 class Metric_Test < Test::Unit::TestCase
-   def test_all_01
-      # Thee “all” tests but considerable strain on the
-      # Steem Engine server so we only do them when
-      # explicitly requested
-      #
-      if Test_All then
+   # Thee “all” tests but considerable strain on the
+   # Steem Engine server so we only do them when
+   # explicitly requested
+   #
+   if Test_All then
+      def test_all_01
          _test = SCC::Metric.all
 
          assert_not_nil(_test, "There should be metrics")
