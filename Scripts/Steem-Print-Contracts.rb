@@ -102,8 +102,8 @@ def real_voting_power (account)
    _last_vote_time = Time.strptime(account.last_vote_time + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
    _current_time   = Time.now
    _seconds_ago    = _current_time - _last_vote_time
-   _voting_power = account.voting_power.to_f / 10000.0
-   _retval       = _voting_power + (_seconds_ago / Five_Days)
+   _voting_power   = account.voting_power.to_f / 10000.0
+   _retval         = _voting_power + (_seconds_ago / Five_Days)
 
    if _retval > 1.0 then
       _retval = 1.0
@@ -205,13 +205,13 @@ def print_account_balances(accounts)
       puts("  Received Power  = " + _received_vesting_shares.to_ansi_s)
       puts("  Actual Power    = " + _total_vests.to_ansi_s)
       puts("  Voting Power    = " +
-         "%1$15.3f SBD".colorize(
-            if _voting_power == 1.0 then
-               :green
-            else
-               :red
-            end
-         ) + " of " + "%2$1.3f SBD".blue) % [
+              "%1$15.3f SBD".colorize(
+                 if _voting_power == 1.0 then
+                    :green
+                 else
+                    :red
+                 end
+              ) + " of " + "%2$1.3f SBD".blue) % [
          _current_vote_value,
          _max_vote_value]
       puts("  Account Value   = " + "%1$15.3f %2$s".green) % [

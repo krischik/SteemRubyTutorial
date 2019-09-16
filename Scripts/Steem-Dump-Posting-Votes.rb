@@ -179,25 +179,23 @@ class Vote < Steem::Type::BaseType
          end
 
          # print the total estimate after the last vote
-         puts (
-                 "Total vote value |          |" +
-                    "%1$10.3f SBD".colorize(
-                       if _total_estimate > 0.0005 then
-                          :green
-                       elsif _total_estimate < -0.0005 then
-                          :red
-                       else
-                          :white
-                       end
-                    ) +
-                    " |           |                 |                     |") % [
+         puts(
+            "Total vote value |          |" +
+               "%1$10.3f SBD".colorize(
+                  if _total_estimate > 0.0005 then
+                     :green
+                  elsif _total_estimate < -0.0005 then
+                     :red
+                  else
+                     :white
+                  end
+               ) +
+               " |           |                 |                     |") % [
             _total_estimate
          ]
 
          return
-      end
-
-      # print_list
+      end # print_list
 
       ##
       # Print the votes from a postings given as URLs:
@@ -217,10 +215,10 @@ class Vote < Steem::Type::BaseType
          _slug              = url.split('@').last
          _author, _permlink = _slug.split('/')
 
-         puts ("Post Author      : " + "%1$s".blue) % _author
-         puts ("Post ID          : " + "%1$s".blue) % _permlink
-         puts ("Voter name       |  percent |         value |    weight |         rshares |    vote date & time |")
-         puts ("-----------------+----------+---------------+-----------+-----------------+---------------------+")
+         puts("Post Author      : " + "%1$s".blue) % _author
+         puts("Post ID          : " + "%1$s".blue) % _permlink
+         puts("Voter name       |  percent |         value |    weight |         rshares |    vote date & time |")
+         puts("-----------------+----------+---------------+-----------+-----------------+---------------------+")
 
          Condenser_Api.get_active_votes(_author, _permlink) do |votes|
             if votes.length == 0 then

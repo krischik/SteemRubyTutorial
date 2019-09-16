@@ -16,16 +16,11 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-if not defined?(Test_All) then
-   Test_All = ARGV[0] == "all"
-end
-
-require_relative '../Test/Radiator_Amount_Test.rb'
-require_relative '../Test/Steem_Engine_Test.rb'
-require_relative '../Test/Contract_Test.rb'
-require_relative '../Test/Token_Test.rb'
-require_relative '../Test/Balance_Test.rb'
-require_relative '../Test/Metric_Test.rb'
+require_relative '../Test/SCC_Test.rb'
+require_relative '../Test/SCC_Contract_Test.rb'
+require_relative '../Test/SCC_Token_Test.rb'
+require_relative '../Test/SCC_Balance_Test.rb'
+require_relative '../Test/SCC_Metric_Test.rb'
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
