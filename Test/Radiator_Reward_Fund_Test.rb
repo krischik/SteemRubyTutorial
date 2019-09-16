@@ -16,12 +16,20 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-if not defined?(Test_All) then
-   Test_All = ARGV[0] == "all"
-end
+require_relative '../Scripts/Radiator/Reward_Fund'
+require "test/unit"
 
-require_relative '../Test/SCC_Suite'
-require_relative '../Test/Radiator_Suite'
+class Reward_Fund_Test < Test::Unit::TestCase
+   def test_get_01
+      _test = Radiator::Type::Reward_Fund.get
+
+      assert_not_nil(_test, "There should be a reward funds.")
+      assert_instance_of(Radiator::Type::Reward_Fund, _test, "result should be a Reward_Fund")
+      assert_instance_of(String, _test.name, "name should be a String")
+      assert_instance_of(Radiator::Type::Amount, _test.reward_balance, "reward_balance should be an Amount")
+      assert_instance_of(Integer, _test.recent_claims, "recent_claims should be a Number")
+   end
+end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

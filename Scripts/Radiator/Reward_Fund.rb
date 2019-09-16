@@ -48,15 +48,15 @@ module Radiator
          # add the missing attribute reader.
          #
          attr_reader :base, :quote,
-            :name,
-            :reward_balance,
-            :recent_claims,
-            :last_update,
-            :content_constant,
-            :percent_curation_rewards,
-            :percent_content_rewards,
-            :author_reward_curve,
-            :curation_reward_curve
+                     :name,
+                     :reward_balance,
+                     :recent_claims,
+                     :last_update,
+                     :content_constant,
+                     :percent_curation_rewards,
+                     :percent_content_rewards,
+                     :author_reward_curve,
+                     :curation_reward_curve
 
          ##
          # create instance form Steem JSON object.
@@ -68,15 +68,15 @@ module Radiator
          def initialize(value)
             super(:name, value)
 
-            @name                      = value.name
-            @reward_balance            = Radiator::Type::Amount.new value.reward_balance
-            @recent_claims             = value.recent_claims.to_i
-            @last_update               = Time.strptime(value.last_update + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
-            @content_constant          = value.content_constant
-            @percent_curation_rewards  = value.percent_curation_rewards
-            @percent_content_rewards   = value.percent_content_rewards
-            @author_reward_curve       = value.author_reward_curve
-            @curation_reward_curve     = value.curation_reward_curve
+            @name                     = value.name
+            @reward_balance           = Radiator::Type::Amount.new value.reward_balance
+            @recent_claims            = value.recent_claims.to_i
+            @last_update              = Time.strptime(value.last_update + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
+            @content_constant         = value.content_constant
+            @percent_curation_rewards = value.percent_curation_rewards
+            @percent_content_rewards  = value.percent_content_rewards
+            @author_reward_curve      = value.author_reward_curve
+            @curation_reward_curve    = value.curation_reward_curve
 
             return
          end

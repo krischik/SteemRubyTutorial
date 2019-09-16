@@ -29,7 +29,6 @@ begin
    Condenser_Api = Radiator::CondenserApi.new
    Database_Api  = Radiator::DatabaseApi.new
    Api           = Radiator::Api.new
-
 rescue => error
    # I am using `Kernel::abort` so the script ends when
    # data can't be loaded
@@ -55,7 +54,6 @@ elsif ARGV.length == 1 then
 
    # pp Api.method_names
    pp Database_Api.method_names
-
 else
    # read arguments from command line
 
@@ -68,7 +66,6 @@ else
 
    # x = JsonRpc.get_signature(Query_Class)
    # x = JsonRpc.get_signature(Steem::DatabaseApi)
-
 end
 
 ############################################################ {{{1 ###########

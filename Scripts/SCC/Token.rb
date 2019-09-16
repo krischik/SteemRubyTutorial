@@ -72,7 +72,7 @@ module SCC
             @loki               = token["$loki"]
 
             return
-         end
+         end # initialize
 
          ##
          # The tokens current market value
@@ -86,13 +86,9 @@ module SCC
             end
 
             return @metric
-         end
-
-         # metric
+         end # metric
 
       private
-
-         metric = nil
 
          class << self
             ##
@@ -113,9 +109,7 @@ module SCC
                   })
 
                return SCC::Token.new _token
-            end
-
-            # find
+            end # find
 
             ##
             #  Get all token
@@ -141,7 +135,7 @@ module SCC
 
                   # Exit loop when no result set is returned.
                   #
-               break if (not _tokens) || (_tokens.length == 0)
+                  break if (not _tokens) || (_tokens.length == 0)
                   _retval += _tokens.map do |_token|
                      SCC::Token.new _token
                   end
