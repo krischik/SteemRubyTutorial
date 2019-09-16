@@ -19,9 +19,9 @@
 # Since radiator and steem library are incompatible they can't be tested inside
 # one Ruby session the top level test script is written as a shell script.
 #
-Test/SCC_Suite.rb       "${1}"
-Test/Radiator_Suite.rb  "${1}"
 Test/Steem_Suite.rb     "${1}"
+Test/Radiator_Suite.rb  "${1}"
+Test/SCC_Suite.rb       "${1}"
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

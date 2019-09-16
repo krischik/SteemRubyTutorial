@@ -24,12 +24,12 @@ unless defined?(Test_All) then
 end
 
 class Balance_Test < Test::Unit::TestCase
-   def test_all_01
-      # Thee “all” tests but considerable strain on the
-      # Steem Engine server so we only do them when
-      # explicitly requested
-      #
-      if Test_All then
+   # Thee “all” tests but considerable strain on the
+   # Steem Engine server so we only do them when
+   # explicitly requested
+   #
+   if Test_All then
+      def test_all_01
          _test = SCC::Balance.all
 
          assert_not_nil(_test, "There should be balances")
@@ -43,8 +43,8 @@ class Balance_Test < Test::Unit::TestCase
          assert_instance_of(SCC::Token, _balance.token, "First balance token should be of type «SCC::Token»")
          assert_equal(:symbol, _balance.key, "First balance key should be «:symbol»")
          assert_equal("ENG", _balance.value, "First balance value should be “ENG”")
-      end
-   end
+      end # test_all_01
+   end #if
 
    def test_account_01
       _test = SCC::Balance.account "krischik"
@@ -137,9 +137,7 @@ class Balance_Test < Test::Unit::TestCase
 
       assert_not_nil(_balance, "First balance can be converted into a steem amount ")
       assert_instance_of(Radiator::Type::Amount, _steem, "First balance should be of type «Radiator::Type::Amount»")
-   end
-
-   # test_to_steem_01
+   end # test_to_steem_01
 
    def test_to_ansi_s_01
       _test = SCC::Balance.account "krischik"
@@ -158,7 +156,7 @@ class Balance_Test < Test::Unit::TestCase
       assert_not_nil(_balance, "First balance can be converted into a ansi text")
       assert_instance_of(String, _text, "First balance should be of type «String»")
    end # test_to_ansi_s_01
-end
+end # Balance_Test
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

@@ -12,8 +12,9 @@ utopian.pay
 All examples from this tutorial can be found as fully functional scripts on GitHub:
 
 * [SteemRubyTutorial](https://github.com/krischik/SteemRubyTutorial)
-* steem-api sample code: [Steem-Dump-XXXXX.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-XXXXX.rb)
-* radiator sample code: [Steem-Print-XXXXX.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Dump-XXXXX.rb).
+* steem-api sample code: [Steem_Suite.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/Steem_Suite.rb)
+* radiator sample code: [Radiator_Suite.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/Radiator_Suite.rb).
+* steem engine sample code: [SCC_Suite.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/SCC_Suite.rb).
 
 ### steem-ruby
 
@@ -99,22 +100,106 @@ The various classes in described in this tutorial need trough testing. For this 
     * [Test/SCC\_Metric\_Test.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/SCC_Metric_Test.rb)
 * [Test/Suite.command](https://github.com/krischik/SteemRubyTutorial/blob/master/Test/Suite.command)
 
-## Implementation using steem-ruby
+## Implementation
 
 ### Tests
 
------
+Test are very easy to write. Just create a class descending from `Test::Unit::TestCase` and a methods to perform the tests. There are a varity of `asserts` to check for the desired results.
 
 ```ruby
+class Radiator_Amount_Test < Test::Unit::TestCase
+
+   def test_to_sbd_01
+      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::STEEM)
+
+      assert_not_nil(_test, "An amount should be created")
+      assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
+      assert_equal(Steem::Type::Amount::STEEM, _test.asset, "The amount is if a «STEEEM» asset")
+
+      _sbd = _test.to_sbd
+
+      assert_not_nil(_sbd, "A sbd amount should be created")
+      assert_instance_of(Steem::Type::Amount, _sbd, "The amount should be of type «Steem::Type::Amount»")
+      assert_equal(Steem::Type::Amount::SBD, _sbd.asset, "The amount is if a «SBD» asset")
+   end # test_to_sbd_01
+end # Radiator_Amount_Test
 ```
 
------
+There are currently 29 test on [GitHub](https://github.com/krischik/SteemRubyTutorial/blob/master/Test) to draw instiration from. Hoewver unit tests tend to by quite repetetive so there is not point in showing multiple examples.
+
+One speciality can be found in the Steem-Engine tests. Since Steem-Engine has no query option it is nessesary to iterate over the whole database table. This is quite resource and time consuming so those tests should only be executed when the `all` option is added to the commeand line.
+
+```ruby
+#!/opt/local/bin/ruby
+
+require_relative '../Scripts/SCC/Balance'
+require "test/unit"
+
+unless defined?(Test_All) then
+   Test_All = ARGV[0] == "all"
+end
+
+class Balance_Test < Test::Unit::TestCase
+   # Thee “all” tests but considerable strain on the
+   # Steem Engine server so we only do them when
+   # explicitly requested
+   #
+   if Test_All then
+      def test_all_01
+         _test = SCC::Balance.all
+
+         assert_not_nil(_test, "There should be balances")
+         assert_instance_of(Array, _test, "balances should be an array")
+
+         _balance = _test[0]
+
+         assert_not_nil(_balance, "First balance should exist")
+         assert_instance_of(SCC::Balance, _balance, "First balance should be of type «SCC::Balance»")
+         assert_instance_of(SCC::Metric, _balance.metric, "First balance metric should be of type «SCC::Metric»")
+         assert_instance_of(SCC::Token, _balance.token, "First balance token should be of type «SCC::Token»")
+         assert_equal(:symbol, _balance.key, "First balance key should be «:symbol»")
+         assert_equal("ENG", _balance.value, "First balance value should be “ENG”")
+      end # test_all_01
+   end #if
+end # Balance_Test  
+```
 
 ### Suites
 
 A collection of tests can be grouped to a test suite. All that is needed is to `require` the individual tests.
 
+#### Steem-API
+
+The Steem-API tutorial currently only use one class and so there is only one test in the suite.
+
 ```ruby
+#!/opt/local/bin/ruby
+
+require_relative '../Test/Steem_Amount_Test.rb'
+```
+
+#### Radiator
+
+The Radiator tutorial used a total of three classes each with it's own test class.
+
+```ruby
+#!/opt/local/bin/ruby
+
+require_relative '../Test/Radiator_Amount_Test.rb'
+require_relative '../Test/Radiator_Reward_Fund_Test.rb'
+require_relative '../Test/Radiator_Price_Test.rb'
+```
+
+#### Steem-Engine
+
+```ruby
+#!/opt/local/bin/ruby
+
+require_relative '../Test/SCC_Test.rb'
+require_relative '../Test/SCC_Contract_Test.rb'
+require_relative '../Test/SCC_Token_Test.rb'
+require_relative '../Test/SCC_Balance_Test.rb'
+require_relative '../Test/SCC_Metric_Test.rb'
 ```
 
 ### All tests
@@ -122,6 +207,11 @@ A collection of tests can be grouped to a test suite. All that is needed is to `
 A test suite can call futher suites to create a hirachy of tests. However,  steem-ruby, steem-mechanize and radiator are incompatibel with each other so at the top level a shell script is used.
 
 ```sh
+#!/opt/local/bin/zsh
+
+Test/SCC_Suite.rb       "${1}"
+Test/Radiator_Suite.rb  "${1}"
+Test/Steem_Suite.rb     "${1}"
 ```
 
 **Hint:** Follow this link to Github for the complete scripts with comments and syntax highlighting: [Test/](https://github.com/krischik/SteemRubyTutorial/blob/master/Test).
@@ -138,15 +228,15 @@ The output of the command (for the steem account) looks like this:
 
 ## Previous tutorial
 
-* [Using Steem-API with Ruby Part XXXXX](https://steemit.com/@krischik/using-steem-api-with-ruby-part-XXXXX)
+* [Using Steem-API with Ruby Part 16](https://steemit.com/@krischik/using-steem-api-with-ruby-part-16)
 
 ## Next tutorial
 
-* [Using Steem-API with Ruby Part XXXXX](https://steemit.com/@krischik/using-steem-api-with-ruby-part-XXXXX)
+* [Using Steem-API with Ruby Part 18](https://steemit.com/@krischik/using-steem-api-with-ruby-part-18)
 
 ## Proof of Work
 
-* GitHub: [SteemRubyTutorial Issue #XXXXX](https://github.com/krischik/SteemRubyTutorial/issues/XXXXX)
+* GitHub: [SteemRubyTutorial Issue #XXXXX](https://github.com/krischik/SteemRubyTutorial/issues/19)
 
 ## Image Source
 
@@ -154,10 +244,6 @@ The output of the command (for the steem account) looks like this:
 * Steemit logo [Wikimedia](https://commons.wikimedia.org/wiki/File:Steemit_New_Logo.png), CC BY-SA 4.0.
 * Steem Engine logo [Steem Engine](https://steem-engine.com)
 * Screenshots: @krischik, CC BY-NC-SA 4.0
-
-## Beneficiary
-
-<center>![Beneficiary.png](https://cdn.steemitimages.com/DQmYnQfCi8Z12jkaNqADKc37gZ89RKdvdLzp7uXRjbo1AHy/image.png)</center>
 
 <center>![comment](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/Comments.png) ![votes](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Votes.png) ![posts](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Posts.png) ![level](http://steemitimages.com/100x80/http://steemitboard.com/@krischik/Level.png) ![payout](http://steemitimages.com/70x80/http://steemitboard.com/@krischik/Payout.png) ![commented](http://steemitimages.com/60x70/http://steemitboard.com/@krischik/Commented.png) ![voted](https://steemitimages.com/50x60/http://steemitboard.com/@krischik/voted.png)</center>
 

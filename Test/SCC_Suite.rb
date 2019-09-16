@@ -16,10 +16,6 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-unless defined?(Test_All) then
-   Test_All = ARGV[0] == "all"
-end
-
 require_relative '../Test/SCC_Test.rb'
 require_relative '../Test/SCC_Contract_Test.rb'
 require_relative '../Test/SCC_Token_Test.rb'
