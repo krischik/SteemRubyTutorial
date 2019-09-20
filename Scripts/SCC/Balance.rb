@@ -101,7 +101,7 @@ module SCC
          def to_steem
             _steem = if @symbol == "STEEMP" then
                @balance
-            elsif token.stakingEnabled then
+            elsif token.staking_enabled then
                (@balance + @stake) * metric.last_price
             else
                @balance * metric.last_price
@@ -175,7 +175,7 @@ module SCC
             begin
                _steem  = self.to_steem
                _sbd    = self.to_sbd
-               _staked = self.token.stakingEnabled
+               _staked = self.token.staking_enabled
 
                _retval = if _staked then
                   ("%1$15.3f %2$s".white +

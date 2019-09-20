@@ -224,7 +224,7 @@ def print_account_balances(accounts)
       puts(("  Account Value (engine) = " + "%1$15.3f %2$s".green) % [
          _scc_value.to_f,
          _scc_value.asset])
-      puts(("  Account Value (total)  = " + "%1$15.3f %2$s".green) % [
+      puts(("  Account Value          = " + "%1$15.3f %2$s".green) % [
          _account_value.to_f,
          _account_value.asset])
    end

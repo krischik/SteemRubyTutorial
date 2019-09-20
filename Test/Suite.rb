@@ -1,4 +1,4 @@
-#!/opt/local/bin/zsh
+#!/opt/local/bin/ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -16,14 +16,11 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# Since radiator and steem library are incompatible they can't be tested inside
-# one Ruby session the top level test script is written as a shell script.
-#
-Test/Steem_Suite.rb     "${1}"
-Test/Radiator_Suite.rb  "${1}"
-Test/SCC_Suite.rb       "${1}"
+require_relative '../Test/Steem_Suite.rb'
+require_relative '../Test/Radiator_Suite.rb'
+require_relative '../Test/SCC_Suite.rb'
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=zsh foldmethod=syntax nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :
