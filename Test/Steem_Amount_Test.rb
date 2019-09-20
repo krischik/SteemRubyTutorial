@@ -19,7 +19,7 @@
 require_relative '../Scripts/Steem/Amount'
 require "test/unit"
 
-class Radiator_Amount_Test < Test::Unit::TestCase
+class Steem_Amount_Test < Test::Unit::TestCase
    def test_to_amount_01
       _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::STEEM)
 

@@ -101,6 +101,8 @@ module SCC
          def to_steem
             _steem = if @symbol == "STEEMP" then
                @balance
+            elsif token.staking_enabled then
+               (@balance + @stake) * metric.last_price
             else
                @balance * metric.last_price
             end
@@ -168,36 +170,50 @@ module SCC
          #
          Contract None => String
          def to_ansi_s
+            _na = "N/A"
+
             begin
-               _steem = self.to_steem
-               _sbd   = self.to_sbd
+               _steem  = self.to_steem
+               _sbd    = self.to_sbd
+               _staked = self.token.staking_enabled
 
-               _retval = (
-               "%1$15.3f %2$s".white +
-                  " " +
-                  "%3$15.3f %4$s".white +
-                  " " +
-                  "%5$18.6f %6$s".blue) % [
-                  _sbd.to_f,
-                  _sbd.asset,
-                  _steem.to_f,
-                  _steem.asset,
-                  @balance,
-                  @symbol]
+               _retval = if _staked then
+                  ("%1$15.3f %2$s".white +
+                     " %3$15.3f %4$s".white +
+                     " %5$18.5f %7$-12s".blue +
+                     " %6$18.6f %7$-12s".blue) % [
+                     _sbd.to_f,
+                     _sbd.asset,
+                     _steem.to_f,
+                     _steem.asset,
+                     @balance,
+                     @stake,
+                     @symbol]
+               else
+                  ("%1$15.3f %2$s".white +
+                     " %3$15.3f %4$s".white +
+                     " %5$18.5f %7$-12s".blue +
+                     " %6$18s".white) % [
+                     _sbd.to_f,
+                     _sbd.asset,
+                     _steem.to_f,
+                     _steem.asset,
+                     @balance,
+                     _na,
+                     @symbol]
+               end
             rescue KeyError
-               _na = "N/A"
-
                _retval = (
                "%1$15s %2$s".white +
-                  " " +
-                  "%3$15s %4$5s".white +
-                  " " +
-                  "%5$18.6f %6$s".blue) % [
+                  " %3$15s %4$5s".white +
+                  " %5$18.5f %7$-12s".blue +
+                  " %6$18.6f %7$-12s".blue) % [
                   _na,
                   _na,
                   _na,
                   _na,
                   @balance,
+                  @stake,
                   @symbol]
             end
 
