@@ -102,7 +102,7 @@ def print_account_balances(accounts)
       # simple to_s method. But this method won't align the
       # decimal point
 
-      puts("Account: %1$s".blue + +" " + "(%2$s)".green) % [account.name, _vesting_shares.to_level]
+      puts(("Account: %1$s".blue + +" " + "(%2$s)".green) % [account.name, _vesting_shares.to_level])
       puts("  SBD             = " + _sbd_balance.to_ansi_s)
       puts("  SBD Savings     = " + _savings_sbd_balance.to_ansi_s)
       puts("  Steem           = " + _balance.to_ansi_s)
@@ -111,9 +111,9 @@ def print_account_balances(accounts)
       puts("  Delegated Power = " + _delegated_vesting_shares.to_ansi_s)
       puts("  Received Power  = " + _received_vesting_shares.to_ansi_s)
       puts("  Actual Power    = " + _total_vests.to_ansi_s)
-      puts("  Account Value   = " + "%1$15.3f %2$s".green) % [
+      puts(("  Account Value   = " + "%1$15.3f %2$s".green) % [
          _account_value.to_f,
-         _account_value.asset]
+         _account_value.asset])
    end
 
    return
