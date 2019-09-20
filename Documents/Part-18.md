@@ -222,10 +222,10 @@ Update printout and add calculation of accounts steem engine token values.
 
 The output of the command changes from previous only printing the steem engine token have not been stacked:
 <center>![Screenshot at Jul 30 15-23-14.png](https://cdn.steemitimages.com/DQmWdg5GNopbmWUHBuEeaYuGmSc4bPYxR3XFymfMWoxLQ4F/Screenshot%20at%20Jul%2030%2015-23-14.png)</center>
+
 to now printing the values of the staked Steem Engine Token as well:
 
-
-<center>![Screenshot at XXXXX.png](https://files.steempeak.com/file/steempeak/krischik/3dURm96L-ScreenshotXXXXX.png)</center>
+<center>![image.png](https://files.steempeak.com/file/steempeak/krischik/ubbCGni5-image.png)</center>
 
 # Curriculum
 
