@@ -97,18 +97,20 @@ class Vesting < Steem::Type::BaseType
    def to_ansi_s
       # All the magic happens in the `%` operators which
       # calls sprintf which in turn formats the string.
-      return (
-      "%1$10d | " +
-         "%2$-16s ⇒ " +
-         "%3$-16s | " +
-         "%4$-68s | " +
-         "%5$20s | ") % [
-         @id,
-         @delegator,
-         @delegatee,
-         @vesting_shares.to_ansi_s,
-         @min_delegation_time.strftime("%Y-%m-%d %H:%M:%S")
-      ]
+      return(
+	 (
+	 "%1$10d | " +
+	    "%2$-16s ⇒ " +
+	    "%3$-16s | " +
+	    "%4$-68s | " +
+	    "%5$20s | "
+	 ) % [
+	    @id,
+	    @delegator,
+	    @delegatee,
+	    @vesting_shares.to_ansi_s,
+	    @min_delegation_time.strftime("%Y-%m-%d %H:%M:%S")
+	 ])
    end
 
    ##
@@ -143,15 +145,15 @@ class Vesting < Steem::Type::BaseType
       #
       Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]]], ArrayOf[String] => nil
       def print_list (vesting, accounts)
-         vesting.each do |vest|
-            _vest = Vesting.new vest
+	 vesting.each do |vest|
+	    _vest = Vesting.new vest
 
-            if _vest.is_accounts accounts then
-               puts _vest.to_ansi_s
-            end
-         end
+	    if _vest.is_accounts accounts then
+	       puts _vest.to_ansi_s
+	    end
+	 end
 
-         return
+	 return
       end
 
       ##
@@ -164,125 +166,129 @@ class Vesting < Steem::Type::BaseType
       Contract ArrayOf[String] => nil
       def print_accounts (accounts)
 
-         puts("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
+	 puts("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
 
-         # `get_vesting_delegations` returns the delegations
-         # of multiple accounts at once. Useful if you want
-         # to iterate over all existing delegations. It's also
-         # the only way to find delegatees.
-         #
-         # The start parameter takes the delegator / delegatee
-         # pair to start the search, limit is the maximum
-         # amount of results to be returned (less then 1000)
-         # and order is always "by_delegation".
-         #
-         # The loop needed is pretty complicated as the last
-         # element on each iteration is duplicated as first
-         # element of the next iteration.
+	 # `get_vesting_delegations` returns the delegations
+	 # of multiple accounts at once. Useful if you want
+	 # to iterate over all existing delegations. It's also
+	 # the only way to find delegatees.
+	 #
+	 # The start parameter takes the delegator / delegatee
+	 # pair to start the search, limit is the maximum
+	 # amount of results to be returned (less then 1000)
+	 # and order is always "by_delegation".
+	 #
+	 # The loop needed is pretty complicated as the last
+	 # element on each iteration is duplicated as first
+	 # element of the next iteration.
 
-         # empty strings denotes start of list
+	 # empty strings denotes start of list
 
-         _previous_end = ["", ""]
+	 _previous_end = ["", ""]
 
-         # counter keep track of the amount of retries left
+	 # counter keep track of the amount of retries left
 
-         _retry_count = Max_Retry_Count
+	 _retry_count = Max_Retry_Count
 
-         loop do
-            # get the next 1000 items.
+	 loop do
+	    # get the next 1000 items.
 
-            _vesting = Database_Api.list_vesting_delegations(start: _previous_end, limit: 10, order: "by_delegation")
+	    _vesting = Database_Api.list_vesting_delegations(start: _previous_end, limit: 10, order: "by_delegation")
 
-            # no elements found, end loop now. This only
-            # happens when the initial delegator / delegatee
-            # pair doesn't exist.
+	    # no elements found, end loop now. This only
+	    # happens when the initial delegator / delegatee
+	    # pair doesn't exist.
 
-            break if _vesting == nil || _vesting.result.length == 0
+	    break if _vesting == nil || _vesting.result.length == 0
 
-            # get the delegator / delegatee pair of the last
-            #  element
+	    # get the delegator / delegatee pair of the last
+	    #  element
 
-            _last_vest   = Vesting.new _vesting.result.delegations.pop
-            _current_end = [_last_vest.delegator, _last_vest.delegatee]
+	    _last_vest   = Vesting.new _vesting.result.delegations.pop
+	    _current_end = [_last_vest.delegator, _last_vest.delegatee]
 
-            # Delete the progress indicator.
+	    # Delete the progress indicator.
 
-            print Delete_Line
+	    print Delete_Line
 
-            # check of the delegatee of the current last
-            # element is the same as the last element of the
-            # previous literation. If this happens we have
-            # reached the end of the list
+	    # check of the delegatee of the current last
+	    # element is the same as the last element of the
+	    # previous literation. If this happens we have
+	    # reached the end of the list
 
-            if _previous_end == _current_end then
-               # In the last iteration there will also be only
-               # one element which we need to print.
+	    if _previous_end == _current_end then
+	       # In the last iteration there will also be only
+	       # one element which we need to print.
 
-               if _last_vest.is_accounts accounts then
-                  puts _last_vest.to_ansi_s
-               end
+	       if _last_vest.is_accounts accounts then
+		  puts _last_vest.to_ansi_s
+	       end
 
-               break
-            else
-               # Print the list.
+	       break
+	    else
+	       # Print the list.
 
-               Vesting.print_list(_vesting.result.delegations, accounts)
+	       Vesting.print_list(_vesting.result.delegations, accounts)
 
-               if _previous_end[0] != "steem" && _current_end[0] == "steem" then
-                  # The large mayority of delegations are done
-                  # by the steem account. Not only will it
-                  # take more then an hour to iterate over the
-                  # steem delegations there is also a very
-                  # high likelihood of a network error
-                  # preventing the iteration from finishing.
-                  # For this we skip over the steem account.
+	       if _previous_end[0] != "steem" && _current_end[0] == "steem" then
+		  # The large mayority of delegations are done
+		  # by the steem account. Not only will it
+		  # take more then an hour to iterate over the
+		  # steem delegations there is also a very
+		  # high likelihood of a network error
+		  # preventing the iteration from finishing.
+		  # For this we skip over the steem account.
 
-                  _previous_end = ["steem", "zzzzzzj"]
-               else
-                  # remember the delegator / delegatee pair for
-                  # the next iteration.
+		  _previous_end = ["steem", "zzzzzzj"]
+	       else
+		  # remember the delegator / delegatee pair for
+		  # the next iteration.
 
-                  _previous_end = _current_end
-               end
-            end
+		  _previous_end = _current_end
+	       end
+	    end
 
-            # Print the current position of the iteration as
-            # progress indicator for the user.
+	    # Print the current position of the iteration as
+	    # progress indicator for the user.
 
-            print(
-               "%1$10d | " +
-                  "%2$-16s ⇒ " +
-                  "%3$-16s ") % [
-               _last_vest.id,
-               _last_vest.delegator,
-               _last_vest.delegatee]
+	    print((
+		  "%1$10d | " +
+		     "%2$-16s ⇒ " +
+		     "%3$-16s ") % [
+	       _last_vest.id,
+	       _last_vest.delegator,
+	       _last_vest.delegatee])
 
-            # Throttle to 20 http requests per second. That
-            # seem to be the acceptable upper limit for
-            # https://api.steemit.com
+	    # Throttle to 20 http requests per second. That
+	    # seem to be the acceptable upper limit for
+	    # https://api.steemit.com
 
-            sleep 0.05
+	    sleep 0.05
 
-            # resets the counter that keeps track of the
-            # retries.
+	    # resets the counter that keeps track of the
+	    # retries.
 
-            _retry_count = Max_Retry_Count
-         rescue => error
-            if _retry_count == 0 then
-               # We made Max_Retry_Count repeats ⇒ giving up.
+	    _retry_count = Max_Retry_Count
+	 rescue => error
+	    if _retry_count == 0 then
+	       # We made Max_Retry_Count repeats ⇒ giving up.
 
-               print Delete_Line
-               Kernel::abort(
-                  "\nCould not read %1$s with %2$d retrys :\n%3$s".red) % [_previous_end, Max_Retry_Count, error.to_s]
-            end
+	       print Delete_Line
+	       Kernel::abort(
+		  (
+		  "\nCould not read %1$s with %2$d retrys :\n%3$s".red
+		  ) % [
+		     _previous_end, Max_Retry_Count, error.to_s
+		  ])
+	    end
 
-            # wait one second before making the next retry
+	    # wait one second before making the next retry
 
-            _retry_count = _retry_count - 1
-            sleep 1.0
-         end
+	    _retry_count = _retry_count - 1
+	    sleep 1.0
+	 end
 
-         return
+	 return
       end # print_accounts
    end # self
 end # Vesting

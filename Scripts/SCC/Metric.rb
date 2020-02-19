@@ -40,160 +40,160 @@ module SCC
       include Contracts::Builtin
 
       attr_reader :key, :value,
-                  :symbol,
-                  :volume,
-                  :volume_expiration,
-                  :last_price,
-                  :lowestAsk,
-                  :highest_bid,
-                  :last_day_price,
-                  :last_day_price_expiration,
-                  :price_change_steem,
-                  :price_change_percent,
-                  :loki
+		  :symbol,
+		  :volume,
+		  :volume_expiration,
+		  :last_price,
+		  :lowestAsk,
+		  :highest_bid,
+		  :last_day_price,
+		  :last_day_price_expiration,
+		  :price_change_steem,
+		  :price_change_percent,
+		  :loki
 
       public
 
-         ##
-         # create instance form Steem Engine JSON object.
-         #
-         # @param [Hash]
-         #    JSON object from contract API.
-         #
-         Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]] => nil
-         def initialize(metric)
-            super(:symbol, metric.symbol)
+      ##
+      # create instance form Steem Engine JSON object.
+      #
+      # @param [Hash]
+      #    JSON object from contract API.
+      #
+      Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]] => nil
+      def initialize(metric)
+	 super(:symbol, metric.symbol)
 
-            @symbol                    = metric.symbol
-            @volume                    = metric.volume.to_f
-            @volume_expiration         = metric.volumeExpiration
-            @last_price                = metric.lastPrice.to_f
-            @lowest_ask                = metric.lowestAsk.to_f
-            @highest_bid               = metric.highestBid.to_f
-            @last_day_price            = metric.lastDayPrice.to_f
-            @last_day_price_expiration = metric.lastDayPriceExpiration
-            @price_change_steem        = metric.priceChangeSteem.to_f
-            @price_change_percent      = metric.priceChangePercent
-            @loki                      = metric["$loki"]
+	 @symbol                    = metric.symbol
+	 @volume                    = metric.volume.to_f
+	 @volume_expiration         = metric.volumeExpiration
+	 @last_price                = metric.lastPrice.to_f
+	 @lowest_ask                = metric.lowestAsk.to_f
+	 @highest_bid               = metric.highestBid.to_f
+	 @last_day_price            = metric.lastDayPrice.to_f
+	 @last_day_price_expiration = metric.lastDayPriceExpiration
+	 @price_change_steem        = metric.priceChangeSteem.to_f
+	 @price_change_percent      = metric.priceChangePercent
+	 @loki                      = metric["$loki"]
 
-            return
-         end
+	 return
+      end
 
-         ##
-         # create a colorized string showing the amount in
-         # SDB, STEEM and the steem engine token.
-         #
-         # The current highest bid is printed green, the
-         # current lowest asking price us printed in red
-         # and the last price of an actual transaction is
-         # printed on blue.
-         #
-         # Unless the value is close to 0, then the value
-         # is greyed out.
-         #
-         # @return [String]
-         #    formatted value
-         #
-         Contract None => String
-         def to_ansi_s
-            begin
-               _retval = (
-               "%1$-12s" +
-                  " | " +
-                  "%2$18.6f STEEM".colorize(
-                     if @highest_bid > 0.000001 then
-                        :green
-                     else
-                        :white
-                     end
-                  ) +
-                  " | " +
-                  "%3$18.6f STEEM".colorize(
-                     if @last_price > 0.000001 then
-                        :blue
-                     else
-                        :white
-                     end
-                  ) +
-                  " | " +
-                  "%4$18.6f STEEM".colorize(
-                     if @lowest_ask > 0.000001 then
-                        :red
-                     else
-                        :white
-                     end) +
-                  " | "
-               ) % [
-                  @symbol,
-                  @highest_bid,
-                  @last_price,
-                  @lowest_ask
-               ]
-            rescue
-               _retval = ""
-            end
+      ##
+      # create a colorized string showing the amount in
+      # SDB, STEEM and the steem engine token.
+      #
+      # The current highest bid is printed green, the
+      # current lowest asking price us printed in red
+      # and the last price of an actual transaction is
+      # printed on blue.
+      #
+      # Unless the value is close to 0, then the value
+      # is greyed out.
+      #
+      # @return [String]
+      #    formatted value
+      #
+      Contract None => String
+      def to_ansi_s
+	 begin
+	    _retval = ((
+	    "%1$-12s" +
+	       " | " +
+	       "%2$18.6f STEEM".colorize(
+		  if @highest_bid > 0.000001 then
+		     :green
+		  else
+		     :white
+		  end
+	       ) +
+	       " | " +
+	       "%3$18.6f STEEM".colorize(
+		  if @last_price > 0.000001 then
+		     :blue
+		  else
+		     :white
+		  end
+	       ) +
+	       " | " +
+	       "%4$18.6f STEEM".colorize(
+		  if @lowest_ask > 0.000001 then
+		     :red
+		  else
+		     :white
+		  end) +
+	       " | "
+	    ) % [
+	       @symbol,
+	       @highest_bid,
+	       @last_price,
+	       @lowest_ask
+	    ])
+	 rescue
+	    _retval = ""
+	 end
 
-            return _retval
-         end
+	 return _retval
+      end
 
-         class << self
-            ##
-            #  Get the metric of a single token.
-            #
-            #  @param [String] name
-            #     name of symbol
-            #  @return [Array<SCC::Metric>]
-            #     metric found
-            #
-            Contract String => Or[SCC::Metric, nil]
-            def symbol (name)
-               _metric = Steem_Engine.contracts_api.find_one(
-                  contract: "market",
-                  table:    "metrics",
-                  query:    {
-                     "symbol": name
-                  })
+      class << self
+	 ##
+	 #  Get the metric of a single token.
+	 #
+	 #  @param [String] name
+	 #     name of symbol
+	 #  @return [Array<SCC::Metric>]
+	 #     metric found
+	 #
+	 Contract String => Or[SCC::Metric, nil]
+	 def symbol (name)
+	    _metric = Steem_Engine.contracts_api.find_one(
+	       contract: "market",
+	       table:    "metrics",
+	       query:    {
+		  "symbol": name
+	       })
 
-               raise KeyError, "Symbol «" + name + "» not found" if _metric == nil
+	    raise KeyError, "Symbol «" + name + "» not found" if _metric == nil
 
-               return SCC::Metric.new _metric
-            end
+	    return SCC::Metric.new _metric
+	 end
 
-            ##
-            #  Get all token
-            #
-            #  @return [SCC::Metric]
-            #     metric found
-            #
-            Contract String => ArrayOf[SCC::Metric]
-            def all
-               _retval  = []
-               _current = 0
+	 ##
+	 #  Get all token
+	 #
+	 #  @return [SCC::Metric]
+	 #     metric found
+	 #
+	 Contract String => ArrayOf[SCC::Metric]
+	 def all
+	    _retval  = []
+	    _current = 0
 
-               loop do
-                  _metric = Steem_Engine.contracts_api.find(
-                     contract:   "market",
-                     table:      "metrics",
-                     query:      Steem_Engine::QUERY_ALL,
-                     limit:      Steem_Engine::QUERY_LIMIT,
-                     offset:     _current,
-                     descending: false)
+	    loop do
+	       _metric = Steem_Engine.contracts_api.find(
+		  contract:   "market",
+		  table:      "metrics",
+		  query:      Steem_Engine::QUERY_ALL,
+		  limit:      Steem_Engine::QUERY_LIMIT,
+		  offset:     _current,
+		  descending: false)
 
-                  # Exit loop when no result set is returned.
-                  #
-                  break if (not _metric) || (_metric.length == 0)
-                  _retval += _metric.map do |_token|
-                     SCC::Metric.new _token
-                  end
+	       # Exit loop when no result set is returned.
+	       #
+	       break if (not _metric) || (_metric.length == 0)
+	       _retval += _metric.map do |_token|
+		  SCC::Metric.new _token
+	       end
 
-                  # Move current by the actual amount of rows returned
-                  #
-                  _current = _current + _metric.length
-               end
+	       # Move current by the actual amount of rows returned
+	       #
+	       _current = _current + _metric.length
+	    end
 
-               return _retval
-            end # all
-         end # self
+	    return _retval
+	 end # all
+      end # self
    end # Metric
 end # SCC
 

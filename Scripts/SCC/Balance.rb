@@ -58,309 +58,308 @@ module SCC
       include Contracts::Builtin
 
       attr_reader :key, :value,
-                  :symbol,
-                  :account,
-                  :balance,
-                  :stake,
-                  :delegated_Stake,
-                  :received_stake,
-                  :pending_unstake,
-                  :loki
+		  :symbol,
+		  :account,
+		  :balance,
+		  :stake,
+		  :delegated_Stake,
+		  :received_stake,
+		  :pending_unstake,
+		  :loki
 
       public
 
-         ##
-         # create instance form Steem Engine JSON object.
-         #
-         # @param [Hash]
-         #    JSON object from contract API.
-         #
-         Contract Any => nil
-         def initialize(balance)
-            super(:symbol, balance.symbol)
+      ##
+      # create instance form Steem Engine JSON object.
+      #
+      # @param [Hash]
+      #    JSON object from contract API.
+      #
+      Contract Any => nil
+      def initialize(balance)
+	 super(:symbol, balance.symbol)
 
-            @symbol          = balance.symbol
-            @account         = balance.account
-            @balance         = balance.balance.to_f
-            @stake           = balance.stake.to_f
-            @delegated_stake = balance.delegatedStake.to_f
-            @received_stake  = balance.receivedStake.to_f
-            @pending_unstake = balance.pendingUnstake.to_f
-            @loki            = balance["$loki"]
+	 @symbol          = balance.symbol
+	 @account         = balance.account
+	 @balance         = balance.balance.to_f
+	 @stake           = balance.stake.to_f
+	 @delegated_stake = balance.delegatedStake.to_f
+	 @received_stake  = balance.receivedStake.to_f
+	 @pending_unstake = balance.pendingUnstake.to_f
+	 @loki            = balance["$loki"]
 
-            return
-         end
+	 return
+      end
 
-         ##
-         # balance in steem.
-         #
-         # @return [Radiator::Amount]
-         #     the current value in steem
-         #
-         Contract None => Radiator::Type::Amount
-         def to_steem
-            _steem = if @symbol == "STEEMP" then
-               @balance
-            elsif token.staking_enabled then
-               (@balance + @stake) * metric.last_price
-            else
-               @balance * metric.last_price
-            end
+      ##
+      # balance in steem.
+      #
+      # @return [Radiator::Amount]
+      #     the current value in steem
+      #
+      Contract None => Radiator::Type::Amount
+      def to_steem
+	 _steem = if @symbol == "STEEMP" then
+		     @balance
+		  elsif token.staking_enabled then
+		     (@balance + @stake) * metric.last_price
+		  else
+		     @balance * metric.last_price
+		  end
 
-            return Radiator::Type::Amount.to_amount(
-               _steem,
-               Radiator::Type::Amount::STEEM)
-         end
+	 return Radiator::Type::Amount.to_amount(
+	    _steem,
+	    Radiator::Type::Amount::STEEM)
+      end
 
-         ##
-         # balance in steem backed dollar.
-         #
-         # @return [Radiator::Amount]
-         #     the current value in steem
-         #
-         Contract None => Radiator::Type::Amount
-         def to_sbd
-            return to_steem.to_sbd
-         end
+      ##
+      # balance in steem backed dollar.
+      #
+      # @return [Radiator::Amount]
+      #     the current value in steem
+      #
+      Contract None => Radiator::Type::Amount
+      def to_sbd
+	 return to_steem.to_sbd
+      end
 
-         ##
-         # The metrics of the balance as lazy initialized
-         # property. The metric is used to convert the
-         # balance into Steem.
-         #
-         # @return [SCC::Metric]
-         #     the metrics instance
-         #
-         Contract None => SCC::Metric
-         def metric
-            if @metric == nil then
-               @metric = SCC::Metric.symbol @symbol
-            end
+      ##
+      # The metrics of the balance as lazy initialized
+      # property. The metric is used to convert the
+      # balance into Steem.
+      #
+      # @return [SCC::Metric]
+      #     the metrics instance
+      #
+      Contract None => SCC::Metric
+      def metric
+	 if @metric == nil then
+	    @metric = SCC::Metric.symbol @symbol
+	 end
 
-            return @metric
-         end
+	 return @metric
+      end
 
-         ##
-         # The token information of the balance also as
-         # lazy initialized property. The token
-         # informations contain, among other, the display
-         # name of the token.
-         #
-         # @return [SCC::Metric]
-         #     the metrics instance
-         #
-         Contract None => SCC::Token
-         def token
-            if @token == nil then
-               @token = SCC::Token.symbol @symbol
-            end
+      ##
+      # The token information of the balance also as
+      # lazy initialized property. The token
+      # informations contain, among other, the display
+      # name of the token.
+      #
+      # @return [SCC::Metric]
+      #     the metrics instance
+      #
+      Contract None => SCC::Token
+      def token
+	 if @token == nil then
+	    @token = SCC::Token.symbol @symbol
+	 end
 
-            return @token
-         end
+	 return @token
+      end
 
-         ##
-         # create a colourised string showing the amount in
-         # SDB, STEEM and the steem engine token. The
-         # actual value is colourised in blue while the
-         # converted values are colourised in grey (aka dark
-         # white).
-         #
-         # @return [String]
-         #    formatted value
-         #
-         Contract None => String
-         def to_ansi_s
-            _na = "N/A"
+      ##
+      # create a colourised string showing the amount in
+      # SDB, STEEM and the steem engine token. The
+      # actual value is colourised in blue while the
+      # converted values are colourised in grey (aka dark
+      # white).
+      #
+      # @return [String]
+      #    formatted value
+      #
+      Contract None => String
+      def to_ansi_s
+	 _na = "N/A"
 
-            begin
-               _steem  = self.to_steem
-               _sbd    = self.to_sbd
-               _staked = self.token.staking_enabled
+	 begin
+	    _steem  = self.to_steem
+	    _sbd    = self.to_sbd
+	    _staked = self.token.staking_enabled
+	    _retval = if _staked then
+			 (("%1$15.3f %2$s".white +
+			    " %3$15.3f %4$s".white +
+			    " %5$18.5f %7$-12s".blue +
+			    " %6$18.6f %7$-12s".blue) % [
+			    _sbd.to_f,
+			    _sbd.asset,
+			    _steem.to_f,
+			    _steem.asset,
+			    @balance,
+			    @stake,
+			    @symbol])
+		      else
+			 (("%1$15.3f %2$s".white +
+			    " %3$15.3f %4$s".white +
+			    " %5$18.5f %7$-12s".blue +
+			    " %6$18s".white) % [
+			    _sbd.to_f,
+			    _sbd.asset,
+			    _steem.to_f,
+			    _steem.asset,
+			    @balance,
+			    _na,
+			    @symbol])
+		      end
+	 rescue KeyError
+	    _retval = ((
+	    "%1$15s %2$s".white +
+	       " %3$15s %4$5s".white +
+	       " %5$18.5f %7$-12s".blue +
+	       " %6$18.6f %7$-12s".blue) % [
+	       _na,
+	       _na,
+	       _na,
+	       _na,
+	       @balance,
+	       @stake,
+	       @symbol])
+	 end
 
-               _retval = if _staked then
-                  ("%1$15.3f %2$s".white +
-                     " %3$15.3f %4$s".white +
-                     " %5$18.5f %7$-12s".blue +
-                     " %6$18.6f %7$-12s".blue) % [
-                     _sbd.to_f,
-                     _sbd.asset,
-                     _steem.to_f,
-                     _steem.asset,
-                     @balance,
-                     @stake,
-                     @symbol]
-               else
-                  ("%1$15.3f %2$s".white +
-                     " %3$15.3f %4$s".white +
-                     " %5$18.5f %7$-12s".blue +
-                     " %6$18s".white) % [
-                     _sbd.to_f,
-                     _sbd.asset,
-                     _steem.to_f,
-                     _steem.asset,
-                     @balance,
-                     _na,
-                     @symbol]
-               end
-            rescue KeyError
-               _retval = (
-               "%1$15s %2$s".white +
-                  " %3$15s %4$5s".white +
-                  " %5$18.5f %7$-12s".blue +
-                  " %6$18.6f %7$-12s".blue) % [
-                  _na,
-                  _na,
-                  _na,
-                  _na,
-                  @balance,
-                  @stake,
-                  @symbol]
-            end
+	 return _retval
+      end
 
-            return _retval
-         end
+      class << self
+	 ##
+	 #  Get balances for gives account name
+	 #
+	 #  @param [String] name
+	 #     name of contract
+	 #  @return [Array<SCC::Balance>]
+	 #     contract found
+	 #
+	 Contract String => ArrayOf[SCC::Balance]
+	 def account (name)
+	    _retval  = []
+	    _current = 0
+	    _query   = {
+	       "account": name
+	    }
 
-         class << self
-            ##
-            #  Get balances for gives account name
-            #
-            #  @param [String] name
-            #     name of contract
-            #  @return [Array<SCC::Balance>]
-            #     contract found
-            #
-            Contract String => ArrayOf[SCC::Balance]
-            def account (name)
-               _retval  = []
-               _current = 0
-               _query   = {
-                  "account": name
-               }
+	    loop do
+	       # Read the next batch of balances using
+	       # the find function.
+	       #
+	       _balances = Steem_Engine.contracts_api.find(
+		  contract:   "tokens",
+		  table:      "balances",
+		  query:      _query,
+		  limit:      SCC::Steem_Engine::QUERY_LIMIT,
+		  offset:     _current,
+		  descending: false)
 
-               loop do
-                  # Read the next batch of balances using
-                  # the find function.
-                  #
-                  _balances = Steem_Engine.contracts_api.find(
-                     contract:   "tokens",
-                     table:      "balances",
-                     query:      _query,
-                     limit:      SCC::Steem_Engine::QUERY_LIMIT,
-                     offset:     _current,
-                     descending: false)
+	       # Exit loop when no result set is returned.
+	       #
+	       break if (not _balances) || (_balances.length == 0)
 
-                  # Exit loop when no result set is returned.
-                  #
-                  break if (not _balances) || (_balances.length == 0)
+	       # convert each returned JSON object into
+	       # a class instacnce.
+	       #
+	       _retval += _balances.map do |_balance|
+		  SCC::Balance.new _balance
+	       end
 
-                  # convert each returned JSON object into
-                  # a class instacnce.
-                  #
-                  _retval += _balances.map do |_balance|
-                     SCC::Balance.new _balance
-                  end
+	       # Move current by the actual amount of rows returned
+	       #
+	       _current = _current + _balances.length
+	    end
 
-                  # Move current by the actual amount of rows returned
-                  #
-                  _current = _current + _balances.length
-               end
+	    return _retval
+	 end
 
-               return _retval
-            end
+	 ##
+	 #  Get balances for one token
+	 #
+	 #  @param [String] name
+	 #     name of contract
+	 #  @return [Array<SCC::Balance>]
+	 #     contract found
+	 #
+	 Contract String => ArrayOf[SCC::Balance]
+	 def symbol (name)
+	    _retval  = []
+	    _current = 0
+	    _query   = {
+	       "symbol": name
+	    }
 
-            ##
-            #  Get balances for one token
-            #
-            #  @param [String] name
-            #     name of contract
-            #  @return [Array<SCC::Balance>]
-            #     contract found
-            #
-            Contract String => ArrayOf[SCC::Balance]
-            def symbol (name)
-               _retval  = []
-               _current = 0
-               _query   = {
-                  "symbol": name
-               }
+	    loop do
+	       # Read the next batch of balances using
+	       # the find function.
+	       #
+	       _balances = Steem_Engine.contracts_api.find(
+		  contract:   "tokens",
+		  table:      "balances",
+		  query:      _query,
+		  limit:      Steem_Engine::QUERY_LIMIT,
+		  offset:     _current,
+		  descending: false)
 
-               loop do
-                  # Read the next batch of balances using
-                  # the find function.
-                  #
-                  _balances = Steem_Engine.contracts_api.find(
-                     contract:   "tokens",
-                     table:      "balances",
-                     query:      _query,
-                     limit:      Steem_Engine::QUERY_LIMIT,
-                     offset:     _current,
-                     descending: false)
+	       # Exit loop when no result set is
+	       # returned.
+	       #
+	       break if (not _balances) || (_balances.length == 0)
 
-                  # Exit loop when no result set is
-                  # returned.
-                  #
-                  break if (not _balances) || (_balances.length == 0)
+	       # convert each returned JSON object into
+	       # a class instacnce.
+	       #
+	       _retval += _balances.map do |_balance|
+		  SCC::Balance.new _balance
+	       end
 
-                  # convert each returned JSON object into
-                  # a class instacnce.
-                  #
-                  _retval += _balances.map do |_balance|
-                     SCC::Balance.new _balance
-                  end
+	       # Move current by the actual amount of
+	       # rows returned
+	       #
+	       _current = _current + _balances.length
+	    end
 
-                  # Move current by the actual amount of
-                  # rows returned
-                  #
-                  _current = _current + _balances.length
-               end
+	    return _retval
+	 end
 
-               return _retval
-            end
+	 ##
+	 #  Get all balances
+	 #
+	 #  @return [SCC::Balance]
+	 #     token found
+	 #
+	 Contract String => ArrayOf[SCC::Balance]
+	 def all
+	    _retval  = []
+	    _current = 0
 
-            ##
-            #  Get all balances
-            #
-            #  @return [SCC::Balance]
-            #     token found
-            #
-            Contract String => ArrayOf[SCC::Balance]
-            def all
-               _retval  = []
-               _current = 0
+	    loop do
+	       # Read the next batch of balances using
+	       # the find function.
+	       #
+	       _balances = Steem_Engine.contracts_api.find(
+		  contract:   "tokens",
+		  table:      "balances",
+		  query:      Steem_Engine::QUERY_ALL,
+		  limit:      Steem_Engine::QUERY_LIMIT,
+		  offset:     _current,
+		  descending: false)
 
-               loop do
-                  # Read the next batch of balances using
-                  # the find function.
-                  #
-                  _balances = Steem_Engine.contracts_api.find(
-                     contract:   "tokens",
-                     table:      "balances",
-                     query:      Steem_Engine::QUERY_ALL,
-                     limit:      Steem_Engine::QUERY_LIMIT,
-                     offset:     _current,
-                     descending: false)
+	       # Exit loop when no result set is
+	       # returned.
+	       #
+	       break if (not _balances) || (_balances.length == 0)
 
-                  # Exit loop when no result set is
-                  # returned.
-                  #
-                  break if (not _balances) || (_balances.length == 0)
+	       # convert each returned JSON object into
+	       # a class instacnce.
+	       #
+	       _retval += _balances.map do |_balance|
+		  SCC::Balance.new _balance
+	       end
 
-                  # convert each returned JSON object into
-                  # a class instacnce.
-                  #
-                  _retval += _balances.map do |_balance|
-                     SCC::Balance.new _balance
-                  end
+	       # Move current by the actual amount of
+	       # rows returned
+	       #
+	       _current = _current + _balances.length
+	    end
 
-                  # Move current by the actual amount of
-                  # rows returned
-                  #
-                  _current = _current + _balances.length
-               end
-
-               return _retval
-            end # all
-         end # self
+	    return _retval
+	 end # all
+      end # self
    end # Balance
 end # SCC
 

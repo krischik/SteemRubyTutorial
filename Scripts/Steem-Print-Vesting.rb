@@ -89,18 +89,20 @@ class Vesting < Radiator::Type::Serializer
    def to_ansi_s
       # All the magic happens in the `%` operators which
       # calls sprintf which in turn formats the string.
-      return (
-      "%1$10d | " +
-         "%2$-16s ⇒ " +
-         "%3$-16s | " +
-         "%4$-68s | " +
-         "%5$20s | ") % [
-         @id,
-         @delegator,
-         @delegatee,
-         @vesting_shares.to_ansi_s,
-         @min_delegation_time.strftime("%Y-%m-%d %H:%M:%S")
-      ]
+      return(
+	 (
+	 "%1$10d | " +
+	    "%2$-16s ⇒ " +
+	    "%3$-16s | " +
+	    "%4$-68s | " +
+	    "%5$20s | "
+	 ) % [
+	    @id,
+	    @delegator,
+	    @delegatee,
+	    @vesting_shares.to_ansi_s,
+	    @min_delegation_time.strftime("%Y-%m-%d %H:%M:%S")
+	 ])
    end
 
    # to_ansi_s
@@ -119,13 +121,13 @@ class Vesting < Radiator::Type::Serializer
       #
       Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]]] => nil
       def print_list (vesting)
-         vesting.each do |vest|
-            _vest = Vesting.new vest
+	 vesting.each do |vest|
+	    _vest = Vesting.new vest
 
-            puts _vest.to_ansi_s
-         end
+	    puts _vest.to_ansi_s
+	 end
 
-         return
+	 return
       end
 
       ##
@@ -137,64 +139,64 @@ class Vesting < Radiator::Type::Serializer
       Contract String => nil
       def print_account (account)
 
-         puts("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
+	 puts("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
 
-         # `get_vesting_delegations` returns a subset of an
-         # accounts delegation. This is helpful for accounts
-         # with more then a thousand delegations like steem.
-         # The 2nd parameter is the first delegatee to
-         # return. The 3nd parameter is maximum amount results
-         # to return. Must be less then 1000.
-         #
-         # The loop needed is pretty complicated as the last
-         # element on each iteration is duplicated as first
-         # element of the next iteration.
+	 # `get_vesting_delegations` returns a subset of an
+	 # accounts delegation. This is helpful for accounts
+	 # with more then a thousand delegations like steem.
+	 # The 2nd parameter is the first delegatee to
+	 # return. The 3nd parameter is maximum amount results
+	 # to return. Must be less then 1000.
+	 #
+	 # The loop needed is pretty complicated as the last
+	 # element on each iteration is duplicated as first
+	 # element of the next iteration.
 
-         # empty string denotes start of list
+	 # empty string denotes start of list
 
-         _previous_delegatee = ""
+	 _previous_delegatee = ""
 
-         loop do
-            # get the next 1000 items.
+	 loop do
+	    # get the next 1000 items.
 
-            _vesting = Condenser_Api.get_vesting_delegations(account, _previous_delegatee, 1000)
+	    _vesting = Condenser_Api.get_vesting_delegations(account, _previous_delegatee, 1000)
 
-            # no elements found, end loop now. This only
-            # happens when the account doesn't exist.
+	    # no elements found, end loop now. This only
+	    # happens when the account doesn't exist.
 
-            break if _vesting.result.length == 0
+	    break if _vesting.result.length == 0
 
-            # get and remove the last element. The last
-            # element meeds to be removed as it will be
-            # dupplicated as firt element in the next
-            # itteration.
+	    # get and remove the last element. The last
+	    # element meeds to be removed as it will be
+	    # dupplicated as firt element in the next
+	    # itteration.
 
-            _last_vest = Vesting.new _vesting.result.pop
+	    _last_vest = Vesting.new _vesting.result.pop
 
-            # check of the delegatee of the current last
-            # element is the same as the last element of the
-            # previous itteration. If this happens we have
-            # reached the end of the list
+	    # check of the delegatee of the current last
+	    # element is the same as the last element of the
+	    # previous itteration. If this happens we have
+	    # reached the end of the list
 
-            if _previous_delegatee == _last_vest.delegatee then
-               # In the last itteration there will also be
-               # only one element which we need to print.
+	    if _previous_delegatee == _last_vest.delegatee then
+	       # In the last itteration there will also be
+	       # only one element which we need to print.
 
-               puts _last_vest.to_ansi_s
-               break
-            else
-               # Print the list.
+	       puts _last_vest.to_ansi_s
+	       break
+	    else
+	       # Print the list.
 
-               Vesting.print_list _vesting.result
+	       Vesting.print_list _vesting.result
 
-               # remember the delegatee for the next
-               # interation.
+	       # remember the delegatee for the next
+	       # interation.
 
-               _previous_delegatee = _last_vest.delegatee
-            end
-         end
+	       _previous_delegatee = _last_vest.delegatee
+	    end
+	 end
 
-         return
+	 return
       end # print_account
    end # self
 end # Vesting
@@ -212,7 +214,7 @@ begin
    # string values into amounts.
 
    _median_history_price = Radiator::Type::Price.new Condenser_Api.get_current_median_history_price.result
-   SBD_Median_Price      = _median_history_price.sbd_median_price
+   SBD_Median_Price      = _median_history_price.to_f
 
    # read the global properties and
    # calculate the conversion Rate for VESTS to steem. We
