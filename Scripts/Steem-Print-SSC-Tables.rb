@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/usr/local/opt/ruby/bin/ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -16,36 +16,52 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-require_relative '../Scripts/SCC/Contract'
-require "test/unit"
+# use the "steem.rb" file from the radiator gem. This is
+# only needed if you have both steem-api and radiator
+# installed.
 
-class Contract_Test < Test::Unit::TestCase
-   def test_new_01
-      _test = SCC::Steem_Engine.new(:test, "test")
+gem "radiator", :require => "steem"
 
-      assert_not_nil(_test, "Steem_Engine was created")
-      assert_instance_of(SCC::Steem_Engine, _test, "Result should be of type «SCC::Steem_Engine»")
-      assert_equal(:test, _test.key, "The key should be «:test»")
-      assert_equal("test", _test.value, "The value should be “test”")
-   end
+require 'pp'
+require 'colorize'
+require 'radiator'
 
-   def test_contracts_api_01
-      _test = SCC::Steem_Engine.contracts_api
+begin
+   # create an instance to the radiator contracts API which
+   # will give us access to steem engine contracts
 
-      assert_not_nil(_test, "Contracts API was created")
-      assert_instance_of(Radiator::SSC::Contracts, _test, "Contracts API should be of type «Radiator::SSC::Contracts»")
-   end
+   Contracts = Radiator::SSC::Contracts.new
+rescue => error
+   # I am using Kernel::abort so the code snipped including
+   # error handler can be copy pasted into other scripts
 
-   def test_query_limit_01
-      _test = SCC::Steem_Engine::QUERY_LIMIT
+   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+end
 
-      assert_equal(1000, _test, "The value of query_limit should be 1000")
-   end
+if ARGV.length == 0 then
+   puts "
+Steem-Print-SSC-Contract — Print steem engine contracts.
 
-   def test_query_all_01
-      _test = SCC::Steem_Engine::QUERY_ALL
+Usage:
+   Steem-Print-SSC-Contract contract_name …
+"
+else
+   # read arguments from command line
 
-      assert_equal({}, _test, "The value of query_all should be «{}»")
+   _names = ARGV
+
+   # Loop over provided contact names and print the steen
+   # engine contracts.
+
+   _names.each do |_name|
+
+      # read the contract
+
+      _contract = Contracts.contract _name
+
+      # print the contract
+
+      pp _contract.tables.keys
    end
 end
 

@@ -28,6 +28,10 @@ setopt XTrace
 pushd ${PROJECT_HOME}
     gvim --nofork -d "Scripts/Steem-Dump-Balances.rb"	"${HOME}/Applications/Utilities/"
     gvim --nofork -d "Scripts/Steem-Print-Balances.rb"	"${HOME}/Applications/Utilities/"
+
+    touch "${HOME}/Applications/Utilities/Steem-Dump-Balances.rb"  
+    touch "${HOME}/Applications/Utilities/Steem-Print-Balances.rb" 
+
     gcp --verbose --update --recursive "Scripts/."	"${HOME}/Applications/Utilities/"    
 popd 
 
