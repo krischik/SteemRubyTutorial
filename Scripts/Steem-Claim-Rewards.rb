@@ -25,18 +25,23 @@ require 'pp'
 require 'colorize'
 require 'radiator'
 
-if ARGV.length == 0 then
+require_relative 'Radiator/Amount'
+
+if ARGV.length < 2 then
    puts "
-Steem-Print-Accounts — Print account infos from Steem database
+Claim-Rewards — Claim accont rewards
 
 Usage:
-   Steem-Print-Accounts account_name …
+   Claim-Rewards account_name active_key
 
+      account_name account name
+      active_key   accounts active key
 "
 else
    # read arguments from command line
 
-   Account_Names = ARGV
+   Account_Name = ARGV[0]
+   Active_Key   = ARGV[1]
 
    # create instance to the steem database API
 
@@ -47,14 +52,42 @@ else
    # (pp) or print out error information when an error
    # occurred.
 
-   Result = Database_Api.get_accounts(Account_Names)
+   User_Infos = Database_Api.get_accounts([Account_Name])
 
-   if Result.key?('error') then
+   if User_Infos.key?('error') then
       Kernel::abort("Error reading accounts:\n".red + error.to_s)
-   elsif Result.result.length == 0 then
-      puts "No accounts found.".yellow
+   elsif User_Infos.result.length != 1 then
+      puts "Account not found.".red
    else
-      pp Result.result
+      User_Info = User_Infos.result[0]
+
+      Reward_Steem = Radiator::Type::Amount.new User_Info.reward_steem_balance
+      Reward_SDB   = Radiator::Type::Amount.new User_Info.reward_sbd_balance
+      Reward_Vests = Radiator::Type::Amount.new User_Info.reward_vesting_balance
+
+      puts("Rewards to claim for %1$s:" % Account_Name)
+      puts("  Reward_Steem   = " + Reward_Steem.to_ansi_s)
+      puts("  Reward_SDB     = " + Reward_SDB.to_ansi_s)
+      puts("  Reward_Vests   = " + Reward_Vests.to_ansi_s)
+
+      if Reward_SDB.to_f == 0 && Reward_SDB.to_f == 0 && Reward_Vests.to_f == 0 then
+	 puts("Nothing to claim.".yellow)
+      else
+	 puts("Start claiming.")
+
+	 Steem = Radiator::Chain.new(
+	    chain:        :steem,
+	    account_name: Account_Name,
+	    wif:          Active_Key)
+
+	 Steem.claim_reward_balance(
+	    reward_steem: Reward_Steem,
+	    reward_sbd:   Reward_SDB,
+	    reward_vests: Reward_Vests)
+	 Steem.broadcast!
+
+	 puts("Finished claiming.")
+      end
    end
 end
 

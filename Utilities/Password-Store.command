@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/bin/zsh
 ############################################################# {{{1 ##########
 #  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -9,18 +9,41 @@
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  MERCHANTABILITY or ENDIFFTNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
+#
+# Store passwords in password manager.
+#
 
-require_relative '../Test/Steem_Suite.rb'
-require_relative '../Test/Radiator_Suite.rb'
-require_relative '../Test/SCC_Suite.rb'
+setopt Err_Exit
+setopt No_XTrace
 
-############################################################ {{{1 ###########
-# vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
-# vim: set spell spelllang=en_gb fileencoding=utf-8 :
+read -r User"?User                 > "
+
+for I in		\
+    "Posting.Private"	\
+    "Active.Private"
+do
+    read -r Password"?${I} Password > "
+
+    security add-generic-password	\
+	-U				\
+	-a "${User}"			\
+	-c "STEE"			\
+	-C "MKEY"			\
+	-D "Steem Key"			\
+	-j "Access to Steem Keychain"	\
+	-l "Steem ${User} ${I/./ }"	\
+	-s "Steem.${User}.${I}"		\
+	-w "${Password}"
+done; unset I; unset Password
+
+############################################################## {{{1 ##########
+# vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
+# vim: set textwidth=0 filetype=zsh foldmethod=marker nospell :
+# vim: set spell spelllang=en_gb :
+

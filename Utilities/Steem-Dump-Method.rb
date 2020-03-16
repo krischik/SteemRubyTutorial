@@ -1,6 +1,6 @@
 #!/usr/local/opt/ruby/bin/ruby
 ############################################################## {{{1 ##########
-#  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
+#  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -34,7 +34,6 @@ rescue => error
 
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
-
 
 if ARGV.length == 0 then
    puts "

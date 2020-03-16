@@ -1,6 +1,6 @@
 #!/opt/local/bin/ruby
 ############################################################# {{{1 ##########
-#  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
+#  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -47,6 +47,8 @@ module Radiator
 	 #
 	 attr_reader :amount, :precision, :asset, :value
 
+	 public
+
 	 ##
 	 # Asset string for VESTS
 	 #
@@ -61,8 +63,6 @@ module Radiator
 	 # Asset string for Steem Backed Dollar
 	 #
 	 SBD = "SBD"
-
-	 public
 
 	 ##
 	 # return amount as float to be used for calculations
