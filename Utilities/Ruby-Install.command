@@ -21,6 +21,24 @@ setopt No_Err_Exit
 
 if test "${USER}" = "root"; then
 
+    path=("/opt/local/bin" ${path})
+
+    gem2.7 install --no-document ntlm-http  
+
+    gem2.7 install bundler
+    gem2.7 install colorize
+    gem2.7 install contracts
+    gem2.7 install gems
+    gem2.7 install ruby-debug-ide
+    gem2.7 install rubygems-update
+    gem2.7 install steem-ruby
+    gem2.7 install radiator
+    gem2.7 install steem-mechanize
+else
+    setopt Multi_OS
+
+    path=("/usr/local/opt/ruby/bin" ${path})
+
     gem install --no-document ntlm-http  
 
     gem install bundler
@@ -33,9 +51,6 @@ if test "${USER}" = "root"; then
     gem install radiator
     gem install steem-mechanize
 
-    update_rubygems
-else
-    setopt Multi_OS
     sudo ${0:a} 1>&1 2>&2 &>~/Library/Logs/${0:r:t}.out
 fi
 
