@@ -75,9 +75,9 @@ else
 
 	 # get the users steem engine balances
 
-	 _scc_balances = SCC::Balance.account _account_name
+	 # _scc_balances = SCC::Balance.account _account_name
 
-	 pp _scc_balances
+	 # pp _scc_balances
       end
    end
 end

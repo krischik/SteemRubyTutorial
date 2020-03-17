@@ -75,16 +75,16 @@ else
       else
 	 puts("Start claiming.")
 
-	 Steem = Radiator::Chain.new(
+	 Chain = Radiator::Chain.new(
 	    chain:        :steem,
 	    account_name: Account_Name,
 	    wif:          Active_Key)
 
-	 Steem.claim_reward_balance(
-	    reward_steem: Reward_Steem,
+	 Chain.claim_reward_balance(
+            reward_steem: Reward_Steem,
 	    reward_sbd:   Reward_SDB,
 	    reward_vests: Reward_Vests)
-	 Steem.broadcast!
+	 Chain.broadcast!
 
 	 puts("Finished claiming.")
       end
