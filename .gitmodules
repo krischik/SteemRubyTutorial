@@ -2,3 +2,6 @@
 	path = Wiki
 	url = https://github.com/krischik/SteemRubyTutorial.wiki.git
 	branch = master
+[submodule "Frameworks/Radiator"]
+	path = Frameworks/Radiator
+	url = https://github.com/krischik/radiator.git
