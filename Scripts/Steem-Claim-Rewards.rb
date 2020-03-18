@@ -81,9 +81,9 @@ else
 	    wif:          Active_Key)
 
 	 Chain.claim_reward_balance(
-            reward_steem: Reward_Steem,
-	    reward_sbd:   Reward_SDB,
-	    reward_vests: Reward_Vests)
+            reward_steem: Reward_Steem.to_s,
+	    reward_sbd:   Reward_SDB.to_s,
+	    reward_vests: Reward_Vests.to_s)
 	 Chain.broadcast!
 
 	 puts("Finished claiming.")

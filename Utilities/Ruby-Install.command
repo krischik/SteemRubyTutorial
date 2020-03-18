@@ -34,6 +34,7 @@ if test "${USER}" = "root"; then
     gem2.7 install steem-ruby
     gem2.7 install radiator
     gem2.7 install steem-mechanize
+
 else
     setopt Multi_OS
 
@@ -50,6 +51,7 @@ else
     gem install steem-ruby
     gem install radiator
     gem install steem-mechanize
+    gem install debase
 
     sudo ${0:a} 1>&1 2>&2 &>~/Library/Logs/${0:r:t}.out
 fi
