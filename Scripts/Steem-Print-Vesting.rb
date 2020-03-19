@@ -211,9 +211,6 @@ begin
    # We use the Amount class from Part 2 to convert the
    # string values into amounts.
 
-   _median_history_price = Radiator::Type::Price.new Condenser_Api.get_current_median_history_price.result
-   SBD_Median_Price      = _median_history_price.sbd_median_price
-
    # read the global properties and
    # calculate the conversion Rate for VESTS to steem. We
    # use the Amount class from Part 2 to convert the string

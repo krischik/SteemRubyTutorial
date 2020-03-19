@@ -30,6 +30,7 @@ require 'radiator'
 # moved into a separate file.
 
 require_relative 'Radiator/Amount'
+require_relative 'Radiator/Reward_Fund'
 
 ##
 # Class to handle vote values from postings.
@@ -174,7 +175,7 @@ class Vote < Radiator::Type::Serializer
 
          # print the total estimate after the last vote
          puts(
-            "Total vote value |          |" +
+            ("Total vote value |          |" +
                "%1$10.3f SBD".colorize(
                   if _total_estimate > 0.0005 then
                      :green
@@ -186,7 +187,7 @@ class Vote < Radiator::Type::Serializer
                ) +
                " |           |                 |                     |") % [
             _total_estimate
-         ]
+         ])
 
          return
       end
@@ -211,8 +212,8 @@ class Vote < Radiator::Type::Serializer
          _slug              = url.split('@').last
          _author, _permlink = _slug.split('/')
 
-         puts("Post Author      : " + "%1$s".blue) % _author
-         puts("Post ID          : " + "%1$s".blue) % _permlink
+         puts(("Post Author      : " + "%1$s".blue) % _author)
+         puts(("Post ID          : " + "%1$s".blue) % _permlink)
          puts("Voter name       |  percent |         value |    weight |         rshares |    vote date & time |")
          puts("-----------------+----------+---------------+-----------+-----------------+---------------------+")
 
