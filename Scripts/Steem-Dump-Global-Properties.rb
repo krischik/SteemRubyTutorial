@@ -30,7 +30,11 @@ begin
    # create instance to the steem condenser API which
    # will give us access to
 
-   Condenser_Api = Steem::CondenserApi.new
+   Condenser_Api = Steem::CondenserApi.new(options = {
+      url: 'https://api.openhive.network',
+      failover_urls: []})
+
+   pp Condenser_Api.chain
 
    # read the global properties. Yes, it's as simple as
    # this.

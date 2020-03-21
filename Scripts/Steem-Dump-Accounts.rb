@@ -34,6 +34,7 @@ Usage:
    Steem-Dump-Accounts account_name …
 
 "
+
 else
    # read arguments from command line
 
