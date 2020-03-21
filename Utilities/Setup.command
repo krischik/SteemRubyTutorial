@@ -27,7 +27,11 @@ fpath=(~/.functions ${fpath})
 
 typeset -f -u realFile
 
+typeset -x -g -U -T RUBYLIB rubylib ":"
+
 typeset -x -g		     opt="/opt/local"
+typeset -x -g		RUBYHOME="/usr/local/opt/ruby"
+
 typeset -x -g		    WORK=$(realFile "/Work")
 typeset -x -g	       Developer="/Applications/Developer"
 typeset -x -g	    PROJECT_NAME="${PROJECT_NAME-SteemRubyTutorial}"
@@ -37,7 +41,10 @@ typeset -x -g	    PROJECT_HOME=$(realFile "${PROJECT_HOME-${WORK}/Projects/${PRO
 typeset -x -g	   RUBYMINE_HOME="${Developer}/RubyMine.app"
 
 path=(${PROJECT_HOME}/Utilities ${path})
+path=(${RUBYHOME}/bin ${path})
 fpath=(${PROJECT_HOME}/Utilities ${fpath})
+rubylib=(${PROJECT_HOME}/Frameworks/radiator/lib ${rubylib})
+rubylib=(${PROJECT_HOME}/Frameworks/steem-ruby/lib ${rubylib})
 
 function lxpm ()
 {

@@ -21,17 +21,27 @@ setopt No_Err_Exit
 
 if test "${USER}" = "root"; then
 
-    gem install --no-document ntlm-http  
+    gem install --no-document ntlm-http
 
+    gem install awesome_print
     gem install bundler
     gem install colorize
     gem install contracts
     gem install gems
+    gem install minitest
+    gem install minitest-line
+    gem install minitest-proveit
+    gem install pry
+    gem install radiator
+    gem install rake
     gem install ruby-debug-ide
     gem install rubygems-update
-    gem install steem-ruby
-    gem install radiator
+    gem install simplecov
     gem install steem-mechanize
+    gem install steem-ruby
+    gem install vcr
+    gem install webmock
+    gem install yard
 
     update_rubygems
 else

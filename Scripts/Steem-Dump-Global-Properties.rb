@@ -20,21 +20,30 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "steem-ruby", :require => "steem"
+# gem "steem-ruby", :require => "steem"
 
 require 'pp'
 require 'colorize'
 require 'steem'
 
+case ENV["CHAIN_ID"].downcase
+   when "test"
+      Chain_Options = {
+         chain:         :test,
+         failover_urls: []}
+   when "hive"
+      Chain_Options = {
+	 chain:         :hive,
+	 failover_urls: []}
+   else
+      Chain_Options = {}
+   # type code here
+end
 begin
    # create instance to the steem condenser API which
    # will give us access to
 
-   Condenser_Api = Steem::CondenserApi.new(options = {
-      url: 'https://api.openhive.network',
-      failover_urls: []})
-
-   pp Condenser_Api.chain
+   Condenser_Api = Steem::CondenserApi.new Chain_Options
 
    # read the global properties. Yes, it's as simple as
    # this.
