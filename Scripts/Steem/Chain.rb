@@ -26,15 +26,25 @@ gem "steem-ruby", :require => "steem"
 
 require 'steem'
 
+# Read the `CHAIN_ID` environment variable and  initialise
+# the `Chain_Options` constant with parameters suitable for
+# the chain requested.
+
 case ENV["CHAIN_ID"]&.downcase
    when "test"
       Chain_Options = {
-	 chain:         :test,
-	 failover_urls: []}
+         chain:         :test,
+         failover_urls: [
+            Steem::ChainConfig::NETWORKS_TEST_DEFAULT_NODE
+         ]
+      }
    when "hive"
       Chain_Options = {
-	 chain:         :hive,
-	 failover_urls: []}
+         chain:         :hive,
+         failover_urls: [
+            Steem::ChainConfig::NETWORKS_HIVE_DEFAULT_NODE
+         ]
+      }
    else
       Chain_Options = {}
 end
