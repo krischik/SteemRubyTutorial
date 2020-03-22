@@ -16,20 +16,14 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the steem-ruby gem. This is
-# only needed if you have both steem-api and radiator
-# installed.
-
-gem "steem-ruby", :require => "steem"
-
 require 'pp'
 require 'colorize'
 require 'contracts'
-require 'steem'
 
 # The Amount class is used in most Scripts so it was
 # moved into a separate file.
 
+require_relative 'Steem/Chain'
 require_relative 'Steem/Amount'
 
 begin

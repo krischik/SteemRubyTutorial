@@ -5,3 +5,6 @@
 [submodule "Frameworks/steem-ruby"]
 	path = Frameworks/steem-ruby
 	url = https://github.com/krischik/steem-ruby
+[submodule "Frameworks/radiator"]
+	path = Frameworks/radiator
+	url = https://github.com/krischik/radiator.git

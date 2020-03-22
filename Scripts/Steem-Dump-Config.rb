@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 ############################################################# {{{1 ##########
-#  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
+#  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ begin
    # read the global properties. Yes, it's as simple as
    # this.
 
-   Global_Properties = Condenser_Api.get_dynamic_global_properties
+   Global_Properties = Condenser_Api.get_config
 rescue => error
    # I am using Kernel::abort so the code snipped
    # including error handler can be copy pasted into other

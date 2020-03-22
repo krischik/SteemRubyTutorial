@@ -20,11 +20,16 @@ setopt No_XTrace
 setopt Err_Exit
 
 pushd "${PROJECT_HOME}/Frameworks/steem-ruby" 
-    ruby -I lib test/test_helper.rb 
+    ruby -I "lib" -I "test" test/**/*.rb 
+
+    gem build "steem-ruby.gemspec"
+    install "steem-ruby"
 popd
+
 
 pushd "${PROJECT_HOME}" 
     for I in "steem" "hive"; do
+	CHAIN_ID="${I}" Scripts/Steem-Dump-Config.rb
 	CHAIN_ID="${I}" Scripts/Steem-Dump-Global-Properties.rb
 
 	# Scripts/Steem-Dump-Accounts.rb		    "steem" "busy.org" "steempeak"

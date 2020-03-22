@@ -38,7 +38,7 @@ if test ${#} -eq 2; then
 	echo "Task Type   : ${Task_Type}"
 	echo "Task Number : ${Task_No}"
 	echo "Comment     : ${in_Comment}"
-	read -sk1 "? add, commit and publish (Y/N): "
+	read -sk1 "? add, commit and push (Y/N): "
 	echo
 
 	if test "${REPLY:u}" = "Y"; then
@@ -49,23 +49,21 @@ if test ${#} -eq 2; then
 		"."
 	    do
 		pushd "${I}"
-		    echo "### Publish ${Task_Type} «${Task_No}» for «${I}»"
+		    echo "### Push ${Task_Type} «${Task_No}» for «${I}»"
 
 		    git add "."
 		    if ! git commit -m"${Task_Type} #${Task_No} : ${in_Comment}"; then
 			echo "nothing to commit but we publish anyway"
 		    fi
-		    if ! git flow feature publish "${in_Task}"; then
-			echo "publish failed, try a simple push instead"
-			git push
-		    fi
+
+		    git push
 		popd
 	    done; unset I
 	fi
     popd
 else
    echo '
-Git-Publish-Feature Task Comment
+Git-Push-Feature Task Comment
 
     Task    Task to publish
     Comment Comment for publish

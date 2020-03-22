@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 ############################################################# {{{1 ##########
-#  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
+#  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -15,38 +15,29 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
+# initialise the Chain_Options as requested by the
+# CHAIN_ID environment variable.
 
-require 'pp'
-require 'colorize'
+# use the "steem.rb" file from the steem-ruby gem. This is
+# only needed if you have both steem-api and radiator
+# installed.
 
-require_relative 'Steem/Chain'
+gem "steem-ruby", :require => "steem"
 
-begin
-   # create instance to the steem condenser API which
-   # will give us access to
+require 'steem'
 
-   Condenser_Api = Steem::CondenserApi.new Chain_Options
-
-   # read the global properties. Yes, it's as simple as
-   # this.
-
-   Global_Properties = Condenser_Api.get_dynamic_global_properties
-rescue => error
-   # I am using Kernel::abort so the code snipped
-   # including error handler can be copy pasted into other
-   # scripts
-
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+case ENV["CHAIN_ID"]&.downcase
+   when "test"
+      Chain_Options = {
+	 chain:         :test,
+	 failover_urls: []}
+   when "hive"
+      Chain_Options = {
+	 chain:         :hive,
+	 failover_urls: []}
+   else
+      Chain_Options = {}
 end
-
-# pretty print the result. It might look strange to do so
-# outside the begin / rescue but the value is now available
-# in constant for the rest of the script. Do note that
-# using constant is only suitable for short running script.
-# Long running scripts would need to re-read the value
-# on a regular basis.
-
-pp Global_Properties
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
