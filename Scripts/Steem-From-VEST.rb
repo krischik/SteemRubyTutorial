@@ -24,18 +24,20 @@ gem "steem-ruby", :require => "steem"
 
 require 'pp'
 require 'colorize'
-require 'steem'
+require 'radiator'
 
 # The Amount class is used in most Scripts so it was
 # moved into a separate file.
 
-require_relative 'Steem/Amount'
+require_relative 'Radiator/Reward_Fund'
+require_relative 'Radiator/Amount'
+require_relative 'Radiator/Price'
 
 begin
    # create instance to the steem condenser API which
    # will give us access to
 
-   Condenser_Api = Steem::CondenserApi.new
+   Condenser_Api = Radiator::CondenserApi.new
 
    # read the global properties. Yes, it's as simple as
    # this. Note the use of result at the end.
@@ -53,10 +55,10 @@ end
 
 if ARGV.length == 0 then
    puts "
-Steem_From_VEST — Print convert list of VESTS value to Steem values
+Steem-From-VEST-With-Vote — Print convert list of VESTS value to Steem values
 
 Usage:
-   Steem-Print-Balances values …
+   Steem-From-VEST-With-Vote values …
 
 "
 else
@@ -67,23 +69,57 @@ else
    # Calculate the conversion Rate. We use the Amount class
    # from Part 2 to convert the sting values into amounts.
 
-   _total_vesting_fund_steem = Steem::Type::Amount.new Global_Properties.total_vesting_fund_steem
-   _total_vesting_shares = Steem::Type::Amount.new Global_Properties.total_vesting_shares
-   _conversion_rate = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
+   _total_vesting_fund_steem = Radiator::Type::Amount.new Global_Properties.total_vesting_fund_steem
+   _total_vesting_shares     = Radiator::Type::Amount.new Global_Properties.total_vesting_shares
+   _conversion_rate          = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
+  
+   # read the  median history value and
+   # Calculate the conversion Rate for Vests to steem
+   # backed dollar. We use the Amount class from Part 2 to
+   # convert the string values into amounts.
+
+   _median_history_price = Radiator::Type::Price.get
+   SBD_Median_Price      = _median_history_price.to_f
+
+   # read the reward funds.
+
+   _reward_fund = Radiator::Type::Reward_Fund.get
+
+   # extract variables needed for the vote estimate. This
+   # is done just once here to reduce the amount of string
+   # parsing needed.
+
+   Recent_Claims  = _reward_fund.recent_claims
+   Reward_Balance = _reward_fund.reward_balance.to_f
 
    # iterate over the valued passed in the command line
 
    Values.each do |value|
-
       # convert the value to steem by multiplying with the
       # conversion rate and display the value
 
       _steem = value.to_f * _conversion_rate
-      puts "%1$18.6f VESTS = %2$15.3f STEEM" % [value, _steem]
+
+      # calculate actual vesting by adding and subtracting
+      # delegation as well at the final vest for vote
+      # estimate
+
+      _final_vest = value.to_f * 1e6
+
+      # convert the value to steem by multiplying with the
+      # calculate the vote value for 100% upvotes
+
+      _weight              = 1.0
+      _max_voting_power    = 1.0
+      _max_power           = (_max_voting_power * _weight) / 50.0
+      _max_rshares         = _max_power * _final_vest
+      _max_vote_value      = (_max_rshares / Recent_Claims) * Reward_Balance * SBD_Median_Price
+
+      puts "%1$18.6f VESTS = %2$15.3f STEEM,   100%% Upvote: %3$6.3f SBD" % [value, _steem, _max_vote_value]
    end
 end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :

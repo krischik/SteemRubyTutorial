@@ -30,47 +30,33 @@ require 'radiator'
 # The Amount class is used in most Scripts so it was
 # moved into a separate file.
 
+require_relative 'Radiator/Reward_Fund'
 require_relative 'Radiator/Amount'
 require_relative 'Radiator/Price'
+require_relative 'SCC/Balance'
+require_relative 'SCC/Token'
 
 Five_Days = 5 * 24 * 60 * 60
 
 begin
-   # create instance to the steem condenser API which
-   # will give us access to to the global properties,
-   # median history and reward fund
-
-   _condenser_api = Radiator::CondenserApi.new
-
    # read the  median history value and
    # Calculate the conversion Rate for Vests to steem
    # backed dollar. We use the Amount class from Part 2 to
    # convert the string values into amounts.
 
-   _median_history_price = Radiator::Type::Price.new _condenser_api.get_current_median_history_price.result
-   SBD_Median_Price      = _median_history_price.sbd_median_price 
+   _median_history_price = Radiator::Type::Price.get
+   SBD_Median_Price      = _median_history_price.to_f
 
-   # read the global properties and
-   # calculate the conversion Rate for VESTS to steem. We
-   # use the Amount class from Part 2 to convert the string
-   # values into amounts.
+   # read the reward funds.
 
-   _global_properties        = _condenser_api.get_dynamic_global_properties.result
-   _total_vesting_fund_steem = Radiator::Type::Amount.new _global_properties.total_vesting_fund_steem
-   _total_vesting_shares     = Radiator::Type::Amount.new _global_properties.total_vesting_shares
-   Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
-
-   # read the reward funds. `get_reward_fund` takes one
-   # parameter is always "post".
-
-   _reward_fund =  _condenser_api.get_reward_fund("post").result
+   _reward_fund = Radiator::Type::Reward_Fund.get
 
    # extract variables needed for the vote estimate. This
    # is done just once here to reduce the amount of string
    # parsing needed.
 
-   Recent_Claims  = _reward_fund.recent_claims.to_i
-   Reward_Balance = Radiator::Type::Amount.new _reward_fund.reward_balance
+   Recent_Claims  = _reward_fund.recent_claims
+   Reward_Balance = _reward_fund.reward_balance.to_f
 rescue => error
    # I am using `Kernel::abort` so the script ends when
    # data can't be loaded
@@ -88,28 +74,28 @@ end
 # const secondsago = (new Date().getTime() - new Date(account.last_vote_time + "Z").getTime()) / 1000;
 # const votingPower = account.voting_power + (10000 * secondsago / 432000);
 #
-# | Name          | API                     | Desciption                                                          |
+# | Name          | API                     | Description                                                         |
 # |---------------|-------------------------|---------------------------------------------------------------------|
 # |last_vote_time |DatabaseApi.get_accounts |Last time the user voted in UTC. Note that the UTC marker is missing |
 # |voting_power   |DatabaseApi.get_accounts |Voting power at last vote in %. Fixed point with 4 decimal places    |
 #
 # @param [Hash] account
-#     account informations.
+#     account information.
 # @return [Float]
 #     voting power as float from 0.0000 to 1.0000
 #
 def real_voting_power (account)
-   _last_vote_time = Time.strptime(account.last_vote_time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
-   _current_time = Time.now
-   _seconds_ago = _current_time - _last_vote_time;
-   _voting_power = account.voting_power.to_f / 10000.0
-   _retval = _voting_power + (_seconds_ago / Five_Days)
+   _last_vote_time = Time.strptime(account.last_vote_time + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
+   _current_time   = Time.now
+   _seconds_ago    = _current_time - _last_vote_time
+   _voting_power   = account.voting_power.to_f / 10000.0
+   _retval         = _voting_power + (_seconds_ago / Five_Days)
 
    if _retval > 1.0 then
       _retval = 1.0
    end
 
-   return _retval.round(4);
+   return _retval.round(4)
 end
 
 ##
@@ -172,39 +158,39 @@ def print_account_balances(accounts)
       # |delegated_vesting_shares |DatabaseApi.get_accounts                      |VESTS delegated to other accounts                          |
       # |recent_claims            |CondenserApi.get_reward_fund                  |Recently made claims on reward pool                        |
       # |reward_balance           |CondenserApi.get_reward_fund                  |Reward pool                                                |
-      # |sbd_median_price         |calulated from base and quote                 |Conversion rate steem ⇔ SBD                                |
+      # |sbd_median_price         |calculated from base and quote                |Conversion rate steem ⇔ SBD                                |
       # |base                     |CondenserApi.get_current_median_history_price |Conversion rate steem ⇔ SBD                                |
       # |quote                    |CondenserApi.get_current_median_history_price |Conversion rate steem ⇔ SBD                                |
       #
       # ¹ Both the current and the last voting_power is
-      #   called voting_power in the official dokumentation
+      #   called voting_power in the official documentation
 
-      _current_power = (_voting_power * _weight) / 50.0
-      _current_rshares = _current_power * _final_vest
-      _current_vote_value = (_current_rshares / Recent_Claims) * Reward_Balance.to_f * SBD_Median_Price
+      _current_power      = (_voting_power * _weight) / 50.0
+      _current_rshares    = _current_power * _final_vest
+      _current_vote_value = (_current_rshares / Recent_Claims) * Reward_Balance * SBD_Median_Price
 
       # calculate the account's maximum vote value for a 100% upvote.
 
       _max_voting_power = 1.0
-      _max_power = (_max_voting_power * _weight) / 50.0
-      _max_rshares = _max_power * _final_vest
-      _max_vote_value = (_max_rshares / Recent_Claims) * Reward_Balance.to_f * SBD_Median_Price
+      _max_power        = (_max_voting_power * _weight) / 50.0
+      _max_rshares      = _max_power * _final_vest
+      _max_vote_value   = (_max_rshares / Recent_Claims) * Reward_Balance * SBD_Median_Price
 
       # pretty print out the balances. Note that for a
       # quick printout Radiator::Type::Amount provides a
       # simple to_s method. But this method won't align the
       # decimal point
 
-      puts ("Account: %1$s".blue + +" " + "(%2$s)".green) % [account.name, _vesting_shares.to_level]
-      puts ("  SBD             = " + _sbd_balance.to_ansi_s)
-      puts ("  SBD Savings     = " + _savings_sbd_balance.to_ansi_s)
-      puts ("  Steem           = " + _balance.to_ansi_s)
-      puts ("  Steem Savings   = " + _savings_balance.to_ansi_s)
-      puts ("  Steem Power     = " + _vesting_shares.to_ansi_s)
-      puts ("  Delegated Power = " + _delegated_vesting_shares.to_ansi_s)
-      puts ("  Received Power  = " + _received_vesting_shares.to_ansi_s)
-      puts ("  Actual Power    = " + _total_vests.to_ansi_s)
-      puts ("  Voting Power    = " +
+      puts(("Account: %1$s".blue + +" " + "(%2$s)".green) % [account.name, _vesting_shares.to_level])
+      puts("  SBD                    = " + _sbd_balance.to_ansi_s)
+      puts("  SBD Savings            = " + _savings_sbd_balance.to_ansi_s)
+      puts("  Steem                  = " + _balance.to_ansi_s)
+      puts("  Steem Savings          = " + _savings_balance.to_ansi_s)
+      puts("  Steem Power            = " + _vesting_shares.to_ansi_s)
+      puts("  Delegated Power        = " + _delegated_vesting_shares.to_ansi_s)
+      puts("  Received Power         = " + _received_vesting_shares.to_ansi_s)
+      puts("  Actual Power           = " + _total_vests.to_ansi_s)
+      puts(("  Voting Power           = " +
          "%1$15.3f SBD".colorize(
             if _voting_power == 1.0 then
                :green
@@ -213,10 +199,34 @@ def print_account_balances(accounts)
             end
          ) + " of " + "%2$1.3f SBD".blue) % [
          _current_vote_value,
-         _max_vote_value]
-      puts ("  Account Value   = " + "%1$15.3f %2$s".green) % [
+         _max_vote_value])
+      puts(("  Account Value (steem)  = " + "%1$15.3f %2$s".green) % [
          _account_value.to_f,
-         _account_value.asset]
+         _account_value.asset])
+
+      _scc_balances = SCC::Balance.account account.name
+      _scc_value    = Radiator::Type::Amount.new("0.0 SBD")
+      _scc_balances.each do |_scc_balance|
+         token = _scc_balance.token
+
+         puts("  %1$-22.22s = %2$s" % [token.name, _scc_balance.to_ansi_s])
+
+         # Add token value (in SDB to the account value.
+         begin
+            _sbd           = _scc_balance.to_sbd
+            _scc_value     = _scc_value + _sbd
+            _account_value = _account_value + _sbd
+         rescue KeyError
+            # do nothing.
+         end
+      end
+
+      puts(("  Account Value (engine) = " + "%1$15.3f %2$s".green) % [
+         _scc_value.to_f,
+         _scc_value.asset])
+      puts(("  Account Value          = " + "%1$15.3f %2$s".green) % [
+         _account_value.to_f,
+         _account_value.asset])
    end
 
    return
@@ -236,7 +246,7 @@ else
    Account_Names = ARGV
 
    # create instance to the steem database API. This is
-   # neede to read account informations.
+   # needed to read account information.
 
    _database_api = Radiator::DatabaseApi.new
 
@@ -258,5 +268,5 @@ end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :

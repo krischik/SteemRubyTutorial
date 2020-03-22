@@ -20,11 +20,35 @@ function Comment_To_Makdown () range
     execute a:firstline . ',' . a:lastline . 'join'
 endfunction
 
-command! -range CommentToMakdown <line1>,<line2>call Comment_To_Makdown ()
+function SteemIt_To_Wiki () 
+   0
+   /\VProof of Work/,$ delete
+   0
+   /\Vutopian.pay/ delete
+   0
+   /\Vutopian-io tutorials/,+1 delete
+   0
+   /# Using Steem-API with/,+1 delete
 
-41vmenu Plugin.&Fix.Comment\ To\ &Makdown<Tab>F12m :CommentToMakdown<CR>
+   %s/<center>//ge
+   %s/<\/center>//ge
+endfunction
+
+function Fix_New_Line_After_Contract ()
+   % substitute /\V\(         Contract None => String\n\)\n/\1/e
+endfunction
+
+command! -range CommentToMakdown <line1>,<line2>call Comment_To_Makdown ()
+command!        SteemItToWiki                   call SteemIt_To_Wiki ()
+command!        FixNewLineAfterContract		call Fix_New_Line_After_Contract ()
+
+41vmenu Plugin.&Fix.Comment\ To\ &Makdown<Tab>F12m	 :CommentToMakdown<CR>
+41menu  Plugin.&Fix.SteemIt\ To\ &Wiki<Tab>F12w		 :SteemItToWiki<CR>
+41menu  Plugin.&Fix.&New\ Line\ After\ Contract<Tab>F12n :FixNewLineAfterContract<CR>
 
 vmap <F12>m :CommentToMakdown<CR>
+map  <F12>w :SteemItToWiki<CR>
+map  <F12>n :FixNewLineAfterContract<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""" {{{1 """""""""""
 " vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 noexpandtab textwidth=96 :

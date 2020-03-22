@@ -63,10 +63,10 @@ pp Median_History_Price
 
 # show actual conversion rate:
 
-puts ("1.000 STEEM = %1$15.3f SBD")   % (1.0 * SBD_Median_Price)
-puts ("1.000 SBD   = %1$15.3f STEEM") % (1.0 / SBD_Median_Price)
+puts("1.000 STEEM = %1$15.3f SBD") % (1.0 * SBD_Median_Price)
+puts("1.000 SBD   = %1$15.3f STEEM") % (1.0 / SBD_Median_Price)
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :

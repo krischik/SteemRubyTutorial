@@ -30,6 +30,7 @@ require 'radiator'
 # moved into a separate file.
 
 require_relative 'Radiator/Amount'
+require_relative 'Radiator/Reward_Fund'
 
 ##
 # Class to handle vote values from postings.
@@ -87,7 +88,7 @@ class Vote < Radiator::Type::Serializer
       @weight     = value.weight.to_i
       @rshares    = value.rshares.to_i
       @reputation = value.reputation.to_i
-      @time       = Time.strptime(value.time + ":Z" , "%Y-%m-%dT%H:%M:%S:%Z")
+      @time       = Time.strptime(value.time + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
 
       return
    end
@@ -115,116 +116,123 @@ class Vote < Radiator::Type::Serializer
    #
    Contract None => String
    def to_ansi_s
-      _percent = @percent * 100.0
+      _percent  = @percent * 100.0
       _estimate = estimate
 
-      return (
-         "%1$-16s | " + "%2$7.2f%%".colorize(
-            if _percent > 0.0 then
-               :green
-            elsif _percent < -0.0 then
-               :red
-            else
-               :white
-            end
-         ) +
-         " |" + "%3$10.3f SBD".colorize(
-            if _estimate > 0.0005 then
-               :green
-            elsif _estimate < -0.0005 then
-               :red
-            else
-               :white
-            end
-         ) +
-         " |%4$10d |%5$16d |%6$20s |") % [
-            @voter,
-            _percent,
-            _estimate,
-            @weight,
-            @rshares,
-            @time.strftime("%Y-%m-%d %H:%M:%S")
-         ]
+      return(
+	 (
+	 "%1$-16s | " + "%2$7.2f%%".colorize(
+	    if _percent > 0.0 then
+	       :green
+	    elsif _percent < -0.0 then
+	       :red
+	    else
+	       :white
+	    end
+	 ) +
+	    " |" + "%3$10.3f SBD".colorize(
+	    if _estimate > 0.0005 then
+	       :green
+	    elsif _estimate < -0.0005 then
+	       :red
+	    else
+	       :white
+	    end
+	 ) +
+	    " |%4$10d |%5$16d |%6$20s |"
+	 ) % [
+	    @voter,
+	    _percent,
+	    _estimate,
+	    @weight,
+	    @rshares,
+	    @time.strftime("%Y-%m-%d %H:%M:%S")
+	 ])
    end
 
-   ##
-   # Print a list a vote values:
-   #
-   # 1. Loop over all votes.
-   # 2. convert the vote JSON object into the ruby `Vote` class.
-   # 3. print as ansi strings.
-   #
-   # @param [Array<Hash>] votes
-   #     list of votes
-   #
-   Contract ArrayOf[HashOf[String => Or[String, Num]] ] => nil
-   def self.print_list (votes)
-      # used to calculate the total vote value
-      _total_estimate = 0.0
+   class << self
+      ##
+      # Print a list a vote values:
+      #
+      # 1. Loop over all votes.
+      # 2. convert the vote JSON object into the ruby `Vote` class.
+      # 3. print as ansi strings.
+      #
+      # @param [Array<Hash>] votes
+      #     list of votes
+      #
+      Contract ArrayOf[HashOf[String => Or[String, Num]]] => nil
+      def print_list (votes)
+	 # used to calculate the total vote value
+	 _total_estimate = 0.0
 
-      votes.each do |_vote|
-         _vote = Vote.new _vote
+	 votes.each do |_vote|
+	    _vote = Vote.new _vote
 
-         puts _vote.to_ansi_s
+	    puts _vote.to_ansi_s
 
-         # add up extimate
-         _total_estimate = _total_estimate + _vote.estimate
+	    # add up extimate
+	    _total_estimate = _total_estimate + _vote.estimate
+	 end
+
+	 # print the total estimate after the last vote
+	 puts((
+	      "Total vote value |          |" +
+		 "%1$10.3f SBD".colorize(
+		    if _total_estimate > 0.0005 then
+		       :green
+		    elsif _total_estimate < -0.0005 then
+		       :red
+		    else
+		       :white
+		    end
+		 ) +
+		 " |           |                 |                     |"
+	      ) % [
+	    _total_estimate
+	 ])
+
+	 return
       end
 
-      # print the total estimate after the last vote
-      puts (
-         "Total vote value |          |" +
-         "%1$10.3f SBD".colorize(
-            if _total_estimate > 0.0005 then
-               :green
-            elsif _total_estimate < -0.0005 then
-               :red
-            else
-               :white
-            end
-         ) +
-         " |           |                 |                     |") % [
-            _total_estimate
-         ]
+      # print_list
 
-      return
-   end
+      ##
+      # Print the votes from a postings given as URLs:
+      #
+      # 1. Extract the posting ID and author name from the URL
+      #    with standard string operations.
+      # 2. Print a short header
+      # 3. Request the list of votes from `Condenser_Api`
+      #    using `get_active_votes`
+      # 4. print the votes.
+      #
+      # @param [String] url
+      #     URL of the posting.
+      #
+      Contract String => nil
+      def print_url (url)
+	 _slug              = url.split('@').last
+	 _author, _permlink = _slug.split('/')
 
-   ##
-   # Print the votes from a postings given as URLs:
-   #
-   # 1. Extract the posting ID and author name from the URL
-   #    with standard string operations.
-   # 2. Print a short header
-   # 3. Request the list of votes from `Condenser_Api`
-   #    using `get_active_votes`
-   # 4. print the votes.
-   #
-   # @param [String] url
-   #     URL of the posting.
-   #
-   Contract String => nil
-   def self.print_url (url)
-      _slug              = url.split('@').last
-      _author, _permlink = _slug.split('/')
+	 puts("Post Author      : " + "%1$s".blue) % _author
+	 puts("Post ID          : " + "%1$s".blue) % _permlink
+	 puts("Voter name       |  percent |         value |    weight |         rshares |    vote date & time |")
+	 puts("-----------------+----------+---------------+-----------+-----------------+---------------------+")
 
-      puts ("Post Author      : " + "%1$s".blue) % _author
-      puts ("Post ID          : " + "%1$s".blue) % _permlink
-      puts ("Voter name       |  percent |         value |    weight |         rshares |    vote date & time |")
-      puts ("-----------------+----------+---------------+-----------+-----------------+---------------------+")
+	 Condenser_Api.get_active_votes(_author, _permlink) do |votes|
+	    if votes.length == 0 then
+	       puts "No votes found.".yellow
+	    else
+	       Vote.print_list votes
+	    end
+	 rescue => error
+	    Kernel::abort(("Error reading posting “%1$s”:\n".red + "%2$s") % [_permlink, error.to_s])
+	 end
 
-      Condenser_Api.get_active_votes(_author, _permlink) do |votes|
-         if votes.length == 0 then
-            puts "No votes found.".yellow
-         else
-            Vote.print_list votes
-         end
-      rescue => error
-         Kernel::abort(("Error reading posting “%1$s”:\n".red + "%2$s") % [_permlink, error.to_s])
-      end
-
-      return
-   end
+	 return
+      end # print_url
+   end # self
 end
 
 begin
@@ -249,9 +257,9 @@ begin
    # here to reduce the amount of string parsing needed.
    # `get_reward_fund` takes one parameter is always "post".
 
-   _reward_fund   = Condenser_Api.get_reward_fund("post").result
-   Recent_Claims  = _reward_fund.recent_claims.to_i
-   Reward_Balance = Radiator::Type::Amount.new _reward_fund.reward_balance
+   _reward_fund   = Radiator::Type::Reward_Fund.get
+   Recent_Claims  = _reward_fund.recent_claims
+   Reward_Balance = _reward_fund.reward_balance
 
 rescue => error
    # I am using `Kernel::abort` so the script ends when
@@ -280,5 +288,5 @@ end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :

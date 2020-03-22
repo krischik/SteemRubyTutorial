@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -16,21 +16,16 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the steem-ruby gem. This is
-# only needed if you have both steem-api and radiator
-# installed.
-
-gem "steem-ruby", :require => "steem"
-
 require 'pp'
 require 'colorize'
-require 'steem'
+
+require_relative 'Steem/Chain'
 
 begin
    # create instance to the steem condenser API which
    # will give us access to
 
-   Condenser_Api = Steem::CondenserApi.new
+   Condenser_Api = Steem::CondenserApi.new Chain_Options
 
    # read the global properties. Yes, it's as simple as
    # this.
@@ -55,5 +50,5 @@ pp Global_Properties
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :

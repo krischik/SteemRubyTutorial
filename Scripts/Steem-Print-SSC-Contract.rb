@@ -31,7 +31,6 @@ begin
    # will give us access to steem engine contracts
 
    Contracts = Radiator::SSC::Contracts.new
-
 rescue => error
    # I am using Kernel::abort so the code snipped including
    # error handler can be copy pasted into other scripts
@@ -68,5 +67,5 @@ end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :

@@ -16,20 +16,14 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the steem-ruby gem. This is
-# only needed if you have both steem-api and radiator
-# installed.
-
-gem "steem-ruby", :require => "steem"
-
 require 'pp'
 require 'colorize'
 require 'contracts'
-require 'steem'
 
 # The Amount class is used in most Scripts so it was
 # moved into a separate file.
 
+require_relative 'Steem/Chain'
 require_relative 'Steem/Amount'
 
 begin
@@ -102,18 +96,18 @@ def print_account_balances(accounts)
       # simple to_s method. But this method won't align the
       # decimal point
 
-      puts ("Account: %1$s".blue + +" " + "(%2$s)".green) % [account.name, _vesting_shares.to_level]
-      puts ("  SBD             = " + _sbd_balance.to_ansi_s)
-      puts ("  SBD Savings     = " + _savings_sbd_balance.to_ansi_s)
-      puts ("  Steem           = " + _balance.to_ansi_s)
-      puts ("  Steem Savings   = " + _savings_balance.to_ansi_s)
-      puts ("  Steem Power     = " + _vesting_shares.to_ansi_s)
-      puts ("  Delegated Power = " + _delegated_vesting_shares.to_ansi_s)
-      puts ("  Received Power  = " + _received_vesting_shares.to_ansi_s)
-      puts ("  Actual Power    = " + _total_vests.to_ansi_s)
-      puts ("  Account Value   = " + "%1$15.3f %2$s".green) % [
+      puts(("Account: %1$s".blue + +" " + "(%2$s)".green) % [account.name, _vesting_shares.to_level])
+      puts("  SBD             = " + _sbd_balance.to_ansi_s)
+      puts("  SBD Savings     = " + _savings_sbd_balance.to_ansi_s)
+      puts("  Steem           = " + _balance.to_ansi_s)
+      puts("  Steem Savings   = " + _savings_balance.to_ansi_s)
+      puts("  Steem Power     = " + _vesting_shares.to_ansi_s)
+      puts("  Delegated Power = " + _delegated_vesting_shares.to_ansi_s)
+      puts("  Received Power  = " + _received_vesting_shares.to_ansi_s)
+      puts("  Actual Power    = " + _total_vests.to_ansi_s)
+      puts(("  Account Value   = " + "%1$15.3f %2$s".green) % [
          _account_value.to_f,
-         _account_value.asset]
+         _account_value.asset])
    end
 
    return
@@ -158,5 +152,5 @@ end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 :

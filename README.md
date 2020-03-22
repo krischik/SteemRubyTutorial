@@ -1,7 +1,8 @@
 # Steem Ruby Tutorial
 
-A tutorial for the steem-ruby and radiator aplication programming interfaces.
+A tutorial for the steem-ruby and radiator application programming interfaces.
 
+![Steemit_Ruby_Engine.png](https://cdn.steemitimages.com/DQmR1jWexK1B1gGwUgcVdGtwRkAZPZ5rUwBXBt6x55TMPjY/Steemit_Ruby_Engine.png)
 ## Chapter
 
 1. [Print Account Informations](Documents/Part-01.md)
@@ -17,3 +18,6 @@ A tutorial for the steem-ruby and radiator aplication programming interfaces.
 11. [Using Mechanize to improve performance](Documents/Part-11.md)
 12. [Print SteemEngine Contracts](Documents/Part-12.md)
 13. [Print SteemEngine Tables](Documents/Part-13.md)
+14. [Query specific rows from a Steem Engine Table](Documents/Part-14.md)
+15. [Print Steem Engine Token values](Documents/Part-15.md)
+16. [Print Steem Enging Token balances](Documents/Part-16.md)

@@ -234,4 +234,4 @@ A future tutorial will show how to combine all these information to further impr
 
 <!-- vim: set wrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab : -->
 <!-- vim: set textwidth=0 filetype=markdown foldmethod=marker nospell : -->
-<!-- vim: set spell spelllang=en_gb fileencoding=utf-8 : -->:
+<!-- vim: set spell spelllang=en_gb fileencoding=utf-8 : -->

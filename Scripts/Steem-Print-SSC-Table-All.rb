@@ -76,8 +76,8 @@ else
    #   rows from database which match the criteria given.
    #
    _contract = ARGV.shift
-   _table = ARGV.shift
-   _query = {}
+   _table    = ARGV.shift
+   _query    = {}
 
    while ARGV.length >= 2 do
       # the query parameter is a hash table with column
@@ -89,17 +89,17 @@ else
    _current = 0
    loop do
       _rows = Contracts.find(
-         contract: _contract,
-         table: _table,
-         query: _query,
-         limit: Query_Limit,
-         offset: _current,
+         contract:   _contract,
+         table:      _table,
+         query:      _query,
+         limit:      Query_Limit,
+         offset:     _current,
          descending: false
       )
 
       # Exit loop when no result set is returned.
       #
-   break if (not _rows) || (_rows.length == 0)
+      break if (not _rows) || (_rows.length == 0)
       pp _rows
 
       # Move current by the actual amount of rows returned
@@ -123,5 +123,5 @@ end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=marker nospell :
+# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
 # vim: set spell spelllang=en_gb fileencoding=utf-8 ::

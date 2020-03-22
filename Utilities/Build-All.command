@@ -19,12 +19,19 @@
 setopt No_XTrace
 setopt Err_Exit
 
-Scripts/Steem-Dump-Accounts.rb		    "steem" "busy.org" "steempeak"
-Scripts/Steem-Dump-Balances.rb		    "steem" "busy.org" "steempeak"
-Scripts/Steem-Dump-Global-Properties.rb 
-Scripts/Steem-Dump-Median-History-Price.rb
-Scripts/Steem-Dump-Posting-Votes.rb	    "https://steempeak.com/@krischik/using-steem-api-with-ruby-part-7"
-Scripts/Steem-From-VEST.rb		    "1000000" "10000000" "100000000" "100000000"
+pushd "${PROJECT_HOME}/Frameworks/radiator" 
+    ruby -I "lib" -I "test" test/**/*.rb 
+
+    gem build "radiator.gemspec"
+    gem install "radiator"
+popd
+
+pushd "${PROJECT_HOME}/Frameworks/steem-ruby" 
+    ruby -I "lib" -I "test" test/**/*.rb 
+
+    gem build "steem-ruby.gemspec"
+    gem install "steem-ruby"
+popd
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
