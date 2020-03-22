@@ -42,6 +42,36 @@ pushd "Wiki"
     git config "user.email"         "krischik@users.sourceforge.net"
 popd
 
+pushd "/Frameworks/radiator"
+    git remote add upstream https://github.com/inertia186/radiator.git
+    git fetch upstream 
+
+    git checkout --track "remotes/origin/master"
+
+    git lfs update
+    git flow init
+
+    git config "user.name"          "Martin Krischik"
+    git config "user.email"         "krischik@users.sourceforge.net"
+    git config "credential.helper"  "store"
+    git config "push.default"       "current"
+popd
+
+pushd "/Frameworks/steem-ruby"
+    git remote add upstream https://github.com/inertia186/steem-ruby.git
+    git fetch upstream 
+
+    git checkout --track "remotes/origin/master"
+
+    git lfs update
+    git flow init
+
+    git config "user.name"          "Martin Krischik"
+    git config "user.email"         "krischik@users.sourceforge.net"
+    git config "credential.helper"  "store"
+    git config "push.default"       "current"
+popd
+
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 expandtab :
 # vim: set textwidth=0 filetype=zsh foldmethod=marker nospell :

@@ -15,31 +15,21 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
+############################################################## }}}1 ##########
 
-setopt No_XTrace
+if test -z "${PROJECT_HOME}"; then
+    source "${0:h}/Setup.command"
+fi
+
 setopt Err_Exit
+setopt No_XTrace
 
-pushd "${PROJECT_HOME}/Frameworks/steem-ruby" 
-    ruby -I "lib" -I "test" test/**/*.rb 
-
-    gem build "steem-ruby.gemspec"
-    install "steem-ruby"
+pushd "${PROJECT_HOME}"
+    git submodule foreach git status
+    echo Betrete '.'
+    git status
 popd
 
-
-pushd "${PROJECT_HOME}" 
-    for I in "steem" "hive"; do
-	CHAIN_ID="${I}" Scripts/Steem-Dump-Config.rb
-	CHAIN_ID="${I}" Scripts/Steem-Dump-Global-Properties.rb
-
-	# Scripts/Steem-Dump-Accounts.rb		    "steem" "busy.org" "steempeak"
-	# Scripts/Steem-Dump-Balances.rb		    "steem" "busy.org" "steempeak"
-	# Scripts/Steem-Dump-Median-History-Price.rb
-	# Scripts/Steem-Dump-Posting-Votes.rb	    "https://steempeak.com/@krischik/using-steem-api-with-ruby-part-7"
-	# Scripts/Steem-From-VEST.rb		    "1000000" "10000000" "100000000" "100000000"
-    done
-popd
-
-############################################################ {{{1 ###########
-# vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
+############################################################## {{{1 ##########
+# vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 expandtab :
 # vim: set textwidth=0 filetype=zsh foldmethod=marker nospell :

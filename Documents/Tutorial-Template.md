@@ -18,22 +18,22 @@ All examples from this tutorial can be found as fully functional scripts on GitH
 
 ### steem-ruby
 
-* Project Name: Steem Ruby
-* Repository: [https://github.com/steemit/steem-ruby](https://github.com/steemit/steem-ruby)
+* Project Name: Steem Ruby (with Hive patches)
+* Repository: [https://github.com/krischik/steem-ruby](https://github.com/krischik/steem-ruby)
 * Official Documentation: [https://www.rubydoc.info/gems/steem-ruby](https://www.rubydoc.info/gems/steem-ruby)
 * Official Tutorial: N/A
 
 ### steem-mechanize
 
-* Project Name: Steem Mechanize
-* Repository: [https://github.com/steemit/steem-mechanize](https://github.com/steemit/steem-mechanize)
+* Project Name: Steem Mechanize (with Hive patches)
+* Repository: [https://github.com/krischik/steem-mechanize](https://github.com/krischik/steem-mechanize)
 * Official Documentation: [https://www.rubydoc.info/gems/steem-mechanize](https://www.rubydoc.info/gems/steem-mechanize)
 * Official Tutorial: N/A
 
 ### radiator
 
-* Project Name: Radiator
-* Repository: [https://github.com/inertia186/radiator](https://github.com/inertia186/radiator)
+* Project Name: Radiator (with Hive patches)
+* Repository: [https://github.com/krischik/radiator](https://github.com/krischik/radiator)
 * Official Documentation: [https://www.rubydoc.info/gems/radiator](https://www.rubydoc.info/gems/radiator)
 * Official Tutorial: [https://developers.steem.io/tutorials-ruby/getting_started](https://developers.steem.io/tutorials-ruby/getting_started)
 
@@ -49,25 +49,45 @@ All examples from this tutorial can be found as fully functional scripts on GitH
 
 ## What Will I Learn?
 
-This tutorial shows how to interact with the Steem blockchain and Steem database using Ruby. When using Ruby you have three APIs available to chose: **steem-api**, **steem-mechanize** and **radiator** which differentiates in how return values and errors are handled:
+This tutorial shows how to interact with the Steem and Hive blockchain as well as the Steem and Hive database using Ruby. When using Ruby you have three APIs available to chose: **steem-api**, **steem-mechanize** and **radiator** which differentiates in how return values and errors are handled:
 
 * **steem-api** uses closures and exceptions and provides low level computer readable data.
-* **steem-mechanize** drop in replacement for steem-api with more performat network I/O
+* **steem-mechanize** drop in replacement for steem-api with more performant network I/O
 * **radiator** uses classic function return values and provides high level human readable data.
 
 Since both APIs have advantages and disadvantages sample code for both APIs will be provided so the reader ca decide which is more suitable.
 
 ## Requirements
 
-Basic knowledge of Ruby programming is needed. It is necessary to install at least Ruby 2.5 as well as the following ruby gems:
+Basic knowledge of Ruby programming is needed. It is necessary to install at least Ruby 2.5 as well as the following standart ruby gems:
 
 ```sh
 gem install bundler
 gem install colorize
 gem install contracts
-gem install steem-ruby
-gem install steem-mechanize
-gem install radiator
+```
+
+For Hive compatibility you need the hive patched versions of the `steem-ruby` and `radiator` ruby gems. These are not yet available in the standard ruby gem repository and you need to install them from source. For this you change into the directory you keep Git clones and use the following commands:
+
+```sh
+git clone "https://github.com/krischik/steem-ruby"
+
+pushd "steem-ruby"
+    gem build "steem-ruby.gemspec"
+    gem install "steem-ruby"
+popd 
+
+pushd "steem-mechanize"
+    gem build "steem-mechanize.gemspec"
+    gem install "steem-mechanize"
+popd 
+
+git clone "https://github.com/krischik/radiator"
+
+pushd "radiator"
+    gem build "radiator.gemspec"
+    gem install "radiator"
+popd 
 ```
 
 **Note:** All APIs steem-ruby, steem-mechanize and radiator provide a file called `steem.rb`. This means that:
@@ -117,15 +137,15 @@ The output of the command (for the steem account) looks identical to the previou
 
 ## First tutorial
 
-* [Using Steem-API with Ruby Part 1](https://steemit.com/@krischik/using-steem-api-with-ruby-part-1)
+* [Using Steem-API with Ruby Part 1](https://peakd.com/@krischik/using-steem-api-with-ruby-part-1)
 
 ## Previous tutorial
 
-* [Using Steem-API with Ruby Part XXXXX](https://steemit.com/@krischik/using-steem-api-with-ruby-part-XXXXX)
+* [Using Steem-API with Ruby Part XXXXX](https://peakd.com/@krischik/using-steem-api-with-ruby-part-XXXXX)
 
 ## Next tutorial
 
-* [Using Steem-API with Ruby Part XXXXX](https://steemit.com/@krischik/using-steem-api-with-ruby-part-XXXXX)
+* [Using Steem-API with Ruby Part XXXXX](https://peakd.com/@krischik/using-steem-api-with-ruby-part-XXXXX)
 
 ## Proof of Work
 
@@ -134,8 +154,9 @@ The output of the command (for the steem account) looks identical to the previou
 ## Image Source
 
 * Ruby symbol: [Wikimedia](https://commons.wikimedia.org/wiki/File:Ruby_logo.svg), CC BY-SA 2.5.
-* Steemit logo [Wikimedia](https://commons.wikimedia.org/wiki/File:Steemit_New_Logo.png), CC BY-SA 4.0.
-* Steem Engine logo [Steem Engine](https://steem-engine.com)
+* Steemit logo: [Wikimedia](https://commons.wikimedia.org/wiki/File:Steemit_New_Logo.png), CC BY-SA 4.0.
+* Hive logo: [Hive Band Assets](https://hive.io/brand), CC BY-SA 4.0.
+* Steem Engine logo: [Steem Engine](https://steem-engine.com)
 * Screenshots: @krischik, CC BY-NC-SA 4.0
 
 ## Beneficiary
