@@ -1,9 +1,8 @@
-# Using Steem-API with Ruby Part 19 — Hive 1
+# Using Steem-API with Ruby Part 19 — Access Hive Blockchain 1
 
-tutorials ruby steem-api hive hive-api programming palnet neoxian marlians stem
+ruby hive hive-api steem-api programming tutorials palnet marlians stem neoxian 
 
-<center>![Steemit_Ruby.png](https://steemitimages.com/500x270/https://ipfs.busy.org/ipfs/QmSDiHZ9ng7BfYFMkvwYtNVPrw3nvbzKBA1gEj3y9vU6qN)</center>
-<center>![Steemit_Ruby_Engine.png](https://cdn.steemitimages.com/DQmR1jWexK1B1gGwUgcVdGtwRkAZPZ5rUwBXBt6x55TMPjY/Steemit_Ruby_Engine.png)</center>
+<center>![Hive_Steem_Ruby_Engine.png](https://files.peakd.com/file/peakd-hive/krischik/ve2qoADQ-Hive_Steem_Ruby_Engine.png)</center>
 
 ## Repositories
 
@@ -31,7 +30,7 @@ All examples from this tutorial can be found as fully functional scripts on GitH
 
 ## What Will I Learn?
 
-This tutorial shows how to interact with the Steem and Hive blockchain as well as the Steem and Hive database using Ruby. When using Ruby you have three APIs available to chose: **steem-api**, **steem-mechanize** and **radiator** which differentiates in how return values and errors are handled:
+This tutorial shows how to interact with the Steem and Hive blockchain as well as the Steem and Hive database using Ruby. When using Ruby you have three APIs available to chose: **steem-api** and **radiator** which differentiates in how return values and errors are handled:
 
 * **steem-api** uses closures and exceptions and provides low level computer readable data.
 * **radiator** uses classic function return values and provides high level human readable data.
@@ -85,9 +84,9 @@ For reader with programming experience this tutorial is **basic level**.
 
 The Hive blockchain is mostly identical to the steem blockchain. The main difference is the new URL to interact with the chain and new names for the token. Chain id, chain prefix and NAIs stayed the same.
 
-While it is possible the specify the chain URL when instantiating the API classes it is not possible to specify then names of the token. It was therefore necessary the change the `steem-api` and `radiator` source. I will not go into details on how this is done. If you are an advanced user who is interested i suggest you compare the sources on GitHub. I have added a helpful `without-hive` tag as reference.
+While it is possible the specify the chain URL when instantiating the API classes it is not possible to specify then names of the token. It was therefore necessary the change the **steem-api** and **radiator** source. I will not go into details on how this is done. If you are an advanced user who is interested i suggest you compare the sources on GitHub. I have added a helpful `without-hive` tag as reference.
 
-To make accessing Hive as easy as possible I added a new `:hive` symbolic chain id. All you need to do to use Hive is set the when instaciating and API classed.
+To make accessing Hive as easy as possible I added a new `:hive` symbolic chain id. All you need to do to use Hive is set the when instantiating an API classed.
 
 Instead of:
 
@@ -109,7 +108,7 @@ Since every script will need to run with both chains I added a little `Chain` ut
 
 ### Utility script Chain.rb
 
-Use the "steem.rb" file from the steem-ruby gem. This is only needed if you have both steem-api and radiator installed.
+Use the "steem.rb" file from the steem-ruby gem. This is only needed if you have both **steem-api** and **radiator** installed.
 
 ```ruby
 gem "steem-ruby", :require => "steem"
@@ -406,7 +405,7 @@ The output of the command (for the hive blockchain) looks like this:
 
 ## Implementation using radiator
 
-The radiator implementation is identical to the steem implementation apart from using radiator instead of steem-api. 
+The radiator implementation is identical to the steem implementation apart from using **radiator** instead of **steem-api**. 
 
 **Hint:** Follow this link to Github for the complete script with comments and syntax highlighting : [Steem-Print-Config.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-Print-Config.rb).
 
@@ -644,7 +643,7 @@ The output of the command (for the steem blockchain) looks identical to the prev
 
 ## Previous tutorial
 
-* [Using Steem-API with Ruby Part 19](https://peakd.com/@krischik/using-steem-api-with-ruby-part-19)
+* [Using Steem-API with Ruby Part 18](https://peakd.com/@krischik/using-steem-api-with-ruby-part-18)
 
 ## Next tutorial
 
