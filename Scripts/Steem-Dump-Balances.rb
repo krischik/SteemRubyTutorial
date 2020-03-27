@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -31,7 +31,7 @@ begin
    # will give us access to to the global properties and
    # median history
 
-   _condenser_api = Steem::CondenserApi.new
+   _condenser_api = Steem::CondenserApi.new Chain_Options
 
    # read the  median history value and
    # Calculate the conversion Rate for Vests to steem

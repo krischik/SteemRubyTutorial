@@ -25,6 +25,7 @@
 gem "steem-ruby", :require => "steem"
 
 require 'steem'
+require 'steem/chain_config'
 
 # Read the `CHAIN_ID` environment variable and  initialise
 # the `Chain_Options` constant with parameters suitable for

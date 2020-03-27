@@ -42,10 +42,11 @@ if test ${#} -eq 2; then
 	echo
 
 	if test "${REPLY:u}" = "Y"; then
-	    for I in			\
-		"Frameworks/radiator"	\
-		"Frameworks/steem-ruby" \
-		"Wiki"			\
+	    for I in				\
+		"Frameworks/radiator"		\
+		"Frameworks/steem-ruby"		\
+		"Frameworks/steem-mechanize"	\
+		"Wiki"				\
 		"."
 	    do
 		pushd "${I}"

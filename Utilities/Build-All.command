@@ -33,6 +33,11 @@ pushd "${PROJECT_HOME}/Frameworks/steem-ruby"
     gem install "steem-ruby"
 popd
 
+pushd "${PROJECT_HOME}/Frameworks/steem-mechanize" 
+    gem build "steem-mechanize.gemspec"
+    gem install "steem-mechanize"
+popd
+
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
 # vim: set textwidth=0 filetype=zsh foldmethod=marker nospell :

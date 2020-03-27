@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -16,14 +16,15 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the steem-ruby gem. This is
-# only needed if you have both steem-api and radiator
-# installed.
-
-gem "steem-ruby", :require => "steem"
-
 require 'pp'
 require 'colorize'
+
+# initialize access to the steem or hive blockchain.
+# The script will initialize the constant Chain_Options
+# with suitable parameter for the chain selected with
+# the  `CHAIN_ID` environment variable.
+
+require_relative 'Steem/Chain'
 require 'steem-mechanize'
 
 # The Amount class is used in most Scripts so it was moved
@@ -32,9 +33,39 @@ require 'steem-mechanize'
 require_relative 'Steem/Amount'
 
 ##
-# Maximum retries to be done when a
+# Maximum retries to be done when an error happens.
 #
-Max_Retry_Count = 3
+Max_Retry_Count = if Chain_Options.chain == :hive then
+		     5
+		  else
+		     3
+		  end
+
+##
+# Maximum requests made per second. Both Steem and
+# Hive will fail of to many requests will be done
+# in a very short time.
+#
+# Hive hasn't got the CPU power yet to accept as many
+# requests per second as Steem does.
+#
+Request_Per_Second = if Chain_Options.chain == :hive then
+			5.0
+		     else
+			20.0
+		     end
+##
+# Maximum retries per second made when and error happens
+#
+# Hive hasn't got the CPU power yet to accept as many
+# retries per second as Steem does.
+#
+Retries_Per_Second = if Chain_Options.chain == :hive then
+			0.5
+		     else
+			1
+		     end
+
 
 ##
 # Delete the current line on the console.
@@ -71,6 +102,7 @@ class Vesting < Steem::Type::BaseType
    #     `list_vesting_delegations`.
    #
    Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]] => nil
+
    def initialize(value)
       super(:id, value)
 
@@ -84,7 +116,7 @@ class Vesting < Steem::Type::BaseType
    end
 
    ##
-   # Create a colorised string from the instance. The vote
+   # Create a colonised string from the instance. The vote
    # percentages are multiplied with 100 and are colorised
    # (positive values are printed in green, negative values
    # in red and zero votes (yes they exist) are shown in
@@ -94,6 +126,7 @@ class Vesting < Steem::Type::BaseType
    #    formatted value
    #
    Contract None => String
+
    def to_ansi_s
       # All the magic happens in the `%` operators which
       # calls sprintf which in turn formats the string.
@@ -124,6 +157,7 @@ class Vesting < Steem::Type::BaseType
    #     or delegatee.
    #
    Contract ArrayOf[String] => Bool
+
    def is_accounts (accounts)
       return (accounts.include? @delegator) || (accounts.include? @delegatee)
    end
@@ -144,6 +178,7 @@ class Vesting < Steem::Type::BaseType
       #     list of vesting
       #
       Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]]], ArrayOf[String] => nil
+
       def print_list (vesting, accounts)
 	 vesting.each do |vest|
 	    _vest = Vesting.new vest
@@ -164,6 +199,7 @@ class Vesting < Steem::Type::BaseType
       #     the accounts to search.
       #
       Contract ArrayOf[String] => nil
+
       def print_accounts (accounts)
 
 	 puts("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
@@ -263,7 +299,7 @@ class Vesting < Steem::Type::BaseType
 	    # seem to be the acceptable upper limit for
 	    # https://api.steemit.com
 
-	    sleep 0.05
+	    sleep(1 / Request_Per_Second)
 
 	    # resets the counter that keeps track of the
 	    # retries.
@@ -285,7 +321,7 @@ class Vesting < Steem::Type::BaseType
 	    # wait one second before making the next retry
 
 	    _retry_count = _retry_count - 1
-	    sleep 1.0
+	    sleep 1.0 / Retries_Per_Second
 	 end
 
 	 return
@@ -323,7 +359,7 @@ rescue => error
    # I am using `Kernel::abort` so the script ends when
    # data can't be loaded
 
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+   Kernel::abort("\nError reading global properties:\n".red + error.to_s)
 end
 
 if ARGV.length == 0 then
@@ -343,6 +379,9 @@ else
 
    Vesting.print_accounts Account_Names
 end
+
+print Delete_Line
+puts "Finished!".green
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

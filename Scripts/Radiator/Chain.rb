@@ -25,6 +25,7 @@
 gem "radiator", :require => "steem"
 
 require 'radiator'
+require 'radiator/chain_config'
 
 # Read the `CHAIN_ID` environment variable and  initialise
 # the `Chain_Options` constant with parameters suitable for

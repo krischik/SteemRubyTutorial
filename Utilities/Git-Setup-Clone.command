@@ -38,6 +38,8 @@ else
 popd
 
 pushd "Wiki"
+    git lfs update
+
     git config "user.name"          "Martin Krischik"
     git config "user.email"         "krischik@users.sourceforge.net"
 popd
@@ -70,6 +72,23 @@ pushd "/Frameworks/steem-ruby"
     git config "user.email"         "krischik@users.sourceforge.net"
     git config "credential.helper"  "store"
     git config "push.default"       "current"
+popd
+
+pushd "/Frameworks/steem-mechanize"
+    git remote add upstream https://github.com/inertia186/steem-mechanize.git
+    git fetch upstream 
+
+    git branch develop
+    git checkout develop 
+
+    git lfs update
+    git flow init
+
+    git config "user.name"          "Martin Krischik"
+    git config "user.email"         "krischik@users.sourceforge.net"
+    git config "credential.helper"  "store"
+    git config "push.default"       "current"
+
 popd
 
 ############################################################ {{{1 ###########

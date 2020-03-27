@@ -40,12 +40,13 @@ if test ${#} -eq 2; then
 	echo "Comment     : ${in_Comment}"
 	read -sk1 "? add, commit and push (Y/N): "
 	echo
+#		"Wiki"				\
 
 	if test "${REPLY:u}" = "Y"; then
-	    for I in			\
-		"Frameworks/radiator"	\
-		"Frameworks/steem-ruby" \
-		"Wiki"			\
+	    for I in				\
+		"Frameworks/radiator"		\
+		"Frameworks/steem-ruby"		\
+		"Frameworks/steem-mechanize"	\
 		"."
 	    do
 		pushd "${I}"
