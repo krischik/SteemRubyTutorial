@@ -107,7 +107,7 @@ module Radiator
 
             ##
             # read the reward funds used to
-            # calcualte the voting values
+            # calculate the voting values
             #
             # @return [Radiator::Type::Reward_Fund]
             #    Conversion rate Steem ⇔ SBD

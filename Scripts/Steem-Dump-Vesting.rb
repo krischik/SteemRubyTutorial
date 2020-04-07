@@ -66,7 +66,6 @@ Retries_Per_Second = if Chain_Options.chain == :hive then
 			1
 		     end
 
-
 ##
 # Delete the current line on the console.
 #
@@ -102,7 +101,6 @@ class Vesting < Steem::Type::BaseType
    #     `list_vesting_delegations`.
    #
    Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]] => nil
-
    def initialize(value)
       super(:id, value)
 
@@ -126,7 +124,6 @@ class Vesting < Steem::Type::BaseType
    #    formatted value
    #
    Contract None => String
-
    def to_ansi_s
       # All the magic happens in the `%` operators which
       # calls sprintf which in turn formats the string.
@@ -157,7 +154,6 @@ class Vesting < Steem::Type::BaseType
    #     or delegatee.
    #
    Contract ArrayOf[String] => Bool
-
    def is_accounts (accounts)
       return (accounts.include? @delegator) || (accounts.include? @delegatee)
    end
@@ -178,7 +174,6 @@ class Vesting < Steem::Type::BaseType
       #     list of vesting
       #
       Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]]], ArrayOf[String] => nil
-
       def print_list (vesting, accounts)
 	 vesting.each do |vest|
 	    _vest = Vesting.new vest
@@ -199,7 +194,6 @@ class Vesting < Steem::Type::BaseType
       #     the accounts to search.
       #
       Contract ArrayOf[String] => nil
-
       def print_accounts (accounts)
 
 	 puts("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
@@ -330,11 +324,15 @@ class Vesting < Steem::Type::BaseType
 end # Vesting
 
 begin
+   # The amount type needs to know which chain is active
+   # to format values as strings.
+   Steem::Type::Amount.set_chain Chain_Options
+
    # create instance to the steem condenser API which
    # will give us access to to the global properties and
    # median history
 
-   Condenser_Api = Steem::CondenserApi.new
+   Condenser_Api = Steem::CondenserApi.new Chain_Options
 
    # read the global properties and median history values
    # and calculate the conversion Rate for steem to SBD
@@ -353,13 +351,13 @@ begin
 
    # create instance to the steem database API
 
-   Database_Api = Steem::DatabaseApi.new
+   Database_Api = Steem::DatabaseApi.new Chain_Options
 
-rescue => error
+   #rescue => error
    # I am using `Kernel::abort` so the script ends when
    # data can't be loaded
 
-   Kernel::abort("\nError reading global properties:\n".red + error.to_s)
+   # Kernel::abort("\nError reading global properties:\n".red + error.to_s)
 end
 
 if ARGV.length == 0 then

@@ -19,28 +19,16 @@
 setopt No_XTrace
 setopt Err_Exit
 
-pushd "${PROJECT_HOME}/Frameworks/radiator" 
-    ruby -I "lib" -I "test" test/**/*.rb 
-
-    gem build "radiator.gemspec"
-    gem install "radiator"
-popd
-
 pushd "${PROJECT_HOME}/Frameworks/steem-ruby" 
     # tests known to work. There are quite a few who don't work
     # and only the original maintainer can fix them.
 
-    ruby -I "lib" -I "test" "test/steem/account_by_key_api_test.rb"
-    ruby -I "lib" -I "test" "test/steem/account_history_api_test.rb"
+#   ruby -I "lib" -I "test" "test/steem/account_by_key_api_test.rb"
+#   ruby -I "lib" -I "test" "test/steem/account_history_api_test.rb"
     ruby -I "lib" -I "test" "test/steem/amount_test.rb"
 
     gem build "steem-ruby.gemspec"
     gem install "steem-ruby"
-popd
-
-pushd "${PROJECT_HOME}/Frameworks/steem-mechanize" 
-    gem build "steem-mechanize.gemspec"
-    gem install "steem-mechanize"
 popd
 
 ############################################################ {{{1 ###########

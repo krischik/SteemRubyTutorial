@@ -41,7 +41,6 @@ module Steem
 	 include Contracts::Core
 	 include Contracts::Builtin
 
-
 	 ##
 	 # Asset string for VESTS
 	 #
@@ -78,6 +77,7 @@ module Steem
 	 #     one of "Whale", "Orca", "Dolphin", "Minnow", "Plankton" or "N/A"
 	 #
 	 Contract None => String
+
 	 def to_level
 	    _value = @amount.to_f
 
@@ -106,6 +106,7 @@ module Steem
 	 #     not a SBD, STEEM or VESTS value
 	 #
 	 Contract None => Amount
+
 	 def to_sbd
 	    return (
 	    case @asset
@@ -129,6 +130,7 @@ module Steem
 	 #    not a SBD, STEEM or VESTS value
 	 #
 	 Contract None => Amount
+
 	 def to_steem
 	    return (
 	    case @asset
@@ -152,6 +154,7 @@ module Steem
 	 #    not a SBD, STEEM or VESTS value
 	 #
 	 Contract None => Amount
+
 	 def to_vests
 	    return (
 	    case @asset
@@ -176,6 +179,7 @@ module Steem
 	 #    formatted value
 	 #
 	 Contract None => String
+
 	 def to_ansi_s
 	    _sbd   = to_sbd
 	    _steem = to_steem
@@ -222,7 +226,9 @@ module Steem
 	 #    values of different asset type
 	 #
 	 Contract Amount => Amount
+
 	 def +(right)
+	    raise ArgumentError, 'chain types differ' if @chain != right.chain
 	    raise ArgumentError, 'asset types differ' if @asset != right.asset
 
 	    return Amount.to_amount(@amount.to_f + right.to_f, @asset)
@@ -239,7 +245,9 @@ module Steem
 	 #    values of different asset type
 	 #
 	 Contract Amount => Amount
+
 	 def -(right)
+	    raise ArgumentError, 'chain types differ' if @chain != right.chain
 	    raise ArgumentError, 'asset types differ' if @asset != right.asset
 
 	    return Amount.to_amount(@amount.to_f - right.to_f, @asset)
@@ -256,7 +264,9 @@ module Steem
 	 #    values of different asset type
 	 #
 	 Contract Amount => Amount
+
 	 def *(right)
+	    raise ArgumentError, 'chain types differ' if @chain != right.chain
 	    raise ArgumentError, 'asset types differ' if @asset != right.asset
 
 	    return Amount.to_amount(@amount.to_f * right.to_f, @asset)
@@ -273,7 +283,9 @@ module Steem
 	 #    values of different asset type
 	 #
 	 Contract Amount => Amount
+
 	 def /(right)
+	    raise ArgumentError, 'chain types differ' if @chain != right.chain
 	    raise ArgumentError, 'asset types differ' if @asset != right.asset
 
 	    return Amount.to_amount(@amount.to_f / right.to_f, @asset)
@@ -291,11 +303,10 @@ module Steem
 	    # @return [Amount]
 	    #     the value as amount
 	    Contract Float, String => Amount
+
 	    def to_amount(value, asset)
 	       return Amount.new(value.to_s + " " + asset)
 	    end
-
-	    # to_amount
 
 	    ##
 	    # create instance to the steem condenser API
@@ -306,6 +317,7 @@ module Steem
 	    #     The condensor API
 	    #
 	    Contract None => Steem::CondenserApi
+
 	    def condenser_api
 	       if @condenser_api == nil then
 		  @condenser_api = Steem::CondenserApi.new
@@ -330,6 +342,7 @@ module Steem
 	    #    Conversion rate Steem ⇔ SBD
 	    #
 	    Contract None => Num
+
 	    def sbd_median_price
 	       if @sbd_median_price == nil then
 		  _median_history_price = self.condenser_api.get_current_median_history_price.result
@@ -351,6 +364,7 @@ module Steem
 	    #    Conversion rate Steem ⇔ VESTS
 	    #
 	    Contract None => Num
+
 	    def conversion_rate_vests
 	       if @conversion_rate_vests == nil then
 		  _global_properties        = self.condenser_api.get_dynamic_global_properties.result
@@ -361,7 +375,7 @@ module Steem
 
 	       return @conversion_rate_vests
 	    end # conversion_rate_vests
-	 end # self
+	 end # class
       end # Amount
    end # Type
 end # Steem
