@@ -34,20 +34,16 @@ require 'steem/chain_config'
 case ENV["CHAIN_ID"]&.downcase
    when "test"
       Chain_Options = {
-         chain:         :test,
-         failover_urls: [
-            Steem::ChainConfig::NETWORKS_TEST_DEFAULT_NODE
-         ]
+	 chain: :test
       }
    when "hive"
       Chain_Options = {
-         chain:         :hive,
-         failover_urls: [
-            Steem::ChainConfig::NETWORKS_HIVE_DEFAULT_NODE
-         ]
+	 chain: :hive
       }
    else
-      Chain_Options = {}
+      Chain_Options = {
+	 chain: :steem
+      }
 end
 
 ############################################################ {{{1 ###########

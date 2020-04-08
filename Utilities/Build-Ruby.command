@@ -25,7 +25,7 @@ pushd "${PROJECT_HOME}/Frameworks/steem-ruby"
 
 #   ruby -I "lib" -I "test" "test/steem/account_by_key_api_test.rb"
 #   ruby -I "lib" -I "test" "test/steem/account_history_api_test.rb"
-    ruby -I "lib" -I "test" "test/steem/amount_test.rb"
+   ruby -I "lib" -I "test" "test/steem/amount_test.rb"
 
     gem build "steem-ruby.gemspec"
     gem install "steem-ruby"

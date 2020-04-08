@@ -32,10 +32,12 @@ require 'steem-mechanize'
 
 require_relative 'Steem/Amount'
 
+Chain = Chain_Options[:chain]
+
 ##
 # Maximum retries to be done when an error happens.
 #
-Max_Retry_Count = if Chain_Options.chain == :hive then
+Max_Retry_Count = if Chain == :hive then
 		     5
 		  else
 		     3
@@ -49,7 +51,7 @@ Max_Retry_Count = if Chain_Options.chain == :hive then
 # Hive hasn't got the CPU power yet to accept as many
 # requests per second as Steem does.
 #
-Request_Per_Second = if Chain_Options.chain == :hive then
+Request_Per_Second = if Chain == :hive then
 			5.0
 		     else
 			20.0
@@ -60,7 +62,7 @@ Request_Per_Second = if Chain_Options.chain == :hive then
 # Hive hasn't got the CPU power yet to accept as many
 # retries per second as Steem does.
 #
-Retries_Per_Second = if Chain_Options.chain == :hive then
+Retries_Per_Second = if Chain == :hive then
 			0.5
 		     else
 			1
@@ -101,13 +103,14 @@ class Vesting < Steem::Type::BaseType
    #     `list_vesting_delegations`.
    #
    Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]] => nil
+
    def initialize(value)
       super(:id, value)
 
       @id                  = value.id
       @delegator           = value.delegator
       @delegatee           = value.delegatee
-      @vesting_shares      = Steem::Type::Amount.new(value.vesting_shares)
+      @vesting_shares      = Steem::Type::Amount.new(value.vesting_shares, Chain)
       @min_delegation_time = Time.strptime(value.min_delegation_time + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
 
       return
@@ -124,6 +127,7 @@ class Vesting < Steem::Type::BaseType
    #    formatted value
    #
    Contract None => String
+
    def to_ansi_s
       # All the magic happens in the `%` operators which
       # calls sprintf which in turn formats the string.
@@ -154,6 +158,7 @@ class Vesting < Steem::Type::BaseType
    #     or delegatee.
    #
    Contract ArrayOf[String] => Bool
+
    def is_accounts (accounts)
       return (accounts.include? @delegator) || (accounts.include? @delegatee)
    end
@@ -174,6 +179,7 @@ class Vesting < Steem::Type::BaseType
       #     list of vesting
       #
       Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]]], ArrayOf[String] => nil
+
       def print_list (vesting, accounts)
 	 vesting.each do |vest|
 	    _vest = Vesting.new vest
@@ -194,6 +200,7 @@ class Vesting < Steem::Type::BaseType
       #     the accounts to search.
       #
       Contract ArrayOf[String] => nil
+
       def print_accounts (accounts)
 
 	 puts("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
@@ -299,23 +306,23 @@ class Vesting < Steem::Type::BaseType
 	    # retries.
 
 	    _retry_count = Max_Retry_Count
-	 rescue => error
-	    if _retry_count == 0 then
-	       # We made Max_Retry_Count repeats ⇒ giving up.
-
-	       print Delete_Line
-	       Kernel::abort(
-		  (
-		  "\nCould not read %1$s with %2$d retrys :\n%3$s".red
-		  ) % [
-		     _previous_end, Max_Retry_Count, error.to_s
-		  ])
-	    end
-
-	    # wait one second before making the next retry
-
-	    _retry_count = _retry_count - 1
-	    sleep 1.0 / Retries_Per_Second
+#	 rescue => error
+#	    if _retry_count == 0 then
+#	       # We made Max_Retry_Count repeats ⇒ giving up.
+#
+#	       print Delete_Line
+#	       Kernel::abort(
+#		  (
+#		  "\nCould not read %1$s with %2$d retrys :\n%3$s".red
+#		  ) % [
+#		     _previous_end, Max_Retry_Count, error.to_s
+#		  ])
+#	    end
+#
+#	    # wait one second before making the next retry
+#
+#	    _retry_count = _retry_count - 1
+#	    sleep 1.0 / Retries_Per_Second
 	 end
 
 	 return
@@ -324,10 +331,6 @@ class Vesting < Steem::Type::BaseType
 end # Vesting
 
 begin
-   # The amount type needs to know which chain is active
-   # to format values as strings.
-   Steem::Type::Amount.set_chain Chain_Options
-
    # create instance to the steem condenser API which
    # will give us access to to the global properties and
    # median history
@@ -340,13 +343,13 @@ begin
    # string values into amounts.
 
    _median_history_price = Condenser_Api.get_current_median_history_price.result
-   _base                 = Steem::Type::Amount.new _median_history_price.base
-   _quote                = Steem::Type::Amount.new _median_history_price.quote
+   _base                 = Steem::Type::Amount.new(_median_history_price.base, Chain)
+   _quote                = Steem::Type::Amount.new(_median_history_price.quote, Chain)
    SBD_Median_Price      = _base.to_f / _quote.to_f
 
    _global_properties        = Condenser_Api.get_dynamic_global_properties.result
-   _total_vesting_fund_steem = Steem::Type::Amount.new _global_properties.total_vesting_fund_steem
-   _total_vesting_shares     = Steem::Type::Amount.new _global_properties.total_vesting_shares
+   _total_vesting_fund_steem = Steem::Type::Amount.new(_global_properties.total_vesting_fund_steem, Chain)
+   _total_vesting_shares     = Steem::Type::Amount.new(_global_properties.total_vesting_shares, Chain)
    Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 
    # create instance to the steem database API

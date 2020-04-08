@@ -436,7 +436,7 @@ class Contract_Test < Test::Unit::TestCase
    end
 
    def test_to_amount_01
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::STEEM)
+      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::STEEM, :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
@@ -444,7 +444,7 @@ class Contract_Test < Test::Unit::TestCase
    end
 
    def test_to_steem_01
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::STEEM)
+      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::STEEM, :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
@@ -458,7 +458,7 @@ class Contract_Test < Test::Unit::TestCase
    end
 
    def test_to_steem_02
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::SBD)
+      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::SBD, :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
@@ -472,7 +472,7 @@ class Contract_Test < Test::Unit::TestCase
    end
 
    def test_to_steem_03
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::VESTS)
+      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::VESTS, :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
@@ -486,7 +486,7 @@ class Contract_Test < Test::Unit::TestCase
    end
 
    def test_to_sbd_01
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::STEEM)
+      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::STEEM, :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
@@ -500,7 +500,7 @@ class Contract_Test < Test::Unit::TestCase
    end
 
    def test_to_sbd_02
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::SBD)
+      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::SBD, :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
@@ -514,7 +514,7 @@ class Contract_Test < Test::Unit::TestCase
    end
 
    def test_to_sbd_03
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::VESTS)
+      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::VESTS, :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
@@ -528,7 +528,7 @@ class Contract_Test < Test::Unit::TestCase
    end
 
    def test_to_vests_01
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::STEEM)
+      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::STEEM, :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
@@ -542,7 +542,7 @@ class Contract_Test < Test::Unit::TestCase
    end
 
    def test_to_vests_02
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::SBD)
+      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::SBD, :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
@@ -556,7 +556,7 @@ class Contract_Test < Test::Unit::TestCase
    end
 
    def test_to_vests_03
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::VESTS)
+      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::VESTS, :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")

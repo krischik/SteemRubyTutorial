@@ -138,11 +138,11 @@ module Radiator
 	    return (
 	    case @asset
 	       when SBD
-		  Amount.to_amount(@amount.to_f / Amount.sbd_median_price, STEEM)
+		  Amount.to_amount(@amount.to_f / Amount.sbd_median_price, STEEM, @chain)
 	       when STEEM
 		  self.clone
 	       when VESTS
-		  Amount.to_amount(@amount.to_f * Amount.conversion_rate_vests, STEEM)
+		  Amount.to_amount(@amount.to_f * Amount.conversion_rate_vests, STEEM, @chain)
 	       else
 		  raise ArgumentError, 'unknown asset type types'
 	    end)
@@ -163,7 +163,7 @@ module Radiator
 	       when SBD
 		  self.to_steem.to_vests
 	       when STEEM
-		  Amount.to_amount(@amount.to_f / Amount.conversion_rate_vests, VESTS)
+		  Amount.to_amount(@amount.to_f / Amount.conversion_rate_vests, VESTS, @chain)
 	       when VESTS
 		  self.clone
 	       else
@@ -359,7 +359,7 @@ module Radiator
 	    #    Conversion rate Steem ⇔ VESTS
 	    #
 	    Contract None => Num
-	    def conversion_rate_vests
+	    def conversion_rate_vests(chain)
 	       if @conversion_rate_vests == nil then
 		  _global_properties        = self.condenser_api.get_dynamic_global_properties.result
 		  _total_vesting_fund_steem = Radiator::Type::Amount.new _global_properties.total_vesting_fund_steem
