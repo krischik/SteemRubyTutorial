@@ -306,23 +306,23 @@ class Vesting < Steem::Type::BaseType
 	    # retries.
 
 	    _retry_count = Max_Retry_Count
-#	 rescue => error
-#	    if _retry_count == 0 then
-#	       # We made Max_Retry_Count repeats ⇒ giving up.
-#
-#	       print Delete_Line
-#	       Kernel::abort(
-#		  (
-#		  "\nCould not read %1$s with %2$d retrys :\n%3$s".red
-#		  ) % [
-#		     _previous_end, Max_Retry_Count, error.to_s
-#		  ])
-#	    end
-#
-#	    # wait one second before making the next retry
-#
-#	    _retry_count = _retry_count - 1
-#	    sleep 1.0 / Retries_Per_Second
+	 rescue => error
+	    if _retry_count == 0 then
+	       # We made Max_Retry_Count repeats ⇒ giving up.
+
+	       print Delete_Line
+	       Kernel::abort(
+		  (
+		  "\nCould not read %1$s with %2$d retrys :\n%3$s".red
+		  ) % [
+		     _previous_end, Max_Retry_Count, error.to_s
+		  ])
+	    end
+
+	    # wait one second before making the next retry
+
+	    _retry_count = _retry_count - 1
+	    sleep 1.0 / Retries_Per_Second
 	 end
 
 	 return
@@ -356,11 +356,11 @@ begin
 
    Database_Api = Steem::DatabaseApi.new Chain_Options
 
-   #rescue => error
+rescue => error
    # I am using `Kernel::abort` so the script ends when
    # data can't be loaded
 
-   # Kernel::abort("\nError reading global properties:\n".red + error.to_s)
+   Kernel::abort("\nError reading global properties:\n".red + error.to_s)
 end
 
 if ARGV.length == 0 then

@@ -28,6 +28,8 @@ require_relative 'Radiator/Chain'
 require_relative 'Radiator/Amount'
 require_relative 'Radiator/Price'
 
+Chain = Chain_Options[:chain]
+
 ##
 # Class to hold a vesting delegation. The vesting holds the
 # following values
@@ -59,13 +61,14 @@ class Vesting < Radiator::Type::Serializer
    #     `list_vesting_delegations`.
    #
    Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]] => nil
+
    def initialize(value)
       super(:id, value)
 
       @id                  = value.id
       @delegator           = value.delegator
       @delegatee           = value.delegatee
-      @vesting_shares      = Radiator::Type::Amount.new(value.vesting_shares)
+      @vesting_shares      = Radiator::Type::Amount.new(value.vesting_shares, Chain)
       @min_delegation_time = Time.strptime(value.min_delegation_time + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
 
       return
@@ -82,6 +85,7 @@ class Vesting < Radiator::Type::Serializer
    #    formatted value
    #
    Contract None => String
+
    def to_ansi_s
       # All the magic happens in the `%` operators which
       # calls sprintf which in turn formats the string.
@@ -116,6 +120,7 @@ class Vesting < Radiator::Type::Serializer
       #     list of vesting
       #
       Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]]] => nil
+
       def print_list (vesting)
 	 vesting.each do |vest|
 	    _vest = Vesting.new vest
@@ -133,6 +138,7 @@ class Vesting < Radiator::Type::Serializer
       #     account of the posting.
       #
       Contract String => nil
+
       def print_account (account)
 
 	 puts("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
@@ -215,15 +221,15 @@ begin
    # values into amounts.
 
    _global_properties        = Condenser_Api.get_dynamic_global_properties.result
-   _total_vesting_fund_steem = Radiator::Type::Amount.new _global_properties.total_vesting_fund_steem
-   _total_vesting_shares     = Radiator::Type::Amount.new _global_properties.total_vesting_shares
+   _total_vesting_fund_steem = Radiator::Type::Amount.new(_global_properties.total_vesting_fund_steem, Chain)
+   _total_vesting_shares     = Radiator::Type::Amount.new(_global_properties.total_vesting_shares, Chain)
    Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 
-rescue => error
-   # I am using `Kernel::abort` so the script ends when
-   # data can't be loaded
-
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+#  rescue => error
+#   # I am using `Kernel::abort` so the script ends when
+#   # data can't be loaded
+#
+#   Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
 
 if ARGV.length == 0 then

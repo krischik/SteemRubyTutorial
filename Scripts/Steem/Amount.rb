@@ -43,17 +43,6 @@ module Steem
 
 	 public
 
-	 ##
-	 # return amount as float to be used for calculations
-	 #
-	 # @return [Float]
-	 #     actual amount as float
-	 #
-	 Contract None => Float
-
-	 def to_f
-	    return @amount.to_f
-	 end
 
 	 ##
 	 # convert VESTS to level or "N/A" when the value
@@ -181,19 +170,19 @@ module Steem
 
 	    return(
 	       (
-	       "%1$15.3f %2$s".colorize(
+	       "%1$15.3f %2$3s".colorize(
 		  if @asset == _chain_info.debt.symbol then
 		     :blue
 		  else
 		     :white
 		  end
-	       ) + " " + "%3$15.3f %4$s".colorize(
+	       ) + " " + "%3$15.3f %4$5s".colorize(
 		  if @asset == _chain_info.core.symbol then
 		     :blue
 		  else
 		     :white
 		  end
-	       ) + " " + "%5$18.6f %6$s".colorize(
+	       ) + " " + "%5$18.6f %6$5s".colorize(
 		  if @asset == _chain_info.vest.symbol then
 		     :blue
 		  else
@@ -209,102 +198,10 @@ module Steem
 	       ])
 	 end
 
-	 ##
-	 # operator to add two balances
-	 #
-	 # @param [Amount]
-	 #     amount to add
-	 # @return [Amount]
-	 #     result of addition
-	 # @raise [ArgumentError]
-	 #    values of different asset type
-	 #
-	 Contract Amount => Amount
-
-	 def +(right)
-	    raise ArgumentError, 'chain types differ' if @chain != right.chain
-	    raise ArgumentError, 'asset types differ' if @asset != right.asset
-
-	    return Amount.to_amount(@amount.to_f + right.to_f, @asset, @chain)
-	 end
-
-	 ##
-	 # operator to subtract two balances
-	 #
-	 # @param [Amount]
-	 #     amount to subtract
-	 # @return [Amount]
-	 #     result of subtraction
-	 # @raise [ArgumentError]
-	 #    values of different asset type
-	 #
-	 Contract Amount => Amount
-
-	 def -(right)
-	    raise ArgumentError, 'chain types differ' if @chain != right.chain
-	    raise ArgumentError, 'asset types differ' if @asset != right.asset
-
-	    return Amount.to_amount(@amount.to_f - right.to_f, @asset, @chain)
-	 end
-
-	 ##
-	 # operator to divert two balances
-	 #
-	 # @param [Amount]
-	 #     amount to divert
-	 # @return [Amount]
-	 #     result of division
-	 # @raise [ArgumentError]
-	 #    values of different asset type
-	 #
-	 Contract Amount => Amount
-
-	 def *(right)
-	    raise ArgumentError, 'chain types differ' if @chain != right.chain
-	    raise ArgumentError, 'asset types differ' if @asset != right.asset
-
-	    return Amount.to_amount(@amount.to_f * right.to_f, @asset, @chain)
-	 end
-
-	 ##
-	 # operator to divert two balances
-	 #
-	 # @param [Amount]
-	 #     amount to divert
-	 # @return [Amount]
-	 #     result of division
-	 # @raise [ArgumentError]
-	 #    values of different asset type
-	 #
-	 Contract Amount => Amount
-
-	 def /(right)
-	    raise ArgumentError, 'chain types differ' if @chain != right.chain
-	    raise ArgumentError, 'asset types differ' if @asset != right.asset
-
-	    return Amount.to_amount(@amount.to_f / right.to_f, @asset, @chain)
-	 end
-
 	 class << self
 	    @@condenser_api         = Hash.new
 	    @@sbd_median_price      = Hash.new
 	    @@conversion_rate_vests = Hash.new
-
-	    ##
-	    # Helper factory method to create a new Amount from
-	    # an value and asset type.
-	    #
-	    # @param [Float] value
-	    #     the numeric value to create an amount from
-	    # @param [String] asset
-	    #     the asset type which should be STEEM, SBD or VESTS
-	    # @return [Amount]
-	    #     the value as amount
-	    Contract Float, String, Symbol => Amount
-
-	    def to_amount(value, asset, chain)
-	       return Amount.new(value.to_s + " " + asset, chain)
-	    end
 
 	    ##
 	    # create instance to the steem condenser API
@@ -340,8 +237,8 @@ module Steem
 	    def sbd_median_price(chain)
 	       unless @@sbd_median_price.key? chain then
 		  _median_history_price = self.condenser_api(chain).get_current_median_history_price.result
-		  _base                 = Steem::Type::Amount.new(_median_history_price.base, chain)
-		  _quote                = Steem::Type::Amount.new(_median_history_price.quote, chain)
+		  _base                 = Amount.new(_median_history_price.base, chain)
+		  _quote                = Amount.new(_median_history_price.quote, chain)
 		  @@sbd_median_price.store(chain, _base.to_f / _quote.to_f)
 	       end
 
@@ -362,14 +259,14 @@ module Steem
 	    def conversion_rate_vests(chain)
 	       unless @@conversion_rate_vests.key? chain then
 		  _global_properties        = self.condenser_api(chain).get_dynamic_global_properties.result
-		  _total_vesting_fund_steem = Steem::Type::Amount.new(_global_properties.total_vesting_fund_steem, chain)
-		  _total_vesting_shares     = Steem::Type::Amount.new(_global_properties.total_vesting_shares, chain)
+		  _total_vesting_fund_steem = Amount.new(_global_properties.total_vesting_fund_steem, chain)
+		  _total_vesting_shares     = Amount.new(_global_properties.total_vesting_shares, chain)
 		  @@conversion_rate_vests.store(chain, _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f)
 	       end
 
 	       return @@conversion_rate_vests[chain]
 	    end # conversion_rate_vests
-	 end # class
+	 end # self
       end # Amount
    end # Type
 end # Steem
