@@ -41,88 +41,88 @@ require_relative 'Amount'
 module Radiator
    module Type
       class Reward_Fund < Serializer
-         include Contracts::Core
-         include Contracts::Builtin
+	 include Contracts::Core
+	 include Contracts::Builtin
 
-         ##
-         # add the missing attribute reader.
-         #
-         attr_reader :base, :quote,
-                     :name,
-                     :reward_balance,
-                     :recent_claims,
-                     :last_update,
-                     :content_constant,
-                     :percent_curation_rewards,
-                     :percent_content_rewards,
-                     :author_reward_curve,
-                     :curation_reward_curve
+	 ##
+	 # add the missing attribute reader.
+	 #
+	 attr_reader :base, :quote,
+		     :name,
+		     :reward_balance,
+		     :recent_claims,
+		     :last_update,
+		     :content_constant,
+		     :percent_curation_rewards,
+		     :percent_content_rewards,
+		     :author_reward_curve,
+		     :curation_reward_curve
 
-         ##
-         # create instance form Steem JSON object.
-         #
-         # @param [Hash]
-         #    JSON object from condenser_api API.
-         #
-         Contract Any => nil
-         def initialize(value)
-            super(:name, value)
+	 ##
+	 # create instance form Steem JSON object.
+	 #
+	 # @param [Hash]
+	 #    JSON object from condenser_api API.
+	 #
+	 Contract Any => nil
+	 def initialize(value)
+	    super(:name, value)
 
-            @name                     = value.name
-            @reward_balance           = Radiator::Type::Amount.new value.reward_balance
-            @recent_claims            = value.recent_claims.to_i
-            @last_update              = Time.strptime(value.last_update + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
-            @content_constant         = value.content_constant
-            @percent_curation_rewards = value.percent_curation_rewards
-            @percent_content_rewards  = value.percent_content_rewards
-            @author_reward_curve      = value.author_reward_curve
-            @curation_reward_curve    = value.curation_reward_curve
+	    @name                     = value.name
+	    @reward_balance           = Radiator::Type::Amount.new value.reward_balance
+	    @recent_claims            = value.recent_claims.to_i
+	    @last_update              = Time.strptime(value.last_update + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
+	    @content_constant         = value.content_constant
+	    @percent_curation_rewards = value.percent_curation_rewards
+	    @percent_content_rewards  = value.percent_content_rewards
+	    @author_reward_curve      = value.author_reward_curve
+	    @curation_reward_curve    = value.curation_reward_curve
 
-            return
-         end
+	    return
+	 end
 
-         class << self
-            ##
-            # create instance to the steem condenser API
-            # which will give us access to to the global
-            # properties and median history.
-            #
-            # return [Steem::CondenserApi]
-            #     The condenser API
-            #
-            Contract None => Radiator::CondenserApi
-            def condenser_api
-               if @condenser_api == nil then
-                  @condenser_api = Radiator::CondenserApi.new
-               end
+	 class << self
+	    ##
+	    # create instance to the steem condenser API
+	    # which will give us access to to the global
+	    # properties and median history.
+	    #
+	    # return [Steem::CondenserApi]
+	    #     The condenser API
+	    #
+	    Contract None => Radiator::CondenserApi
+	    def condenser_api
+	       if @condenser_api == nil then
+		  @condenser_api = Radiator::CondenserApi.new
+	       end
 
-               return @condenser_api
-            rescue => error
-               # I am using Kernel::abort so the code
-               # snipped including error handler can be
-               # copy pasted into other scripts
+	       return @condenser_api
+	    rescue => error
+	       # I am using Kernel::abort so the code
+	       # snipped including error handler can be
+	       # copy pasted into other scripts
 
-               Kernel::abort("Error creating condenser API :\n".red + error.to_s)
-            end
+	       Kernel::abort("Error creating condenser API :\n".red + error.to_s)
+	    end
 
-            ##
-            # read the reward funds used to
-            # calculate the voting values
-            #
-            # @return [Radiator::Type::Reward_Fund]
-            #    Conversion rate Steem ⇔ SBD
-            #
-            Contract None => Radiator::Type::Reward_Fund
-            def get
-               # read the reward funds. `get_reward_fund` takes one
-               # parameter is always "post".
-               #
+	    ##
+	    # read the reward funds used to
+	    # calculate the voting values
+	    #
+	    # @return [Radiator::Type::Reward_Fund]
+	    #    Conversion rate Steem ⇔ SBD
+	    #
+	    Contract None => Radiator::Type::Reward_Fund
+	    def get
+	       # read the reward funds. `get_reward_fund` takes one
+	       # parameter is always "post".
+	       #
 
-               _reward_fund = self.condenser_api.get_reward_fund("post").result
+	       _reward_fund = self.condenser_api.get_reward_fund("post").result
 
-               return Radiator::Type::Reward_Fund.new _reward_fund
-            end
-         end # self
+	       return Radiator::Type::Reward_Fund.new _reward_fund
+	    end
+	 end # self
       end # Price
    end # Type
 end # Radiator

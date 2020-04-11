@@ -89,12 +89,12 @@ else
    _current = 0
    loop do
       _rows = Contracts.find(
-         contract:   _contract,
-         table:      _table,
-         query:      _query,
-         limit:      Query_Limit,
-         offset:     _current,
-         descending: false
+	 contract:   _contract,
+	 table:      _table,
+	 query:      _query,
+	 limit:      Query_Limit,
+	 offset:     _current,
+	 descending: false
       )
 
       # Exit loop when no result set is returned.

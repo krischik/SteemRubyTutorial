@@ -43,7 +43,6 @@ module Steem
 
 	 public
 
-
 	 ##
 	 # convert VESTS to level or "N/A" when the value
 	 # isn't a VEST value.
@@ -52,7 +51,6 @@ module Steem
 	 #     one of "Whale", "Orca", "Dolphin", "Minnow", "Plankton" or "N/A"
 	 #
 	 Contract None => String
-
 	 def to_level
 	    _value      = @amount.to_f
 	    _chain_info = @@chain_infos[chain]
@@ -82,7 +80,6 @@ module Steem
 	 #     not a SBD, STEEM or VESTS value
 	 #
 	 Contract None => Amount
-
 	 def to_sbd
 	    _chain_info = @@chain_infos[chain]
 
@@ -108,7 +105,6 @@ module Steem
 	 #    not a SBD, STEEM or VESTS value
 	 #
 	 Contract None => Amount
-
 	 def to_steem
 	    _chain_info = @@chain_infos[chain]
 
@@ -134,7 +130,6 @@ module Steem
 	 #    not a SBD, STEEM or VESTS value
 	 #
 	 Contract None => Amount
-
 	 def to_vests
 	    _chain_info = @@chain_infos[chain]
 
@@ -161,7 +156,6 @@ module Steem
 	 #    formatted value
 	 #
 	 Contract None => String
-
 	 def to_ansi_s
 	    _chain_info = @@chain_infos[chain]
 	    _sbd        = to_sbd
@@ -176,13 +170,13 @@ module Steem
 		  else
 		     :white
 		  end
-	       ) + " " + "%3$15.3f %4$5s".colorize(
+	       ) + " %3$15.3f %4$5s".colorize(
 		  if @asset == _chain_info.core.symbol then
 		     :blue
 		  else
 		     :white
 		  end
-	       ) + " " + "%5$18.6f %6$5s".colorize(
+	       ) + " %5$18.6f %6$5s".colorize(
 		  if @asset == _chain_info.vest.symbol then
 		     :blue
 		  else
@@ -212,10 +206,9 @@ module Steem
 	    #     The condenser API
 	    #
 	    Contract Symbol => Steem::CondenserApi
-
 	    def condenser_api(chain)
 	       unless @@condenser_api.key? chain then
-		  @@condenser_api.store(chain, Steem::CondenserApi.new({chain: chain}))
+		  @@condenser_api.store(chain, CondenserApi.new({chain: chain}))
 	       end
 
 	       return @@condenser_api[chain]
@@ -233,7 +226,6 @@ module Steem
 	    #    Conversion rate Steem ⇔ SBD
 	    #
 	    Contract Symbol => Num
-
 	    def sbd_median_price(chain)
 	       unless @@sbd_median_price.key? chain then
 		  _median_history_price = self.condenser_api(chain).get_current_median_history_price.result
@@ -255,7 +247,6 @@ module Steem
 	    #    Conversion rate Steem ⇔ VESTS
 	    #
 	    Contract Symbol => Num
-
 	    def conversion_rate_vests(chain)
 	       unless @@conversion_rate_vests.key? chain then
 		  _global_properties        = self.condenser_api(chain).get_dynamic_global_properties.result

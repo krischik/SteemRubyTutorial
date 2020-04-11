@@ -85,11 +85,11 @@ def print_account_balances(accounts)
       # calculate the account value by adding all balances in SBD
 
       _account_value =
-         _balance.to_sbd +
-            _savings_balance.to_sbd +
-            _sbd_balance.to_sbd +
-            _savings_sbd_balance.to_sbd +
-            _vesting_shares.to_sbd
+	 _balance.to_sbd +
+	    _savings_balance.to_sbd +
+	    _sbd_balance.to_sbd +
+	    _savings_sbd_balance.to_sbd +
+	    _vesting_shares.to_sbd
 
       # pretty print out the balances. Note that for a
       # quick printout Steem::Type::Amount provides a
@@ -106,8 +106,8 @@ def print_account_balances(accounts)
       puts("  Received Power  = " + _received_vesting_shares.to_ansi_s)
       puts("  Actual Power    = " + _total_vests.to_ansi_s)
       puts(("  Account Value   = " + "%1$15.3f %2$s".green) % [
-         _account_value.to_f,
-         _account_value.asset])
+	 _account_value.to_f,
+	 _account_value.asset])
    end
 
    return
@@ -139,11 +139,11 @@ else
       Accounts = result.accounts
 
       if Accounts.length == 0 then
-         puts "No accounts found.".yellow
+	 puts "No accounts found.".yellow
       else
-         # print out the actual account balances.
+	 # print out the actual account balances.
 
-         print_account_balances Accounts
+	 print_account_balances Accounts
       end
    rescue => error
       Kernel::abort("Error reading accounts:\n".red + error.to_s)

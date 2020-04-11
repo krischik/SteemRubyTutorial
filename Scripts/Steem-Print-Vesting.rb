@@ -225,11 +225,11 @@ begin
    _total_vesting_shares     = Radiator::Type::Amount.new(_global_properties.total_vesting_shares, Chain)
    Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 
-#  rescue => error
-#   # I am using `Kernel::abort` so the script ends when
-#   # data can't be loaded
-#
-#   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+   #  rescue => error
+   #   # I am using `Kernel::abort` so the script ends when
+   #   # data can't be loaded
+   #
+   #   Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
 
 if ARGV.length == 0 then

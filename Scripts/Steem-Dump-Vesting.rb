@@ -103,7 +103,6 @@ class Vesting < Steem::Type::BaseType
    #     `list_vesting_delegations`.
    #
    Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]] => nil
-
    def initialize(value)
       super(:id, value)
 
@@ -127,7 +126,6 @@ class Vesting < Steem::Type::BaseType
    #    formatted value
    #
    Contract None => String
-
    def to_ansi_s
       # All the magic happens in the `%` operators which
       # calls sprintf which in turn formats the string.
@@ -158,7 +156,6 @@ class Vesting < Steem::Type::BaseType
    #     or delegatee.
    #
    Contract ArrayOf[String] => Bool
-
    def is_accounts (accounts)
       return (accounts.include? @delegator) || (accounts.include? @delegatee)
    end
@@ -179,7 +176,6 @@ class Vesting < Steem::Type::BaseType
       #     list of vesting
       #
       Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]]], ArrayOf[String] => nil
-
       def print_list (vesting, accounts)
 	 vesting.each do |vest|
 	    _vest = Vesting.new vest
@@ -200,7 +196,6 @@ class Vesting < Steem::Type::BaseType
       #     the accounts to search.
       #
       Contract ArrayOf[String] => nil
-
       def print_accounts (accounts)
 
 	 puts("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
