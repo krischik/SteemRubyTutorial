@@ -51,30 +51,30 @@ module SCC
       QUERY_ALL = {}
 
       class << self
-         attr_reader :QUERY_ALL, :QUERY_LIMIT
+	 attr_reader :QUERY_ALL, :QUERY_LIMIT
 
-         @api = nil
+	 @api = nil
 
-         ##
-         # Access to contracts interface
-         #
-         # @return [Radiator::SSC::Contracts]
-         #     the contracts API.
-         #
-         Contract None => Radiator::SSC::Contracts
-         def contracts_api
-            if @api == nil then
-               @api = Radiator::SSC::Contracts.new
-            end
+	 ##
+	 # Access to contracts interface
+	 #
+	 # @return [Radiator::SSC::Contracts]
+	 #     the contracts API.
+	 #
+	 Contract None => Radiator::SSC::Contracts
+	 def contracts_api
+	    if @api == nil then
+	       @api = Radiator::SSC::Contracts.new
+	    end
 
-            return @api
-         rescue => error
-            # I am using Kernel::abort so the code snipped
-            # including error handler can be copy pasted into other
-            # scripts
+	    return @api
+	 rescue => error
+	    # I am using Kernel::abort so the code snipped
+	    # including error handler can be copy pasted into other
+	    # scripts
 
-            Kernel::abort("Error creating contracts API :\n".red + error.to_s)
-         end #contracts
+	    Kernel::abort("Error creating contracts API :\n".red + error.to_s)
+	 end #contracts
       end # self
    end # Token
 end # SCC

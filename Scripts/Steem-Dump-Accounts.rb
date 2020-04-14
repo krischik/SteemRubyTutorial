@@ -34,6 +34,7 @@ Usage:
    Steem-Dump-Accounts account_name …
 
 "
+
 else
    # read arguments from command line
 
@@ -52,9 +53,9 @@ else
       Accounts = result.accounts
 
       if Accounts.length == 0 then
-         puts "No accounts found.".yellow
+	 puts "No accounts found.".yellow
       else
-         pp Accounts
+	 pp Accounts
       end
    rescue => error
       Kernel::abort("Error reading accounts:\n".red + error.to_s)

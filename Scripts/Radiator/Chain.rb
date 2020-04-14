@@ -1,6 +1,6 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
 ############################################################# {{{1 ##########
-#  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
+#  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
+# initialise the Chain_Options as requested by the
+# CHAIN_ID environment variable.
 
 # use the "steem.rb" file from the radiator gem. This is
 # only needed if you have both steem-api and radiator
@@ -22,60 +24,27 @@
 
 gem "radiator", :require => "steem"
 
-require 'pp'
-require 'colorize'
-require 'contracts'
 require 'radiator'
+require 'radiator/chain_config'
 
-require_relative 'Steem_Engine'
+# Read the `CHAIN_ID` environment variable and  initialise
+# the `Chain_Options` constant with parameters suitable for
+# the chain requested.
 
-module SCC
-   ##
-   #
-   class Contract < SCC::Steem_Engine
-      include Contracts::Core
-      include Contracts::Builtin
-
-      attr_reader :key, :value, :name, :owner, :code, :code_hash, :tables
-
-      public
-
-      ##
-      # create instance form Steem Engine JSON object.
-      #
-      # @param [Hash]
-      #    JSON object from contract API.
-      #
-      Contract Any => nil
-      def initialize(contract)
-	 super(:name, contract.name)
-
-	 @name      = contract.name
-	 @owner     = contract.owner
-	 @code      = contract.code
-	 @code_hash = contract.codeHash
-	 @tables    = contract.tables
-
-	 return
-      end
-
-      class << self
-	 ##
-	 #
-	 #  @param [String] name
-	 #     name of contract
-	 #  @return [SCC::Contract]
-	 #     contract found
-	 #
-	 Contract String => SCC::Contract
-	 def symbol (name)
-	    _contract = Steem_Engine.contracts_api.contract name
-
-	    return SCC::Contract.new _contract
-	 end
-      end # self
-   end # Token
-end # SCC
+case ENV["CHAIN_ID"]&.downcase
+   when "test"
+      Chain_Options = {
+	 chain: :test,
+      }
+   when "hive"
+      Chain_Options = {
+	 chain: :hive,
+      }
+   else
+      Chain_Options = {
+	 chain: :steem,
+      }
+end
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

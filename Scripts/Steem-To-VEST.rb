@@ -72,7 +72,7 @@ else
    _total_vesting_fund_steem = Radiator::Type::Amount.new Global_Properties.total_vesting_fund_steem
    _total_vesting_shares     = Radiator::Type::Amount.new Global_Properties.total_vesting_shares
    _conversion_rate          = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
-  
+
    # read the  median history value and
    # Calculate the conversion Rate for Vests to steem
    # backed dollar. We use the Amount class from Part 2 to
@@ -109,11 +109,11 @@ else
       # convert the value to steem by multiplying with the
       # calculate the vote value for 100% upvotes
 
-      _weight              = 1.0
-      _max_voting_power    = 1.0
-      _max_power           = (_max_voting_power * _weight) / 50.0
-      _max_rshares         = _max_power * _final_vest
-      _max_vote_value      = (_max_rshares / Recent_Claims) * Reward_Balance * SBD_Median_Price
+      _weight           = 1.0
+      _max_voting_power = 1.0
+      _max_power        = (_max_voting_power * _weight) / 50.0
+      _max_rshares      = _max_power * _final_vest
+      _max_vote_value   = (_max_rshares / Recent_Claims) * Reward_Balance * SBD_Median_Price
 
       puts "%1$15.3f STEEM    = %2$18.6f VEST, 100%% Upvote: %3$6.3f SBD" % [value, _vest, _max_vote_value]
    end

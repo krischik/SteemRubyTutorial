@@ -128,11 +128,11 @@ def print_account_balances(accounts)
       # calculate the account value by adding all balances in SBD
 
       _account_value =
-         _balance.to_sbd +
-            _savings_balance.to_sbd +
-            _sbd_balance.to_sbd +
-            _savings_sbd_balance.to_sbd +
-            _vesting_shares.to_sbd
+	 _balance.to_sbd +
+	    _savings_balance.to_sbd +
+	    _sbd_balance.to_sbd +
+	    _savings_sbd_balance.to_sbd +
+	    _vesting_shares.to_sbd
 
       # calculate the vote value for 100% upvotes
 
@@ -191,42 +191,42 @@ def print_account_balances(accounts)
       puts("  Received Power         = " + _received_vesting_shares.to_ansi_s)
       puts("  Actual Power           = " + _total_vests.to_ansi_s)
       puts(("  Voting Power           = " +
-         "%1$15.3f SBD".colorize(
-            if _voting_power == 1.0 then
-               :green
-            else
-               :red
-            end
-         ) + " of " + "%2$1.3f SBD".blue) % [
-         _current_vote_value,
-         _max_vote_value])
+	 "%1$15.3f SBD".colorize(
+	    if _voting_power == 1.0 then
+	       :green
+	    else
+	       :red
+	    end
+	 ) + " of " + "%2$1.3f SBD".blue) % [
+	 _current_vote_value,
+	 _max_vote_value])
       puts(("  Account Value (steem)  = " + "%1$15.3f %2$s".green) % [
-         _account_value.to_f,
-         _account_value.asset])
+	 _account_value.to_f,
+	 _account_value.asset])
 
       _scc_balances = SCC::Balance.account account.name
       _scc_value    = Radiator::Type::Amount.new("0.0 SBD")
       _scc_balances.each do |_scc_balance|
-         token = _scc_balance.token
+	 token = _scc_balance.token
 
-         puts("  %1$-22.22s = %2$s" % [token.name, _scc_balance.to_ansi_s])
+	 puts("  %1$-22.22s = %2$s" % [token.name, _scc_balance.to_ansi_s])
 
-         # Add token value (in SDB to the account value.
-         begin
-            _sbd           = _scc_balance.to_sbd
-            _scc_value     = _scc_value + _sbd
-            _account_value = _account_value + _sbd
-         rescue KeyError
-            # do nothing.
-         end
+	 # Add token value (in SDB to the account value.
+	 begin
+	    _sbd           = _scc_balance.to_sbd
+	    _scc_value     = _scc_value + _sbd
+	    _account_value = _account_value + _sbd
+	 rescue KeyError
+	    # do nothing.
+	 end
       end
 
       puts(("  Account Value (engine) = " + "%1$15.3f %2$s".green) % [
-         _scc_value.to_f,
-         _scc_value.asset])
+	 _scc_value.to_f,
+	 _scc_value.asset])
       puts(("  Account Value          = " + "%1$15.3f %2$s".green) % [
-         _account_value.to_f,
-         _account_value.asset])
+	 _account_value.to_f,
+	 _account_value.asset])
    end
 
    return

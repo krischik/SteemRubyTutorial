@@ -17,141 +17,151 @@
 ############################################################# }}}1 ##########
 
 require_relative '../Scripts/Steem/Amount'
+
 require "test/unit"
 
-class Steem_Amount_Test < Test::Unit::TestCase
+class Amount_Test < Test::Unit::TestCase
+
    def test_to_amount_01
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::STEEM)
+      _test = Steem::Type::Amount.to_amount(1.0, "STEEM", :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
-      assert_equal(Steem::Type::Amount::STEEM, _test.asset, "The amount is if a «STEEEM» asset")
-   end # test_to_amount_01
+      assert_equal("STEEM", _test.asset, "The amount is if a «STEEEM» asset")
+   end
+
+   def test_to_amount_05
+      _test = Steem::Type::Amount.to_amount(1.0, "HIVE", :hive)
+
+      assert_not_nil(_test, "An amount should be created")
+      assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
+      assert_equal("HIVE", _test.asset, "The amount is if a «HIVE» asset")
+   end
 
    def test_to_steem_01
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::STEEM)
+      _test = Steem::Type::Amount.to_amount(1.0, "STEEM", :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
-      assert_equal(Steem::Type::Amount::STEEM, _test.asset, "The amount is if a «STEEEM» asset")
+      assert_equal("STEEM", _test.asset, "The amount is if a «STEEEM» asset")
 
       _steem = _test.to_steem
 
       assert_not_nil(_steem, "A vests amount should be created")
       assert_instance_of(Steem::Type::Amount, _steem, "The amount should be of type «Rator::Type::Amount»")
-      assert_equal(Steem::Type::Amount::STEEM, _steem.asset, "The amount is if a «STEEM» asset")
-   end # test_to_steem_01
+      assert_equal("STEEM", _steem.asset, "The amount is if a «STEEM» asset")
+   end
 
    def test_to_steem_02
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::SBD)
+      _test = Steem::Type::Amount.to_amount(1.0, "SBD", :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
-      assert_equal(Steem::Type::Amount::SBD, _test.asset, "The amount is if a «SBD» asset")
+      assert_equal("SBD", _test.asset, "The amount is if a «SBD» asset")
 
       _steem = _test.to_steem
 
       assert_not_nil(_steem, "A vests amount should be created")
       assert_instance_of(Steem::Type::Amount, _steem, "The amount should be of type «Rator::Type::Amount»")
-      assert_equal(Steem::Type::Amount::STEEM, _steem.asset, "The amount is if a «STEEM» asset")
-   end # test_to_steem_02
+      assert_equal("STEEM", _steem.asset, "The amount is if a «STEEM» asset")
+   end
 
    def test_to_steem_03
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::VESTS)
+      _test = Steem::Type::Amount.to_amount(1.0, "VESTS", :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
-      assert_equal(Steem::Type::Amount::VESTS, _test.asset, "The amount is if a «VESTS» asset")
+      assert_equal("VESTS", _test.asset, "The amount is if a «VESTS» asset")
 
       _steem = _test.to_steem
 
       assert_not_nil(_steem, "A vests amount should be created")
       assert_instance_of(Steem::Type::Amount, _steem, "The amount should be of type «Rator::Type::Amount»")
-      assert_equal(Steem::Type::Amount::STEEM, _steem.asset, "The amount is if a «STEEM» asset")
-   end # test_to_steem_03
+      assert_equal("STEEM", _steem.asset, "The amount is if a «STEEM» asset")
+   end
 
    def test_to_sbd_01
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::STEEM)
+      _test = Steem::Type::Amount.to_amount(1.0, "STEEM", :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
-      assert_equal(Steem::Type::Amount::STEEM, _test.asset, "The amount is if a «STEEEM» asset")
+      assert_equal("STEEM", _test.asset, "The amount is if a «STEEM» asset")
 
       _sbd = _test.to_sbd
 
       assert_not_nil(_sbd, "A sbd amount should be created")
       assert_instance_of(Steem::Type::Amount, _sbd, "The amount should be of type «Steem::Type::Amount»")
-      assert_equal(Steem::Type::Amount::SBD, _sbd.asset, "The amount is if a «SBD» asset")
-   end # test_to_sbd_01
+      assert_equal("SBD", _sbd.asset, "The amount is if a «SBD» asset")
+   end
 
    def test_to_sbd_02
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::SBD)
+      _test = Steem::Type::Amount.to_amount(1.0, "SBD", :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
-      assert_equal(Steem::Type::Amount::SBD, _test.asset, "The amount is if a «SBD» asset")
+      assert_equal("SBD", _test.asset, "The amount is if a «SBD» asset")
 
       _sbd = _test.to_sbd
 
       assert_not_nil(_sbd, "A sbd amount should be created")
       assert_instance_of(Steem::Type::Amount, _sbd, "The amount should be of type «Steem::Type::Amount»")
-      assert_equal(Steem::Type::Amount::SBD, _sbd.asset, "The amount is if a «SBD» asset")
-   end # test_to_sbd_02
+      assert_equal("SBD", _sbd.asset, "The amount is if a «SBD» asset")
+   end
 
    def test_to_sbd_03
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::VESTS)
+      _test = Steem::Type::Amount.to_amount(1.0, "VESTS", :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
-      assert_equal(Steem::Type::Amount::VESTS, _test.asset, "The amount is if a «VESTS» asset")
+      assert_equal("VESTS", _test.asset, "The amount is if a «VESTS» asset")
 
       _sbd = _test.to_sbd
 
       assert_not_nil(_sbd, "A sbd amount should be created")
       assert_instance_of(Steem::Type::Amount, _sbd, "The amount should be of type «Steem::Type::Amount»")
-      assert_equal(Steem::Type::Amount::SBD, _sbd.asset, "The amount is if a «SBD» asset")
-   end # test_to_sbd_03
+      assert_equal("SBD", _sbd.asset, "The amount is if a «SBD» asset")
+   end
 
    def test_to_vests_01
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::STEEM)
+      _test = Steem::Type::Amount.to_amount(1.0, "STEEM", :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
-      assert_equal(Steem::Type::Amount::STEEM, _test.asset, "The amount is if a «STEEEM» asset")
+      assert_equal("STEEM", _test.asset, "The amount is if a «STEEEM» asset")
 
       _vests = _test.to_vests
 
       assert_not_nil(_vests, "A vests amount should be created")
       assert_instance_of(Steem::Type::Amount, _vests, "The amount should be of type «Rator::Type::Amount»")
-      assert_equal(Steem::Type::Amount::VESTS, _vests.asset, "The amount is if a «VESTS» asset")
-   end # test_to_vests_01
+      assert_equal("VESTS", _vests.asset, "The amount is if a «VESTS» asset")
+   end
 
    def test_to_vests_02
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::SBD)
+      _test = Steem::Type::Amount.to_amount(1.0, "SBD", :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
-      assert_equal(Steem::Type::Amount::SBD, _test.asset, "The amount is if a «SBD» asset")
+      assert_equal("SBD", _test.asset, "The amount is if a «SBD» asset")
 
       _vests = _test.to_vests
 
       assert_not_nil(_vests, "A vests amount should be created")
       assert_instance_of(Steem::Type::Amount, _vests, "The amount should be of type «Rator::Type::Amount»")
-      assert_equal(Steem::Type::Amount::VESTS, _vests.asset, "The amount is if a «VESTS» asset")
-   end # test_to_vests_02
+      assert_equal("VESTS", _vests.asset, "The amount is if a «VESTS» asset")
+   end
 
    def test_to_vests_03
-      _test = Steem::Type::Amount.to_amount(1.0, Steem::Type::Amount::VESTS)
+      _test = Steem::Type::Amount.to_amount(1.0, "VESTS", :steem)
 
       assert_not_nil(_test, "An amount should be created")
       assert_instance_of(Steem::Type::Amount, _test, "The amount should be of type «Steem::Type::Amount»")
-      assert_equal(Steem::Type::Amount::VESTS, _test.asset, "The amount is if a «VESTS» asset")
+      assert_equal("VESTS", _test.asset, "The amount is if a «VESTS» asset")
 
       _vests = _test.to_vests
 
       assert_not_nil(_vests, "A vests amount should be created")
       assert_instance_of(Steem::Type::Amount, _vests, "The amount should be of type «Rator::Type::Amount»")
-      assert_equal(Steem::Type::Amount::VESTS, _vests.asset, "The amount is if a «VESTS» asset")
+      assert_equal("VESTS", _vests.asset, "The amount is if a «VESTS» asset")
    end # test_to_vests_03
 end # Radiator_Amount_Test
 

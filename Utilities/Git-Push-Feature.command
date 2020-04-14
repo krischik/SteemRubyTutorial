@@ -16,30 +16,60 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-setopt No_XTrace
+if test -z "${PROJECT_HOME}"; then
+    source "${0:h}/Setup.command"
+fi
+
 setopt Err_Exit
+setopt No_XTrace
 
-pushd "${PROJECT_HOME}/Frameworks/steem-ruby" 
-    ruby -I "lib" -I "test" test/**/*.rb 
+if test ${#} -eq 2; then
+    local in_Task="${1}"
+    local in_Comment="${2}"
 
-    gem build "steem-ruby.gemspec"
-    install "steem-ruby"
-popd
+    local Task_Type="${in_Task%%[0-9]*}"
+    local   Task_No="${in_Task#${Task_Type}}"
 
+    pushd "${PROJECT_HOME}"
+	git status
+	git submodule foreach git status
 
-pushd "${PROJECT_HOME}" 
-    for I in "steem" "hive"; do
-	CHAIN_ID="${I}" Scripts/Steem-Dump-Config.rb
-	CHAIN_ID="${I}" Scripts/Steem-Dump-Global-Properties.rb
+	echo "Task Type   : ${Task_Type}"
+	echo "Task Number : ${Task_No}"
+	echo "Comment     : ${in_Comment}"
+	read -sk1 "? add, commit and push (Y/N): "
+	echo
+#		"Wiki"				\
 
-	# Scripts/Steem-Dump-Accounts.rb		    "steem" "busy.org" "steempeak"
-	# Scripts/Steem-Dump-Balances.rb		    "steem" "busy.org" "steempeak"
-	# Scripts/Steem-Dump-Median-History-Price.rb
-	# Scripts/Steem-Dump-Posting-Votes.rb	    "https://steempeak.com/@krischik/using-steem-api-with-ruby-part-7"
-	# Scripts/Steem-From-VEST.rb		    "1000000" "10000000" "100000000" "100000000"
-    done
-popd
+	if test "${REPLY:u}" = "Y"; then
+	    for I in				\
+		"Frameworks/radiator"		\
+		"Frameworks/steem-ruby"		\
+		"Frameworks/steem-mechanize"	\
+		"."
+	    do
+		pushd "${I}"
+		    echo "### Push ${Task_Type} «${Task_No}» for «${I}»"
 
-############################################################ {{{1 ###########
+		    git add "."
+		    if ! git commit -m"${Task_Type} #${Task_No} : ${in_Comment}"; then
+			echo "nothing to commit but we publish anyway"
+		    fi
+
+		    git push
+		popd
+	    done; unset I
+	fi
+    popd
+else
+   echo '
+Git-Push-Feature Task Comment
+
+    Task    Task to publish
+    Comment Comment for publish
+'
+fi
+
+############################################################## {{{1 ##########
 # vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
 # vim: set textwidth=0 filetype=zsh foldmethod=marker nospell :

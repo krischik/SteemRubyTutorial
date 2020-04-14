@@ -19,25 +19,14 @@
 setopt No_XTrace
 setopt Err_Exit
 
-pushd "${PROJECT_HOME}" 
-    for I in "steem" "hive"; do
-	CHAIN_ID="${I}" Scripts/Steem-Print-Config.rb
+pushd "${PROJECT_HOME}/Frameworks/steem-ruby" 
+    # tests known to work. There are quite a few who don't work
+    # and only the original maintainer can fix them.
 
-	# Scripts/Steem-Print-Accounts.rb		    "steem" "busy.org" "steempeak"
-	# Scripts/Steem-Print-Balances.rb		    "steem" "busy.org" "steempeak"
-	# Scripts/Steem-Print-Global-Properties.rb
-	# Scripts/Steem-Print-Median-History-Price.rb
-	# Scripts/Steem-Print-Posting-Votes.rb	    "https://steempeak.com/@krischik/using-steem-api-with-ruby-part-7"
-	# Scripts/Steem-To-VEST.rb		    "500" "5000" "50000" "50000"
-	# Scripts/Steem-Print-Vesting.rb	    "busy.org" "steempeak"
-	# Scripts/Steem-Print-SSC-Contract.rb	    "tokens" "market" "steempegged"
-	# Scripts/Steem-Print-SSC-Table-First.rb    "tokens" "tokens"
-	# Scripts/Steem-Print-SSC-Table-First.rb    "market" "metrics" "symbol"  "BEER"
-	# Scripts/Steem-Print-SSC-Table-All.rb	    "tokens" "balances" "account" "krischik"
-	# Scripts/Steem-Print-SSC-Table-All.rb	    "tokens" "balances" "symbol"  "BEER" "balance" "10.0000"
-	# Scripts/Steem-Print-SSC-Table-All.rb	    "tokens" "params"
-	# Scripts/Steem-Print-SSC-Table-All.rb	    "tokens" "tokens" "symbol"  "BEER"
-    done
+    ruby -I "lib" -I "test" "test/steem/amount_test.rb"
+
+    gem build "steem-ruby.gemspec"
+    gem install "steem-ruby"
 popd
 
 ############################################################ {{{1 ###########

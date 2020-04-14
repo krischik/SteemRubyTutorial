@@ -195,8 +195,6 @@ class Vote < Radiator::Type::Serializer
 	 return
       end
 
-      # print_list
-
       ##
       # Print the votes from a postings given as URLs:
       #
