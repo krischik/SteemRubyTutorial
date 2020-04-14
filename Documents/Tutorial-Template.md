@@ -75,19 +75,21 @@ git clone "https://github.com/krischik/steem-ruby"
 pushd "steem-ruby"
     gem build "steem-ruby.gemspec"
     gem install "steem-ruby"
-popd 
+popd
+
+git clone "https://github.com/krischik/steem-mechanize"
 
 pushd "steem-mechanize"
     gem build "steem-mechanize.gemspec"
     gem install "steem-mechanize"
-popd 
+popd
 
 git clone "https://github.com/krischik/radiator"
 
 pushd "radiator"
     gem build "radiator.gemspec"
     gem install "radiator"
-popd 
+popd
 ```
 
 **Note:** All APIs steem-ruby, steem-mechanize and radiator provide a file called `steem.rb`. This means that:

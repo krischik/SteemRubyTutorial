@@ -208,7 +208,7 @@ module Steem
 	    Contract Symbol => Steem::CondenserApi
 	    def condenser_api(chain)
 	       unless @@condenser_api.key? chain then
-		  @@condenser_api.store(chain, CondenserApi.new({chain: chain}))
+		  @@condenser_api.store(chain, Steem::CondenserApi.new({chain: chain}))
 	       end
 
 	       return @@condenser_api[chain]

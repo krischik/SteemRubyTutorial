@@ -32,6 +32,9 @@ require 'steem-mechanize'
 
 require_relative 'Steem/Amount'
 
+##
+# Store the chain name for convenience.
+#
 Chain = Chain_Options[:chain]
 
 ##
@@ -45,7 +48,7 @@ Max_Retry_Count = if Chain == :hive then
 
 ##
 # Maximum requests made per second. Both Steem and
-# Hive will fail of to many requests will be done
+# Hive will fail if to many requests will be done
 # in a very short time.
 #
 # Hive hasn't got the CPU power yet to accept as many
@@ -116,8 +119,8 @@ class Vesting < Steem::Type::BaseType
    end
 
    ##
-   # Create a colonised string from the instance. The vote
-   # percentages are multiplied with 100 and are colorised
+   # Create a colourised string from the instance. The vote
+   # percentages are multiplied with 100 and are colourised
    # (positive values are printed in green, negative values
    # in red and zero votes (yes they exist) are shown in
    # grey), for improved human readability.
