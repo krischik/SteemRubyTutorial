@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -20,16 +20,17 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "steem-ruby", :require => "steem"
+gem "steem-ruby", :version=>'1.0.0', :require => "steem"
 
 require 'colorize'
 require 'contracts'
-require 'steem'
-
-# The Amount class is used in most Scripts so it was
-# moved into a separate file.
-
+require_relative 'Steem/Chain'
 require_relative 'Steem/Amount'
+
+##
+# Store the chain name for convenience.
+#
+Chain = Chain_Options[:chain]
 
 ##
 # Class to handle vote values from postings.
@@ -104,8 +105,8 @@ class Vote < Steem::Type::BaseType
    end
 
    ##
-   # Create a colorised string from the instance. The vote
-   # percentages are multiplied with 100 and are colorised
+   # Create a colourised string from the instance. The vote
+   # percentages are multiplied with 100 and are colourised
    # (positive values are printed in green, negative values
    # in red and zero votes (yes they exist) are shown in
    # grey), for improved human readability.
@@ -115,7 +116,7 @@ class Vote < Steem::Type::BaseType
    #
    Contract None => String
    def to_ansi_s
-      # multipy percent with 100 for human readability
+      # multiply percent with 100 for human readability
       _percent  = @percent * 100.0
       _estimate = estimate
 
@@ -134,7 +135,7 @@ class Vote < Steem::Type::BaseType
 	       end
 	    ) +
 	    " |" +
-	    "%3$10.3f SBD".colorize(
+	    "%3$10.3f %4$-3s".colorize(
 	       if _estimate > 0.0005 then
 		  :green
 	       elsif _estimate < -0.0005 then
@@ -143,11 +144,12 @@ class Vote < Steem::Type::BaseType
 		  :white
 	       end
 	    ) +
-	    " |%4$10d |%5$16d |%6$20s |"
+	    " |%5$10d |%6$16d |%7$20s |"
 	 ) % [
 	    @voter,
 	    _percent,
 	    _estimate,
+	    Steem::Type::Amount.debt_asset(Chain),
 	    @weight,
 	    @rshares,
 	    @time.strftime("%Y-%m-%d %H:%M:%S")
@@ -183,7 +185,7 @@ class Vote < Steem::Type::BaseType
 	 # print the total estimate after the last vote
 	 puts((
 	      "Total vote value |          |" +
-		 "%1$10.3f SBD".colorize(
+		 "%1$10.3f %2$-3s".colorize(
 		    if _total_estimate > 0.0005 then
 		       :green
 		    elsif _total_estimate < -0.0005 then
@@ -194,13 +196,12 @@ class Vote < Steem::Type::BaseType
 		 ) +
 		 " |           |                 |                     |"
 	      ) % [
-	    _total_estimate
+	    _total_estimate,
+	    Steem::Type::Amount.debt_asset(Chain)
 	 ])
 
 	 return
       end
-
-      # print_list
 
       ##
       # Print the votes from a postings given as URLs:
@@ -220,8 +221,8 @@ class Vote < Steem::Type::BaseType
 	 _slug              = url.split('@').last
 	 _author, _permlink = _slug.split('/')
 
-	 puts("Post Author      : " + "%1$s".blue) % _author
-	 puts("Post ID          : " + "%1$s".blue) % _permlink
+	 puts(("Post Author      : " + "%1$s".blue) % [_author])
+	 puts(("Post ID          : " + "%1$s".blue) % [_permlink])
 	 puts("Voter name       |  percent |         value |    weight |         rshares |    vote date & time |")
 	 puts("-----------------+----------+---------------+-----------+-----------------+---------------------+")
 
@@ -244,7 +245,7 @@ begin
    # create instance to the steem condenser API which
    # will give us access to the active votes.
 
-   Condenser_Api = Steem::CondenserApi.new
+   Condenser_Api = Steem::CondenserApi.new Chain_Options
 
    # read the global properties and median history values
    # and calculate the conversion Rate for steem to SBD
@@ -252,8 +253,8 @@ begin
    # string values into amounts.
 
    _median_history_price = Condenser_Api.get_current_median_history_price.result
-   _base                 = Steem::Type::Amount.new _median_history_price.base
-   _quote                = Steem::Type::Amount.new _median_history_price.quote
+   _base                 = Steem::Type::Amount.new(_median_history_price.base, Chain)
+   _quote                = Steem::Type::Amount.new(_median_history_price.quote, Chain)
    SBD_Median_Price      = _base.to_f / _quote.to_f
 
    # read the reward funds. `get_reward_fund` takes one
@@ -265,8 +266,7 @@ begin
 
    _reward_fund   = Condenser_Api.get_reward_fund("post").result
    Recent_Claims  = _reward_fund.recent_claims.to_i
-   Reward_Balance = Steem::Type::Amount.new _reward_fund.reward_balance
-
+   Reward_Balance = Steem::Type::Amount.new(_reward_fund.reward_balance, Chain)
 rescue => error
    # I am using `Kernel::abort` so the script ends when
    # data can't be loaded

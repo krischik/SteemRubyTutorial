@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -20,17 +20,22 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "radiator", :require => "steem"
+gem "radiator", :version => '1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
-require 'radiator'
+require_relative 'Radiator/Chain'
+
+##
+# Store the chain name for convenience.
+#
+Chain = Chain_Options[:chain]
 
 begin
    # create instance to the steem condenser API which
    # will give us access to the median history price
 
-   Condenser_Api = Radiator::CondenserApi.new
+   Condenser_Api = Radiator::CondenserApi.new Chain_Options
 
    # read the global properties. Yes, it's as simple as
    # this.
@@ -38,12 +43,10 @@ begin
    Median_History_Price = Condenser_Api.get_current_median_history_price
 
    # Calculate the conversion Rate for Vests to steem
-   # backed dollar. We use the Amount class from Part 2 to
+   # backed dollar. We use the Amount and Price class from Part 2 to
    # convert the string values into amounts.
 
-   _base            = Median_History_Price.result.base
-   _quote           = Median_History_Price.result.quote
-   SBD_Median_Price = _base.to_f / _quote.to_f
+   SBD_Median_Price = Radiator::Type::Price.new(Median_History_Price.result, Chain)
 rescue => error
    # I am using Kernel::abort so the code snipped
    # including error handler can be copy pasted into other
@@ -63,8 +66,11 @@ pp Median_History_Price
 
 # show actual conversion rate:
 
-puts("1.000 STEEM = %1$15.3f SBD") % (1.0 * SBD_Median_Price)
-puts("1.000 SBD   = %1$15.3f STEEM") % (1.0 / SBD_Median_Price)
+DEBT_ASSET = Radiator::Type::Amount.debt_asset Chain
+CORE_ASSET = Radiator::Type::Amount.core_asset Chain
+
+puts(("1.000 %1$-5s = %2$15.3f %3$-5s") % [CORE_ASSET, 1.0 * SBD_Median_Price.to_f, DEBT_ASSET])
+puts(("1.000 %1$-5s = %2$15.3f %3$-5s") % [DEBT_ASSET, 1.0 / SBD_Median_Price.to_f, CORE_ASSET])
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

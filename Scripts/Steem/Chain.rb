@@ -22,7 +22,7 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "steem-ruby", :require => "steem"
+gem "steem-ruby", :version=>'1.0.0', :require => "steem"
 
 require 'steem'
 require 'steem/chain_config'

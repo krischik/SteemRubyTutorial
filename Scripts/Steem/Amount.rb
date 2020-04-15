@@ -20,7 +20,7 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "steem-ruby", :require => "steem"
+gem "steem-ruby", :version=>'1.0.0', :require => "steem"
 
 require 'colorize'
 require 'contracts'
@@ -202,7 +202,9 @@ module Steem
 	    # which will give us access to to the global
 	    # properties and median history.
 	    #
-	    # return [Steem::CondenserApi]
+	    # @param [Symbol] chain
+	    # 	  chain for which to create an api instance
+	    # @return [Steem::CondenserApi]
 	    #     The condenser API
 	    #
 	    Contract Symbol => Steem::CondenserApi

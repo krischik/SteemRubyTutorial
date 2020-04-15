@@ -16,11 +16,11 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the radiator gem. This is
+# use the "steem.rb" file from the Steem gem. This is
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "radiator", :version=>'1.0.0', :require => "steem"
+gem "steem-ruby", :version=>'1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
@@ -29,14 +29,14 @@ require 'contracts'
 ##
 # Class handling the date from the reward pool.
 #
-module Radiator
+module Steem
    module Type
       class Reward_Fund
          include Contracts::Core
          include Contracts::Builtin
 
          class << self
-            @@condenser_api         = ::Hash.new
+            @@condenser_api         = Hash.new
 
             ##
             # create instance to the steem condenser API
@@ -48,10 +48,10 @@ module Radiator
             # @return [Steem::CondenserApi]
             #     The condenser API
             #
-            #            Contract ::Symbol => Radiator::CondenserApi
+            Contract Symbol => Steem::CondenserApi
             def condenser_api(chain)
                unless @@condenser_api.key? chain then
-                  @@condenser_api.store(chain, Radiator::CondenserApi.new({chain: chain}))
+                  @@condenser_api.store(chain, Steem::CondenserApi.new({chain: chain}))
                end
 
                return @@condenser_api[chain]
@@ -65,10 +65,10 @@ module Radiator
             #
             # @param [Symbol] chain
             #     chain for which to create an api instance
-            # @return [Radiator::Type::Reward_Fund]
+            # @return [Steem::Type::Reward_Fund]
             #    Conversion rate Steem ⇔ SBD
             #
-            Contract Symbol => Radiator::Type::Reward_Fund
+            Contract Symbol => Steem::Type::Reward_Fund
             def get(chain)
                # read the reward funds. `get_reward_fund` takes one
                # parameter is always "post".
@@ -76,12 +76,12 @@ module Radiator
 
                _reward_fund = self.condenser_api(chain).get_reward_fund("post").result
 
-               return Radiator::Type::Reward_Fund.new(_reward_fund, chain)
+               return Steem::Type::Reward_Fund.new(_reward_fund, chain)
             end
          end # self
       end # Reward_Fund
    end # Type
-end # Radiator
+end # Steem
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :

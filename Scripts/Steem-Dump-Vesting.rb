@@ -59,6 +59,7 @@ Request_Per_Second = if Chain == :hive then
 		     else
 			20.0
 		     end
+
 ##
 # Maximum retries per second made when and error happens
 #
