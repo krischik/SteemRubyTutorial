@@ -1,8 +1,8 @@
-# Using Steem-API with Ruby Part 20 — Access Hive Blockchain 3
+# Using Steem-API with Ruby Part 21 — Access Hive Blockchain 3
 
 ruby hive hive-api steem-api programming tutorials palnet marlians stem neoxian
 
-In this tutorial we will look at using coins and **steem-mechanize** API on the hive blockchain.
+In this tutorial we will look at converting the three different coins on each chain.
 
 <center>![Hive_Steem_Ruby_Engine.png](https://files.peakd.com/file/peakd-hive/krischik/ve2qoADQ-Hive_Steem_Ruby_Engine.png)</center>
 
@@ -128,10 +128,12 @@ The actual values are:
     <td style="border: 1pt solid black; padding: 4pt">"STEEM"</td>
   </tr>
   <tr style="border: 1pt solid black">
+    <td></td>
     <td style="border: 1pt solid black; padding: 4pt">Dept</td>
     <td style="border: 1pt solid black; padding: 4pt">"SBD"</td>
   </tr>
   <tr style="border: 1pt solid black">
+    <td></td>
     <td style="border: 1pt solid black; padding: 4pt">Vest</td>
     <td style="border: 1pt solid black; padding: 4pt">"VESTS"</td>
   </tr>
@@ -141,10 +143,12 @@ The actual values are:
     <td style="border: 1pt solid black; padding: 4pt">"HIVE"</td>
   </tr>
   <tr style="border: 1pt solid black">
+    <td></td>
     <td style="border: 1pt solid black; padding: 4pt">Dept</td>
     <td style="border: 1pt solid black; padding: 4pt">"HBD"</td>
   </tr>
   <tr style="border: 1pt solid black">
+    <td></td>
     <td style="border: 1pt solid black; padding: 4pt">Vest</td>
     <td style="border: 1pt solid black; padding: 4pt">"VESTS"</td>
   </tr>
@@ -152,7 +156,7 @@ The actual values are:
 
 ## Implementation using steem-ruby
 
-The (https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-From-VEST.rb)[Steem-From-VEST.rb] script was previously described in (https://peakd.com/utopian-io/@krischik/using-steem-api-with-ruby-part-4)[Part 4] of the tutorial. Here we only look at the changed needed to make the script multi chain compatible.
+The [Steem-From-VEST.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-From-VEST.rb) script was previously described in [Part 4](https://peakd.com/utopian-io/@krischik/using-steem-api-with-ruby-part-4) of the tutorial. Here we only look at the changed needed to make the script multi chain compatible.
 
 Store the chain name and symbols for convenience.
 
@@ -206,11 +210,11 @@ Print the result using the the correct symbols for the requested chain
 
 The output of the command (for the steem account) looks like this:
 
-<center>![Screenshot at Feb 13 145331.png](https://files.steempeak.com/file/steempeak/krischik/bj5gfctG-Screenshot20at20Feb20132014-53-31.png)</center>
+<center>![Screenshot at Apr 30 154031.png](https://files.peakd.com/file/peakd-hive/krischik/ehErK4Vf-Screenshot20at20Apr20302015-40-31.png)</center>
 
 ## Implementation using radiator
 
-The (https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-To-VEST.rb)[Steem-To-VEST.rb] script was previously described in (https://peakd.com/utopian-io/@krischik/using-steem-api-with-ruby-part-4)[Part 4] of the tutorial. Here we only look at the changed needed to make the script multi chain compatible.
+The [Steem-To-VEST.rb](https://github.com/krischik/SteemRubyTutorial/blob/master/Scripts/Steem-To-VEST.rb) script was previously described in [Part 4](https://peakd.com/utopian-io/@krischik/using-steem-api-with-ruby-part-4) of the tutorial. Here we only look at the changed needed to make the script multi chain compatible.
 
 Store the chain name and symbols for convenience.
 
@@ -264,7 +268,7 @@ Print the result using the the correct symbols for the requested chain
 
 The output of the command (for the steem account) looks identical to the previous output:
 
-<center>![Screenshot at XXXXX.png](https://files.steempeak.com/file/steempeak/krischik/3dURm96L-ScreenshotXXXXX.png)</center>
+<center>![Screenshot at Apr 30 154229.png](https://files.peakd.com/file/peakd-hive/krischik/U7hWvT6U-Screenshot20at20Apr20302015-42-29.png)</center>
 
 # Curriculum
 
