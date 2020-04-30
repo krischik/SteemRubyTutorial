@@ -22,9 +22,10 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "steem-ruby", :require => "steem"
+gem "steem-ruby", :version=>'1.0.0', :require => "steem"
 
 require 'steem'
+require 'steem/chain_config'
 
 # Read the `CHAIN_ID` environment variable and  initialise
 # the `Chain_Options` constant with parameters suitable for
@@ -33,20 +34,16 @@ require 'steem'
 case ENV["CHAIN_ID"]&.downcase
    when "test"
       Chain_Options = {
-         chain:         :test,
-         failover_urls: [
-            Steem::ChainConfig::NETWORKS_TEST_DEFAULT_NODE
-         ]
+	 chain: :test
       }
    when "hive"
       Chain_Options = {
-         chain:         :hive,
-         failover_urls: [
-            Steem::ChainConfig::NETWORKS_HIVE_DEFAULT_NODE
-         ]
+	 chain: :hive
       }
    else
-      Chain_Options = {}
+      Chain_Options = {
+	 chain: :steem
+      }
 end
 
 ############################################################ {{{1 ###########

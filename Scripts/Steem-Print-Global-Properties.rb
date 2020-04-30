@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -20,17 +20,23 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "radiator", :require => "steem"
+gem "radiator", :version=>'1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
-require 'radiator'
+
+require_relative 'Radiator/Chain'
+
+##
+# Store the chain name for convenience.
+#
+Chain = Chain_Options[:chain]
 
 begin
    # create instance to the steem condenser API which
    # will give us access to
 
-   Condenser_Api = Radiator::CondenserApi.new
+   Condenser_Api = Radiator::CondenserApi.new Chain_Options
 
    # read the global properties. Yes, it's as simple as
    # this.

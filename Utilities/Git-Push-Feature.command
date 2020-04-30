@@ -15,7 +15,6 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
-############################################################## }}}1 ##########
 
 if test -z "${PROJECT_HOME}"; then
     source "${0:h}/Setup.command"
@@ -40,12 +39,13 @@ if test ${#} -eq 2; then
 	echo "Comment     : ${in_Comment}"
 	read -sk1 "? add, commit and push (Y/N): "
 	echo
+#		"Wiki"				\
 
 	if test "${REPLY:u}" = "Y"; then
-	    for I in			\
-		"Frameworks/radiator"	\
-		"Frameworks/steem-ruby" \
-		"Wiki"			\
+	    for I in				\
+		"Frameworks/radiator"		\
+		"Frameworks/steem-ruby"		\
+		"Frameworks/steem-mechanize"	\
 		"."
 	    do
 		pushd "${I}"

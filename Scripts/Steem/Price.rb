@@ -20,32 +20,25 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "radiator", :version=>'1.0.0', :require => "steem"
+gem "steem-ruby", :version=>'1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
 require 'contracts'
-require 'radiator'
-
-require_relative 'Amount'
+require 'steem/type/price'
 
 ##
-# steem-ruby comes with a helpful Radiator::Type::Price
-# class to handle the SDB price. However
-# Radiator::Type::Price won't let you access any
-# attributes which makes using the class quite cumbersome.
-#
 # This class expands Radiator::Type::Price to add the
 # missing functions making it super convenient.
 #
-module Radiator
+module Steem
    module Type
       class Price
 	 include Contracts::Core
 	 include Contracts::Builtin
 
 	 class << self
-	    @@condenser_api         = ::Hash.new
+	    @@condenser_api         = Hash.new
 
 	    ##
 	    # create instance to the steem condenser API
@@ -57,10 +50,10 @@ module Radiator
 	    # @return [Steem::CondenserApi]
 	    #     The condenser API
 	    #
-	    Contract Symbol => Radiator::CondenserApi
+	    Contract Symbol => Steem::CondenserApi
 	    def condenser_api(chain)
 	       unless @@condenser_api.key? chain then
-		  @@condenser_api.store(chain, Radiator::CondenserApi.new({chain: chain}))
+		  @@condenser_api.store(chain, Steem::CondenserApi.new({chain: chain}))
 	       end
 
 	       return @@condenser_api[chain]
@@ -79,11 +72,11 @@ module Radiator
 	    # @return [Float]
 	    #    Conversion rate Steem ⇔ SBD
 	    #
-	    Contract Symbol => Radiator::Type::Price
+	    Contract Symbol => Steem::Type::Price
 	    def get(chain)
 	       _median_history_price = condenser_api(chain).get_current_median_history_price.result
 
-	       return Radiator::Type::Price.new(_median_history_price, chain)
+	       return Steem::Type::Price.new(_median_history_price, chain)
 	    end
 	 end # self
       end # Price

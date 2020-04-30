@@ -20,9 +20,8 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "radiator", :require => "steem"
+gem "radiator", :version=>'1.0.0', :require => "steem"
 
-require 'pp'
 require 'colorize'
 require 'contracts'
 require 'radiator'
@@ -42,38 +41,7 @@ module Radiator
 	 include Contracts::Core
 	 include Contracts::Builtin
 
-	 ##
-	 # add the missing attribute reader.
-	 #
-	 attr_reader :amount, :precision, :asset, :value
-
-	 ##
-	 # Asset string for VESTS
-	 #
-	 VESTS = "VESTS"
-
-	 ##
-	 # Asset string for STEEM
-	 #
-	 STEEM = "STEEM"
-
-	 ##
-	 # Asset string for Steem Backed Dollar
-	 #
-	 SBD = "SBD"
-
 	 public
-
-	 ##
-	 # return amount as float to be used for calculations
-	 #
-	 # @return [Float]
-	 #     actual amount as float
-	 #
-	 Contract None => Float
-	 def to_f
-	    return @amount.to_f
-	 end
 
 	 ##
 	 # convert VESTS to level or "N/A" when the value
@@ -84,10 +52,11 @@ module Radiator
 	 #
 	 Contract None => String
 	 def to_level
-	    _value = @amount.to_f
+	    _value      = @amount.to_f
+	    _chain_info = @@chain_infos[chain]
 
 	    return (
-	    if @asset != VESTS then
+	    if @asset != _chain_info.vest.symbol then
 	       "N/A"
 	    elsif _value > 1.0e9 then
 	       "Whale"
@@ -112,13 +81,15 @@ module Radiator
 	 #
 	 Contract None => Amount
 	 def to_sbd
+	    _chain_info = @@chain_infos[chain]
+
 	    return (
 	    case @asset
-	       when SBD
+	       when _chain_info.debt.symbol
 		  self.clone
-	       when STEEM
-		  Amount.to_amount(@amount.to_f * Amount.sbd_median_price, SBD)
-	       when VESTS
+	       when _chain_info.core.symbol
+		  Amount.to_amount(@amount.to_f * Amount.sbd_median_price(@chain), _chain_info.debt.symbol, @chain)
+	       when _chain_info.vest.symbol
 		  self.to_steem.to_sbd
 	       else
 		  raise ArgumentError, 'unknown asset type types'
@@ -135,14 +106,16 @@ module Radiator
 	 #
 	 Contract None => Amount
 	 def to_steem
+	    _chain_info = @@chain_infos[chain]
+
 	    return (
 	    case @asset
-	       when SBD
-		  Amount.to_amount(@amount.to_f / Amount.sbd_median_price, STEEM)
-	       when STEEM
+	       when _chain_info.debt.symbol
+		  Amount.to_amount(@amount.to_f / Amount.sbd_median_price(@chain), _chain_info.core.symbol, @chain)
+	       when _chain_info.core.symbol
 		  self.clone
-	       when VESTS
-		  Amount.to_amount(@amount.to_f * Amount.conversion_rate_vests, STEEM)
+	       when _chain_info.vest.symbol
+		  Amount.to_amount(@amount.to_f * Amount.conversion_rate_vests(@chain), _chain_info.core.symbol, @chain)
 	       else
 		  raise ArgumentError, 'unknown asset type types'
 	    end)
@@ -158,13 +131,15 @@ module Radiator
 	 #
 	 Contract None => Amount
 	 def to_vests
+	    _chain_info = @@chain_infos[chain]
+
 	    return (
 	    case @asset
-	       when SBD
+	       when _chain_info.debt.symbol
 		  self.to_steem.to_vests
-	       when STEEM
-		  Amount.to_amount(@amount.to_f / Amount.conversion_rate_vests, VESTS)
-	       when VESTS
+	       when _chain_info.core.symbol
+		  Amount.to_amount(@amount.to_f / Amount.conversion_rate_vests(@chain), _chain_info.vest.symbol, @chain)
+	       when _chain_info.vest.symbol
 		  self.clone
 	       else
 		  raise ArgumentError, 'unknown asset type types'
@@ -182,36 +157,32 @@ module Radiator
 	 #
 	 Contract None => String
 	 def to_ansi_s
-	    _sbd   = to_sbd
-	    _steem = to_steem
-	    _vests = to_vests
+	    _chain_info = @@chain_infos[chain]
+	    _sbd        = to_sbd
+	    _steem      = to_steem
+	    _vests      = to_vests
 
 	    return(
 	       (
-	       "%1$15.3f %2$s".colorize(
-		  if @asset == SBD then
+	       "%1$15.3f %2$3s".colorize(
+		  if @asset == _chain_info.debt.symbol then
 		     :blue
 		  else
 		     :white
 		  end
-	       ) +
-		  " " +
-		  "%3$15.3f %4$s".colorize(
-		     if @asset == STEEM then
-			:blue
-		     else
-			:white
-		     end
-		  ) +
-		  " " +
-		  "%5$18.6f %6$s".colorize(
-		     if @asset == VESTS then
-			:blue
-		     else
-			:white
-		     end
-		  )
-	       ) % [
+	       ) + " %3$15.3f %4$5s".colorize(
+		  if @asset == _chain_info.core.symbol then
+		     :blue
+		  else
+		     :white
+		  end
+	       ) + " %5$18.6f %6$5s".colorize(
+		  if @asset == _chain_info.vest.symbol then
+		     :blue
+		  else
+		     :white
+		  end
+	       )) % [
 		  _sbd.to_f,
 		  _sbd.asset,
 		  _steem.to_f,
@@ -221,110 +192,27 @@ module Radiator
 	       ])
 	 end
 
-	 ##
-	 # operator to add two balances
-	 #
-	 # @param [Amount]
-	 #     amount to add
-	 # @return [Amount]
-	 #     result of addition
-	 # @raise [ArgumentError]
-	 #    values of different asset type
-	 #
-	 Contract Amount => Amount
-	 def +(right)
-	    raise ArgumentError, 'asset types differ' if @asset != right.asset
-
-	    return Amount.to_amount(@amount.to_f + right.to_f, @asset)
-	 end
-
-	 ##
-	 # operator to subtract two balances
-	 #
-	 # @param [Amount]
-	 #     amount to subtract
-	 # @return [Amount]
-	 #     result of subtraction
-	 # @raise [ArgumentError]
-	 #    values of different asset type
-	 #
-	 Contract Amount => Amount
-	 def -(right)
-	    raise ArgumentError, 'asset types differ' if @asset != right.asset
-
-	    return Amount.to_amount(@amount.to_f - right.to_f, @asset)
-	 end
-
-	 ##
-	 # operator to divert two balances
-	 #
-	 # @param [Amount]
-	 #     amount to divert
-	 # @return [Amount]
-	 #     result of division
-	 # @raise [ArgumentError]
-	 #    values of different asset type
-	 #
-	 Contract Amount => Amount
-	 def *(right)
-	    raise ArgumentError, 'asset types differ' if @asset != right.asset
-
-	    return Amount.to_amount(@amount.to_f * right.to_f, @asset)
-	 end
-
-	 ##
-	 # operator to divert two balances
-	 #
-	 # @param [Amount]
-	 #     amount to divert
-	 # @return [Amount]
-	 #     result of division
-	 # @raise [ArgumentError]
-	 #    values of different asset type
-	 #
-	 Contract Amount => Amount
-	 def /(right)
-	    raise ArgumentError, 'asset types differ' if @asset != right.asset
-
-	    return Amount.to_amount(@amount.to_f / right.to_f, @asset)
-	 end
-
 	 class << self
-	    ##
-	    # Helper factory method to create a new Amount from
-	    # an value and asset type.
-	    #
-	    # @param [Float] value
-	    #     the numeric value to create an amount from
-	    # @param [String] asset
-	    #     the asset type which should be STEEM, SBD or VESTS
-	    # @return [Amount]
-	    #     the value as amount
-	    Contract Float, String => Amount
-	    def to_amount(value, asset)
-	       return Amount.new(value.to_s + " " + asset)
-	    end
+	    @@condenser_api         = ::Hash.new
+	    @@sbd_median_price      = ::Hash.new
+	    @@conversion_rate_vests = ::Hash.new
 
 	    ##
 	    # create instance to the steem condenser API
 	    # which will give us access to to the global
 	    # properties and median history.
 	    #
-	    # return [Steem::CondenserApi]
-	    #     The condensor API
+	    # return [Radiator::CondenserApi]
+	    #     The condenser API
 	    #
-	    Contract None => Radiator::CondenserApi
-	    def condenser_api
-	       if @condenser_api == nil then
-		  @condenser_api = Radiator::CondenserApi.new
+	    Contract Symbol => Radiator::CondenserApi
+	    def condenser_api(chain)
+	       unless @@condenser_api.key? chain then
+		  @@condenser_api.store(chain, CondenserApi.new({chain: chain}))
 	       end
 
-	       return @condenser_api
+	       return @@condenser_api[chain]
 	    rescue => error
-	       # I am using Kernel::abort so the code
-	       # snipped including error handler can be
-	       # copy pasted into other scripts
-
 	       Kernel::abort("Error creating condenser API :\n".red + error.to_s)
 	    end
 
@@ -337,16 +225,16 @@ module Radiator
 	    # @return [Float]
 	    #    Conversion rate Steem ⇔ SBD
 	    #
-	    Contract None => Num
-	    def sbd_median_price
-	       if @sbd_median_price == nil then
-		  _median_history_price = self.condenser_api.get_current_median_history_price.result
-		  _base                 = Radiator::Type::Amount.new _median_history_price.base
-		  _quote                = Radiator::Type::Amount.new _median_history_price.quote
-		  @sbd_median_price     = _base.to_f / _quote.to_f
+	    Contract Symbol => Num
+	    def sbd_median_price(chain)
+	       unless @@sbd_median_price.key? chain then
+		  _median_history_price = self.condenser_api(chain).get_current_median_history_price.result
+		  _base                 = Amount.new(_median_history_price.base, chain)
+		  _quote                = Amount.new(_median_history_price.quote, chain)
+		  @@sbd_median_price.store(chain, _base.to_f / _quote.to_f)
 	       end
 
-	       return @sbd_median_price
+	       return @@sbd_median_price[chain]
 	    end
 
 	    ##
@@ -358,16 +246,16 @@ module Radiator
 	    # @return [Float]
 	    #    Conversion rate Steem ⇔ VESTS
 	    #
-	    Contract None => Num
-	    def conversion_rate_vests
-	       if @conversion_rate_vests == nil then
-		  _global_properties        = self.condenser_api.get_dynamic_global_properties.result
-		  _total_vesting_fund_steem = Radiator::Type::Amount.new _global_properties.total_vesting_fund_steem
-		  _total_vesting_shares     = Radiator::Type::Amount.new _global_properties.total_vesting_shares
-		  @conversion_rate_vests    = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
+	    Contract Symbol => Num
+	    def conversion_rate_vests(chain)
+	       unless @@conversion_rate_vests.key? chain then
+		  _global_properties        = self.condenser_api(chain).get_dynamic_global_properties.result
+		  _total_vesting_fund_steem = Amount.new(_global_properties.total_vesting_fund_steem, chain)
+		  _total_vesting_shares     = Amount.new(_global_properties.total_vesting_shares, chain)
+		  @@conversion_rate_vests.store(chain, _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f)
 	       end
 
-	       return @conversion_rate_vests
+	       return @@conversion_rate_vests[chain]
 	    end # conversion_rate_vests
 	 end # self
       end # Amount

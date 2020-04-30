@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -26,21 +26,25 @@ require 'contracts'
 require_relative 'Steem/Chain'
 require_relative 'Steem/Amount'
 
+##
+# Store the chain name for convenience.
+#
+Chain = Chain_Options[:chain]
+
 begin
    # create instance to the steem condenser API which
    # will give us access to to the global properties and
    # median history
 
-   _condenser_api = Steem::CondenserApi.new
+   _condenser_api = Steem::CondenserApi.new Chain_Options
 
    # read the  median history value and
    # Calculate the conversion Rate for Vests to steem
    # backed dollar. We use the Amount class from Part 2 to
    # convert the string values into amounts.
 
-   _median_history_price = _condenser_api.get_current_median_history_price.result
-   _base                 = Steem::Type::Amount.new _median_history_price.base
-   _quote                = Steem::Type::Amount.new _median_history_price.quote
+
+   _median_history_price = Steem::Type::Price.get Chain
    SBD_Median_Price      = _base.to_f / _quote.to_f
 
    # read the global properties and
@@ -49,8 +53,8 @@ begin
    # values into amounts.
 
    _global_properties        = _condenser_api.get_dynamic_global_properties.result
-   _total_vesting_fund_steem = Steem::Type::Amount.new _global_properties.total_vesting_fund_steem
-   _total_vesting_shares     = Steem::Type::Amount.new _global_properties.total_vesting_shares
+   _total_vesting_fund_steem = Steem::Type::Amount.new(_global_properties.total_vesting_fund_steem, Chain)
+   _total_vesting_shares     = Steem::Type::Amount.new(_global_properties.total_vesting_shares, Chain)
    Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 rescue => error
    # I am using `Kernel::abort` so the script ends when
@@ -70,13 +74,13 @@ def print_account_balances(accounts)
       # create an amount instances for each balance to be
       # used for further processing
 
-      _balance                  = Steem::Type::Amount.new account.balance
-      _savings_balance          = Steem::Type::Amount.new account.savings_balance
-      _sbd_balance              = Steem::Type::Amount.new account.sbd_balance
-      _savings_sbd_balance      = Steem::Type::Amount.new account.savings_sbd_balance
-      _vesting_shares           = Steem::Type::Amount.new account.vesting_shares
-      _delegated_vesting_shares = Steem::Type::Amount.new account.delegated_vesting_shares
-      _received_vesting_shares  = Steem::Type::Amount.new account.received_vesting_shares
+      _balance                  = Steem::Type::Amount.new(account.balance, Chain)
+      _savings_balance          = Steem::Type::Amount.new(account.savings_balance, Chain)
+      _sbd_balance              = Steem::Type::Amount.new(account.sbd_balance, Chain)
+      _savings_sbd_balance      = Steem::Type::Amount.new(account.savings_sbd_balance, Chain)
+      _vesting_shares           = Steem::Type::Amount.new(account.vesting_shares, Chain)
+      _delegated_vesting_shares = Steem::Type::Amount.new(account.delegated_vesting_shares, Chain)
+      _received_vesting_shares  = Steem::Type::Amount.new(account.received_vesting_shares, Chain)
 
       # calculate actual vesting by adding and subtracting delegation.
 
@@ -85,11 +89,11 @@ def print_account_balances(accounts)
       # calculate the account value by adding all balances in SBD
 
       _account_value =
-         _balance.to_sbd +
-            _savings_balance.to_sbd +
-            _sbd_balance.to_sbd +
-            _savings_sbd_balance.to_sbd +
-            _vesting_shares.to_sbd
+	 _balance.to_sbd +
+	    _savings_balance.to_sbd +
+	    _sbd_balance.to_sbd +
+	    _savings_sbd_balance.to_sbd +
+	    _vesting_shares.to_sbd
 
       # pretty print out the balances. Note that for a
       # quick printout Steem::Type::Amount provides a
@@ -106,8 +110,8 @@ def print_account_balances(accounts)
       puts("  Received Power  = " + _received_vesting_shares.to_ansi_s)
       puts("  Actual Power    = " + _total_vests.to_ansi_s)
       puts(("  Account Value   = " + "%1$15.3f %2$s".green) % [
-         _account_value.to_f,
-         _account_value.asset])
+	 _account_value.to_f,
+	 _account_value.asset])
    end
 
    return
@@ -128,7 +132,7 @@ else
 
    # create instance to the steem database API
 
-   _database_api = Steem::DatabaseApi.new
+   _database_api = Steem::DatabaseApi.new Chain_Options
 
    # request account information from the Steem database
    # and print out the accounts balances found using a new
@@ -139,11 +143,11 @@ else
       Accounts = result.accounts
 
       if Accounts.length == 0 then
-         puts "No accounts found.".yellow
+	 puts "No accounts found.".yellow
       else
-         # print out the actual account balances.
+	 # print out the actual account balances.
 
-         print_account_balances Accounts
+	 print_account_balances Accounts
       end
    rescue => error
       Kernel::abort("Error reading accounts:\n".red + error.to_s)

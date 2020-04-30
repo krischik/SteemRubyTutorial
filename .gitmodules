@@ -8,3 +8,6 @@
 [submodule "Frameworks/radiator"]
 	path = Frameworks/radiator
 	url = https://github.com/krischik/radiator.git
+[submodule "Frameworks/steem-mechanize"]
+	path = Frameworks/steem-mechanize
+	url = https://github.com/krischik/steem-mechanize
