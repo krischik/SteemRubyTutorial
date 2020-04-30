@@ -24,7 +24,13 @@ gem "radiator", :version=>'1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
-require 'radiator'
+
+require_relative 'Radiator/Chain'
+
+##
+# Store the chain name for convenience.
+#
+Chain = Chain_Options[:chain]
 
 ##
 # amount of rows read from database in a single query. If
@@ -37,7 +43,7 @@ begin
    # create instance to the steem condenser API which
    # will give us access to the median history price
 
-   Contracts = Radiator::SSC::Contracts.new
+   Contracts = Radiator::SSC::Contracts.new Chain_Options
 rescue => error
    # I am using Kernel::abort so the code snipped
    # including error handler can be copy pasted into other
@@ -89,12 +95,12 @@ else
    _current = 0
    loop do
       _rows = Contracts.find(
-	 contract:   _contract,
-	 table:      _table,
-	 query:      _query,
-	 limit:      Query_Limit,
-	 offset:     _current,
-	 descending: false
+         contract:   _contract,
+         table:      _table,
+         query:      _query,
+         limit:      Query_Limit,
+         offset:     _current,
+         descending: false
       )
 
       # Exit loop when no result set is returned.

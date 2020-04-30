@@ -35,7 +35,7 @@ begin
    # create instance to the steem condenser API which
    # will give us access to the median history price
 
-   Condenser_Api = Radiator::CondenserApi.new Chain_Options
+   Condenser_Api = Radiator::CondenserApi.new Chain_Options Chain_Options
 
    # read the global properties. Yes, it's as simple as
    # this.

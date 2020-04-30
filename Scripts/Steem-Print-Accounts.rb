@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -23,7 +23,13 @@ gem "radiator", :version=>'1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
-require 'radiator'
+
+require_relative 'Radiator/Chain'
+
+##
+# Store the chain name for convenience.
+#
+Chain = Chain_Options[:chain]
 
 if ARGV.length == 0 then
    puts "
@@ -40,7 +46,7 @@ else
 
    # create instance to the steem database API
 
-   Database_Api = Radiator::DatabaseApi.new
+   Database_Api = Radiator::DatabaseApi.new Chain_Options
 
    # request account information from the steem database
    # and print out the accounts found using pretty print

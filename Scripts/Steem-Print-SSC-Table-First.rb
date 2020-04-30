@@ -24,13 +24,19 @@ gem "radiator", :version=>'1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
-require 'radiator'
+
+require_relative 'Radiator/Chain'
+
+##
+# Store the chain name for convenience.
+#
+Chain = Chain_Options[:chain]
 
 begin
    # create instance to the steem condenser API which
    # will give us access to the median history price
 
-   Contracts = Radiator::SSC::Contracts.new
+   Contracts = Radiator::SSC::Contracts.new Chain_Options
 rescue => error
    # I am using Kernel::abort so the code snipped
    # including error handler can be copy pasted into other

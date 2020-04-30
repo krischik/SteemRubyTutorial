@@ -20,7 +20,7 @@ setopt No_XTrace
 setopt Multi_OS
 setopt Err_Exit
 
-pushd "${PROJECT_HOME}/Frameworks/steem-ruby" 
+pushd "${PROJECT_HOME}/Frameworks/steem-ruby"
     gem build "steem-ruby.gemspec"
     gem install "steem-ruby"
 popd

@@ -31,13 +31,16 @@ require_relative 'Radiator/Price'
 require_relative 'Radiator/Reward_Fund'
 
 ##
-# Store the chain name for convenience.
+# Store the chain name and symbols for convenience.
 #
-Chain = Chain_Options[:chain]
+Chain      = Chain_Options[:chain]
+DEBT_ASSET = Radiator::Type::Amount.debt_asset Chain
+CORE_ASSET = Radiator::Type::Amount.core_asset Chain
+VEST_ASSET = Radiator::Type::Amount.vest_asset Chain
 
 begin
    # create instance to the steem condenser API which
-   # will give us access to
+   # will give us access to the requested chain.
 
    Condenser_Api = Radiator::CondenserApi.new Chain_Options
 
@@ -53,10 +56,6 @@ rescue => error
    Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
 
-DEBT_ASSET = Radiator::Type::Amount.debt_asset Chain
-CORE_ASSET = Radiator::Type::Amount.core_asset Chain
-VEST_ASSET = Radiator::Type::Amount.vest_asset Chain
-
 # shows usage help if the no values are given to convert.
 
 if ARGV.length == 0 then
@@ -64,7 +63,7 @@ if ARGV.length == 0 then
 Steem_To_VEST — Print convert list of Steem value to VESTS values
 
 Usage:
-   Steem-Print-Balances values …
+   Radiator_To_VEST values …
 
 "
 else
@@ -74,15 +73,17 @@ else
 
    # Calculate the conversion Rate. We use the Amount class
    # from Part 2 to convert the sting values into amounts.
+   # The chain need to be passed as different chains have
+   # different symbols
 
    _total_vesting_fund_steem = Radiator::Type::Amount.new(Global_Properties.total_vesting_fund_steem, Chain)
    _total_vesting_shares     = Radiator::Type::Amount.new(Global_Properties.total_vesting_shares, Chain)
    _conversion_rate          = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 
-   # read the  median history value and
-   # Calculate the conversion Rate for Vests to steem
-   # backed dollar. We use the Amount class from Part 2 to
-   # convert the string values into amounts.
+   # read the  median history value and Calculate the
+   # conversion Rate for Vests to steem backed dollar.
+   # We use the Amount class from Part 2 to convert
+   # the string values into amounts.
 
    _median_history_price = Radiator::Type::Price.get Chain
    SBD_Median_Price      = _median_history_price.to_f
@@ -121,7 +122,10 @@ else
       _max_rshares      = _max_power * _final_vest
       _max_vote_value   = (_max_rshares / Recent_Claims) * Reward_Balance * SBD_Median_Price
 
-      puts "%1$18.6f %2$-5s = %3$15.3f %4$-5s,   100%% Upvote: %5$6.3f %6$-3s" % [
+      # Print the result using the the correct symbols for the
+      # requested chain
+
+      puts "%1$18.6f %2$-5s = %3$15.3f %4$-5s,   100%% Upvote: %5$8.3f %6$-3s" % [
 	 value,
 	 CORE_ASSET,
 	 _vest,

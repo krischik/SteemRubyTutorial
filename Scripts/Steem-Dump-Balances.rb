@@ -43,9 +43,8 @@ begin
    # backed dollar. We use the Amount class from Part 2 to
    # convert the string values into amounts.
 
-   _median_history_price = _condenser_api.get_current_median_history_price.result
-   _base                 = Steem::Type::Amount.new(_median_history_price.base, Chain) 
-   _quote                = Steem::Type::Amount.new(_median_history_price.quote, Chain)
+
+   _median_history_price = Steem::Type::Price.get Chain
    SBD_Median_Price      = _base.to_f / _quote.to_f
 
    # read the global properties and

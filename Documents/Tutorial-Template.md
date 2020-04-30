@@ -55,7 +55,7 @@ This tutorial shows how to interact with the Steem and Hive blockchain as well a
 * **steem-mechanize** drop in replacement for steem-api with more performant network I/O
 * **radiator** uses classic function return values and provides high level human readable data.
 
-Since both APIs have advantages and disadvantages sample code for both APIs will be provided so the reader ca decide which is more suitable.
+Since all APIs have advantages and disadvantages sample code for both APIs will be provided so the reader ca decide which is more suitable.
 
 ## Requirements
 
@@ -95,7 +95,7 @@ popd
 **Note:** All APIs steem-ruby, steem-mechanize and radiator provide a file called `steem.rb`. This means that:
 
 1. When more then one APIs is installed ruby must be told which one to use.
-2. The tree APIs can't be used in the same script.
+2. The three APIs can't be used in the same script.
 
 If there is anything not clear you can ask in the comments.
 
@@ -165,7 +165,11 @@ The output of the command (for the steem account) looks identical to the previou
 
 <center>![Beneficiary.png](https://cdn.steemitimages.com/DQmYnQfCi8Z12jkaNqADKc37gZ89RKdvdLzp7uXRjbo1AHy/image.png)</center>
 
+-----
+
 <center>![posts5060.png](https://files.steempeak.com/file/steempeak/krischik/JaSBtA1B-posts-50-60.png)![comments5870.png](https://files.steempeak.com/file/steempeak/krischik/3zh0hy1H-comments-58-70.png)![votes6680.png](https://files.steempeak.com/file/steempeak/krischik/VVR0lQ3T-votes-66-80.png)![level9090.png](https://files.steempeak.com/file/steempeak/krischik/K8PLgaRh-level-90-90.png)![payout6680.png](https://files.steempeak.com/file/steempeak/krischik/EKjrC9xN-payout-66-80.png)![commented5870.png](https://files.steempeak.com/file/steempeak/krischik/bMY0fJGX-commented-58-70.png)![voted5060.png](https://files.steempeak.com/file/steempeak/krischik/P5yFKQ8S-voted-50-60.png)</center>
+
+<center>![posts5060.png](https://images.hive.blog/50x60/http://hivebuzz.me/accounts/@krischik/posts.png)![comments5870.png](https://images.hive.blog/58x70/http://hivebuzz.me/accounts/@krischik/comments.png)![upvotes6680.png](https://images.hive.blog/66x80/http://hivebuzz.me/accounts/@krischik/upvotes.png)![level9090.png](https://images.hive.blog/90x90/http://hivebuzz.me/accounts/@krischik/level.png)![payout6680.png](https://images.hive.blog/66x80/http://hivebuzz.me/accounts/@krischik/payout.png)![replies5870.png](https://images.hive.blog/58x70/http://hivebuzz.me/accounts/@krischik/replies.png)![upvoted5060.png](https://images.hive.blog/50x60/http://hivebuzz.me/accounts/@krischik/upvoted.png)</center>
 
 <!-- vim: set wrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab : -->
 <!-- vim: set textwidth=0 filetype=markdown foldmethod=marker nospell : -->

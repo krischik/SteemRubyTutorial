@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -16,25 +16,24 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the radiator gem. This is
-# only needed if you have both steem-api and radiator
-# installed.
-
-gem "radiator", :version=>'1.0.0', :require => "steem"
-
 require 'pp'
 require 'colorize'
 require 'contracts'
-require 'radiator'
 
 # The Amount class is used in most Scripts so it was
 # moved into a separate file.
 
+require_relative 'Radiator/Chain'
 require_relative 'Radiator/Reward_Fund'
 require_relative 'Radiator/Amount'
 require_relative 'Radiator/Price'
 require_relative 'SCC/Balance'
 require_relative 'SCC/Token'
+
+##
+# Store the chain name for convenience.
+#
+Chain = Chain_Options[:chain]
 
 Five_Days = 5 * 24 * 60 * 60
 
@@ -44,12 +43,12 @@ begin
    # backed dollar. We use the Amount class from Part 2 to
    # convert the string values into amounts.
 
-   _median_history_price = Radiator::Type::Price.get
+   _median_history_price = Radiator::Type::Price.get Chain
    SBD_Median_Price      = _median_history_price.to_f
 
    # read the reward funds.
 
-   _reward_fund = Radiator::Type::Reward_Fund.get
+   _reward_fund = Radiator::Type::Reward_Fund.get Chain
 
    # extract variables needed for the vote estimate. This
    # is done just once here to reduce the amount of string
@@ -109,13 +108,13 @@ def print_account_balances(accounts)
       # create an amount instances for each balance to be
       # used for further processing
 
-      _balance                  = Radiator::Type::Amount.new account.balance
-      _savings_balance          = Radiator::Type::Amount.new account.savings_balance
-      _sbd_balance              = Radiator::Type::Amount.new account.sbd_balance
-      _savings_sbd_balance      = Radiator::Type::Amount.new account.savings_sbd_balance
-      _vesting_shares           = Radiator::Type::Amount.new account.vesting_shares
-      _delegated_vesting_shares = Radiator::Type::Amount.new account.delegated_vesting_shares
-      _received_vesting_shares  = Radiator::Type::Amount.new account.received_vesting_shares
+      _balance                  = Radiator::Type::Amount.new(account.balance, Chain)
+      _savings_balance          = Radiator::Type::Amount.new(account.savings_balance, Chain)
+      _sbd_balance              = Radiator::Type::Amount.new(account.sbd_balance, Chain)
+      _savings_sbd_balance      = Radiator::Type::Amount.new(account.savings_sbd_balance, Chain)
+      _vesting_shares           = Radiator::Type::Amount.new(account.vesting_shares, Chain)
+      _delegated_vesting_shares = Radiator::Type::Amount.new(account.delegated_vesting_shares, Chain)
+      _received_vesting_shares  = Radiator::Type::Amount.new(account.received_vesting_shares, Chain)
       _voting_power             = real_voting_power account
 
       # calculate actual vesting by adding and subtracting
@@ -128,11 +127,11 @@ def print_account_balances(accounts)
       # calculate the account value by adding all balances in SBD
 
       _account_value =
-	 _balance.to_sbd +
-	    _savings_balance.to_sbd +
-	    _sbd_balance.to_sbd +
-	    _savings_sbd_balance.to_sbd +
-	    _vesting_shares.to_sbd
+         _balance.to_sbd +
+            _savings_balance.to_sbd +
+            _sbd_balance.to_sbd +
+            _savings_sbd_balance.to_sbd +
+            _vesting_shares.to_sbd
 
       # calculate the vote value for 100% upvotes
 
@@ -191,42 +190,42 @@ def print_account_balances(accounts)
       puts("  Received Power         = " + _received_vesting_shares.to_ansi_s)
       puts("  Actual Power           = " + _total_vests.to_ansi_s)
       puts(("  Voting Power           = " +
-	 "%1$15.3f SBD".colorize(
-	    if _voting_power == 1.0 then
-	       :green
-	    else
-	       :red
-	    end
-	 ) + " of " + "%2$1.3f SBD".blue) % [
-	 _current_vote_value,
-	 _max_vote_value])
+         "%1$15.3f SBD".colorize(
+            if _voting_power == 1.0 then
+               :green
+            else
+               :red
+            end
+         ) + " of " + "%2$1.3f SBD".blue) % [
+         _current_vote_value,
+         _max_vote_value])
       puts(("  Account Value (steem)  = " + "%1$15.3f %2$s".green) % [
-	 _account_value.to_f,
-	 _account_value.asset])
+         _account_value.to_f,
+         _account_value.asset])
 
       _scc_balances = SCC::Balance.account account.name
-      _scc_value    = Radiator::Type::Amount.new("0.0 SBD")
+      _scc_value    = Radiator::Type::Amount.new("0.0 SBD", Chain)
       _scc_balances.each do |_scc_balance|
-	 token = _scc_balance.token
+         token = _scc_balance.token
 
-	 puts("  %1$-22.22s = %2$s" % [token.name, _scc_balance.to_ansi_s])
+         puts("  %1$-22.22s = %2$s" % [token.name, _scc_balance.to_ansi_s])
 
-	 # Add token value (in SDB to the account value.
-	 begin
-	    _sbd           = _scc_balance.to_sbd
-	    _scc_value     = _scc_value + _sbd
-	    _account_value = _account_value + _sbd
-	 rescue KeyError
-	    # do nothing.
-	 end
+         # Add token value (in SDB to the account value.
+         begin
+            _sbd           = _scc_balance.to_sbd
+            _scc_value     = _scc_value + _sbd
+            _account_value = _account_value + _sbd
+         rescue KeyError
+            # do nothing.
+         end
       end
 
       puts(("  Account Value (engine) = " + "%1$15.3f %2$s".green) % [
-	 _scc_value.to_f,
-	 _scc_value.asset])
+         _scc_value.to_f,
+         _scc_value.asset])
       puts(("  Account Value          = " + "%1$15.3f %2$s".green) % [
-	 _account_value.to_f,
-	 _account_value.asset])
+         _account_value.to_f,
+         _account_value.asset])
    end
 
    return
@@ -248,7 +247,7 @@ else
    # create instance to the steem database API. This is
    # needed to read account information.
 
-   _database_api = Radiator::DatabaseApi.new
+   _database_api = Radiator::DatabaseApi.new Chain_Options
 
    # request account information from the Steem database
    # and print out the accounts balances found using a new
