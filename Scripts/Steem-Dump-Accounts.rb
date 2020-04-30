@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
 ############################################################## {{{1 ##########
 #  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -20,11 +20,12 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "steem-ruby", :require => "steem"
+gem "steem-ruby", :version=>'1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
-require 'steem'
+
+require_relative 'Steem/Chain'
 
 if ARGV.length == 0 then
    puts "
@@ -42,7 +43,7 @@ else
 
    # create instance to the steem database API
 
-   Database_Api = Steem::DatabaseApi.new
+   Database_Api = Steem::DatabaseApi.new Chain_Options
 
    # request account information from the Steem database
    # and print out the accounts found using pretty print
@@ -53,9 +54,9 @@ else
       Accounts = result.accounts
 
       if Accounts.length == 0 then
-         puts "No accounts found.".yellow
+	 puts "No accounts found.".yellow
       else
-         pp Accounts
+	 pp Accounts
       end
    rescue => error
       Kernel::abort("Error reading accounts:\n".red + error.to_s)

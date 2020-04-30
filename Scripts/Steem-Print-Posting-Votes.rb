@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -20,17 +20,22 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "radiator", :require => "steem"
+gem "radiator", :version=>'1.0.0', :require => "steem"
 
 require 'colorize'
 require 'contracts'
-require 'radiator'
 
 # The Amount class is used in most Scripts so it was
 # moved into a separate file.
 
+require_relative 'Radiator/Chain'
 require_relative 'Radiator/Amount'
 require_relative 'Radiator/Reward_Fund'
+
+##
+# Store the chain name for convenience.
+#
+Chain = Chain_Options[:chain]
 
 ##
 # Class to handle vote values from postings.
@@ -120,34 +125,34 @@ class Vote < Radiator::Type::Serializer
       _estimate = estimate
 
       return(
-	 (
-	 "%1$-16s | " + "%2$7.2f%%".colorize(
-	    if _percent > 0.0 then
-	       :green
-	    elsif _percent < -0.0 then
-	       :red
-	    else
-	       :white
-	    end
-	 ) +
-	    " |" + "%3$10.3f SBD".colorize(
-	    if _estimate > 0.0005 then
-	       :green
-	    elsif _estimate < -0.0005 then
-	       :red
-	    else
-	       :white
-	    end
-	 ) +
-	    " |%4$10d |%5$16d |%6$20s |"
-	 ) % [
-	    @voter,
-	    _percent,
-	    _estimate,
-	    @weight,
-	    @rshares,
-	    @time.strftime("%Y-%m-%d %H:%M:%S")
-	 ])
+         (
+         "%1$-16s | " + "%2$7.2f%%".colorize(
+            if _percent > 0.0 then
+               :green
+            elsif _percent < -0.0 then
+               :red
+            else
+               :white
+            end
+         ) +
+            " |" + "%3$10.3f SBD".colorize(
+            if _estimate > 0.0005 then
+               :green
+            elsif _estimate < -0.0005 then
+               :red
+            else
+               :white
+            end
+         ) +
+            " |%4$10d |%5$16d |%6$20s |"
+         ) % [
+            @voter,
+            _percent,
+            _estimate,
+            @weight,
+            @rshares,
+            @time.strftime("%Y-%m-%d %H:%M:%S")
+         ])
    end
 
    class << self
@@ -163,39 +168,37 @@ class Vote < Radiator::Type::Serializer
       #
       Contract ArrayOf[HashOf[String => Or[String, Num]]] => nil
       def print_list (votes)
-	 # used to calculate the total vote value
-	 _total_estimate = 0.0
+         # used to calculate the total vote value
+         _total_estimate = 0.0
 
-	 votes.each do |_vote|
-	    _vote = Vote.new _vote
+         votes.each do |_vote|
+            _vote = Vote.new _vote
 
-	    puts _vote.to_ansi_s
+            puts _vote.to_ansi_s
 
-	    # add up extimate
-	    _total_estimate = _total_estimate + _vote.estimate
-	 end
+            # add up extimate
+            _total_estimate = _total_estimate + _vote.estimate
+         end
 
-	 # print the total estimate after the last vote
-	 puts((
-	      "Total vote value |          |" +
-		 "%1$10.3f SBD".colorize(
-		    if _total_estimate > 0.0005 then
-		       :green
-		    elsif _total_estimate < -0.0005 then
-		       :red
-		    else
-		       :white
-		    end
-		 ) +
-		 " |           |                 |                     |"
-	      ) % [
-	    _total_estimate
-	 ])
+         # print the total estimate after the last vote
+         puts((
+              "Total vote value |          |" +
+                 "%1$10.3f SBD".colorize(
+                    if _total_estimate > 0.0005 then
+                       :green
+                    elsif _total_estimate < -0.0005 then
+                       :red
+                    else
+                       :white
+                    end
+                 ) +
+                 " |           |                 |                     |"
+              ) % [
+            _total_estimate
+         ])
 
-	 return
+         return
       end
-
-      # print_list
 
       ##
       # Print the votes from a postings given as URLs:
@@ -212,25 +215,25 @@ class Vote < Radiator::Type::Serializer
       #
       Contract String => nil
       def print_url (url)
-	 _slug              = url.split('@').last
-	 _author, _permlink = _slug.split('/')
+         _slug              = url.split('@').last
+         _author, _permlink = _slug.split('/')
 
-	 puts("Post Author      : " + "%1$s".blue) % _author
-	 puts("Post ID          : " + "%1$s".blue) % _permlink
-	 puts("Voter name       |  percent |         value |    weight |         rshares |    vote date & time |")
-	 puts("-----------------+----------+---------------+-----------+-----------------+---------------------+")
+         puts("Post Author      : " + "%1$s".blue) % _author
+         puts("Post ID          : " + "%1$s".blue) % _permlink
+         puts("Voter name       |  percent |         value |    weight |         rshares |    vote date & time |")
+         puts("-----------------+----------+---------------+-----------+-----------------+---------------------+")
 
-	 Condenser_Api.get_active_votes(_author, _permlink) do |votes|
-	    if votes.length == 0 then
-	       puts "No votes found.".yellow
-	    else
-	       Vote.print_list votes
-	    end
-	 rescue => error
-	    Kernel::abort(("Error reading posting “%1$s”:\n".red + "%2$s") % [_permlink, error.to_s])
-	 end
+         Condenser_Api.get_active_votes(_author, _permlink) do |votes|
+            if votes.length == 0 then
+               puts "No votes found.".yellow
+            else
+               Vote.print_list votes
+            end
+         rescue => error
+            Kernel::abort(("Error reading posting “%1$s”:\n".red + "%2$s") % [_permlink, error.to_s])
+         end
 
-	 return
+         return
       end # print_url
    end # self
 end
@@ -239,7 +242,7 @@ begin
    # create instance to the steem condenser API which
    # will give us access to the active votes.
 
-   Condenser_Api = Radiator::CondenserApi.new
+   Condenser_Api = Radiator::CondenserApi.new Chain_Options
 
    # read the global properties and median history values
    # and calculate the conversion Rate for steem to SBD
@@ -247,8 +250,8 @@ begin
    # string values into amounts.
 
    _median_history_price = Condenser_Api.get_current_median_history_price.result
-   _base                 = Radiator::Type::Amount.new _median_history_price.base
-   _quote                = Radiator::Type::Amount.new _median_history_price.quote
+   _base                 = Radiator::Type::Amount.new(_median_history_price.base, Chain)
+   _quote                = Radiator::Type::Amount.new(_median_history_price.quote, Chain)
    SBD_Median_Price      = _base.to_f / _quote.to_f
 
    # read the reward funds. `get_reward_fund` takes one
@@ -257,7 +260,7 @@ begin
    # here to reduce the amount of string parsing needed.
    # `get_reward_fund` takes one parameter is always "post".
 
-   _reward_fund   = Radiator::Type::Reward_Fund.get
+   _reward_fund   = Radiator::Type::Reward_Fund.get Chain
    Recent_Claims  = _reward_fund.recent_claims
    Reward_Balance = _reward_fund.reward_balance
 
