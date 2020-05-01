@@ -16,71 +16,72 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-setopt XTrace
+setopt No_XTrace
 setopt Err_Exit
 
 git lfs update
-# git flow init
+git flow init || true
 
 git config "user.name"          "Martin Krischik"
 git config "user.email"         "krischik@users.sourceforge.net"
 git config "credential.helper"  "store"
 git config "push.default"       "current"
 
-# git branch --set-upstream-to="remotes/origin/master"            "master"
-# git branch --set-upstream-to="remotes/origin/develop"           "develop"
+git branch --set-upstream-to="remotes/origin/master"            "master"
+git branch --set-upstream-to="remotes/origin/develop"           "develop"
 
 pushd "Wiki"
-    git lfs update
-
+    git config "credential.helper"  "store"
+    git config "push.default"       "current"
     git config "user.name"          "Martin Krischik"
     git config "user.email"         "krischik@users.sourceforge.net"
+
+    git lfs update
 popd
 
 pushd "Frameworks/radiator"
-    git remote add upstream https://github.com/inertia186/radiator.git
-    git fetch upstream 
-
-    # git checkout --track "remotes/origin/master"
-
-    git lfs update
-#    git flow init
-
     git config "user.name"          "Martin Krischik"
     git config "user.email"         "krischik@users.sourceforge.net"
     git config "credential.helper"  "store"
     git config "push.default"       "current"
+
+    git checkout --track "remotes/origin/master" || true
+
+    git lfs update
+    git flow init || true
+
+    git remote add upstream https://github.com/inertia186/radiator.git || true
+    git fetch upstream 
 popd
 
 pushd "Frameworks/steem-ruby"
+    git config "user.name"          "Martin Krischik"
+    git config "user.email"         "krischik@users.sourceforge.net"
+    git config "credential.helper"  "store"
+    git config "push.default"       "current"
+
     git remote add upstream https://github.com/inertia186/steem-ruby.git
     git fetch upstream 
 
-    # git checkout --track "remotes/origin/master"
+    git checkout --track "remotes/origin/master" || true
 
     git lfs update
-#    git flow init
-
-    git config "user.name"          "Martin Krischik"
-    git config "user.email"         "krischik@users.sourceforge.net"
-    git config "credential.helper"  "store"
-    git config "push.default"       "current"
+    git flow init || true
 popd
 
 pushd "Frameworks/steem-mechanize"
-    git remote add upstream https://github.com/inertia186/steem-mechanize.git
-    git fetch upstream 
-
-    # git branch develop
-    # git checkout develop 
-
-    git lfs update
-#    git flow init
-
     git config "user.name"          "Martin Krischik"
     git config "user.email"         "krischik@users.sourceforge.net"
     git config "credential.helper"  "store"
     git config "push.default"       "current"
+
+    git remote add upstream https://github.com/inertia186/steem-mechanize.git
+    git fetch upstream 
+
+    git checkout --track "remotes/origin/master" || true
+
+    git lfs update
+    git flow init || true
 popd
 
 ############################################################ {{{1 ###########
