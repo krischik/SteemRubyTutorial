@@ -1,7 +1,3 @@
-[submodule "Wiki"]
-	path = Wiki
-	url = https://github.com/krischik/SteemRubyTutorial.wiki.git
-	branch = master
 [submodule "Frameworks/steem-ruby"]
 	path = Frameworks/steem-ruby
 	url = https://github.com/krischik/steem-ruby
@@ -11,3 +7,7 @@
 [submodule "Frameworks/steem-mechanize"]
 	path = Frameworks/steem-mechanize
 	url = https://github.com/krischik/steem-mechanize
+[submodule "Wiki"]
+	path = Wiki
+	url = https://github.com/krischik/SteemRubyTutorial.wiki.git
+	branch = master

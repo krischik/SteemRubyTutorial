@@ -16,26 +16,19 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-setopt No_XTrace
-setopt No_Err_Exit
+setopt XTrace
+setopt Err_Exit
 
 git lfs update
-git flow init
+# git flow init
 
 git config "user.name"          "Martin Krischik"
 git config "user.email"         "krischik@users.sourceforge.net"
 git config "credential.helper"  "store"
 git config "push.default"       "current"
 
-git branch --set-upstream-to="remotes/origin/master"            "master"
-git branch --set-upstream-to="remotes/origin/develop"           "develop"
-
-if test -d "Wiki"; then
-    git submodule init
-    git submodule update
-else
-    git submodule add -b master "https://github.com/krischik/SteemRubyTutorial.wiki.git" "Wiki"
-popd
+# git branch --set-upstream-to="remotes/origin/master"            "master"
+# git branch --set-upstream-to="remotes/origin/develop"           "develop"
 
 pushd "Wiki"
     git lfs update
@@ -44,14 +37,14 @@ pushd "Wiki"
     git config "user.email"         "krischik@users.sourceforge.net"
 popd
 
-pushd "/Frameworks/radiator"
+pushd "Frameworks/radiator"
     git remote add upstream https://github.com/inertia186/radiator.git
     git fetch upstream 
 
-    git checkout --track "remotes/origin/master"
+    # git checkout --track "remotes/origin/master"
 
     git lfs update
-    git flow init
+#    git flow init
 
     git config "user.name"          "Martin Krischik"
     git config "user.email"         "krischik@users.sourceforge.net"
@@ -59,14 +52,14 @@ pushd "/Frameworks/radiator"
     git config "push.default"       "current"
 popd
 
-pushd "/Frameworks/steem-ruby"
+pushd "Frameworks/steem-ruby"
     git remote add upstream https://github.com/inertia186/steem-ruby.git
     git fetch upstream 
 
-    git checkout --track "remotes/origin/master"
+    # git checkout --track "remotes/origin/master"
 
     git lfs update
-    git flow init
+#    git flow init
 
     git config "user.name"          "Martin Krischik"
     git config "user.email"         "krischik@users.sourceforge.net"
@@ -74,21 +67,20 @@ pushd "/Frameworks/steem-ruby"
     git config "push.default"       "current"
 popd
 
-pushd "/Frameworks/steem-mechanize"
+pushd "Frameworks/steem-mechanize"
     git remote add upstream https://github.com/inertia186/steem-mechanize.git
     git fetch upstream 
 
-    git branch develop
-    git checkout develop 
+    # git branch develop
+    # git checkout develop 
 
     git lfs update
-    git flow init
+#    git flow init
 
     git config "user.name"          "Martin Krischik"
     git config "user.email"         "krischik@users.sourceforge.net"
     git config "credential.helper"  "store"
     git config "push.default"       "current"
-
 popd
 
 ############################################################ {{{1 ###########
