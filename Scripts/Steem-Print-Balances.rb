@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 ############################################################# {{{1 ##########
-#  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
+#  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -33,7 +33,10 @@ require_relative 'SCC/Token'
 ##
 # Store the chain name for convenience.
 #
-Chain = Chain_Options[:chain]
+Chain      = Chain_Options[:chain]
+DEBT_ASSET = Steem::Type::Amount.debt_asset Chain
+CORE_ASSET = Steem::Type::Amount.core_asset Chain
+VEST_ASSET = Steem::Type::Amount.vest_asset Chain
 
 Five_Days = 5 * 24 * 60 * 60
 
@@ -127,11 +130,11 @@ def print_account_balances(accounts)
       # calculate the account value by adding all balances in SBD
 
       _account_value =
-         _balance.to_sbd +
-            _savings_balance.to_sbd +
-            _sbd_balance.to_sbd +
-            _savings_sbd_balance.to_sbd +
-            _vesting_shares.to_sbd
+	 _balance.to_sbd +
+	    _savings_balance.to_sbd +
+	    _sbd_balance.to_sbd +
+	    _savings_sbd_balance.to_sbd +
+	    _vesting_shares.to_sbd
 
       # calculate the vote value for 100% upvotes
 
@@ -148,9 +151,9 @@ def print_account_balances(accounts)
       # rshares = power * final_vest / 10000
       # estimate = rshares / recent_claims * reward_balance * sbd_median_price
       #
-      # | Name                    | API                                          | Desciption                                                |
+      # | Name                    | API                                          | Description                                               |
       # |-------------------------|----------------------------------------------|-----------------------------------------------------------|
-      # |weight                   |choosen by the user                           |Weight of vote in %. Fixed point with 4 places             |
+      # |weight                   |choose by the user                            |Weight of vote in %. Fixed point with 4 places             |
       # |voting_power¹            |calculated from the last vote                 |Voting power at last vote in %.                            |
       # |vesting_shares           |DatabaseApi.get_accounts                      |VESTS owned by account                                     |
       # |received_vesting_shares  |DatabaseApi.get_accounts                      |VESTS delegated from other accounts                        |
@@ -181,51 +184,52 @@ def print_account_balances(accounts)
       # decimal point
 
       puts(("Account: %1$s".blue + +" " + "(%2$s)".green) % [account.name, _vesting_shares.to_level])
-      puts("  SBD                    = " + _sbd_balance.to_ansi_s)
-      puts("  SBD Savings            = " + _savings_sbd_balance.to_ansi_s)
-      puts("  Steem                  = " + _balance.to_ansi_s)
-      puts("  Steem Savings          = " + _savings_balance.to_ansi_s)
-      puts("  Steem Power            = " + _vesting_shares.to_ansi_s)
+      puts("  Dept                   = " + _sbd_balance.to_ansi_s)
+      puts("  Dept Savings           = " + _savings_sbd_balance.to_ansi_s)
+      puts("  Core                   = " + _balance.to_ansi_s)
+      puts("  Core Savings           = " + _savings_balance.to_ansi_s)
+      puts("  Power                  = " + _vesting_shares.to_ansi_s)
       puts("  Delegated Power        = " + _delegated_vesting_shares.to_ansi_s)
       puts("  Received Power         = " + _received_vesting_shares.to_ansi_s)
       puts("  Actual Power           = " + _total_vests.to_ansi_s)
       puts(("  Voting Power           = " +
-         "%1$15.3f SBD".colorize(
-            if _voting_power == 1.0 then
-               :green
-            else
-               :red
-            end
-         ) + " of " + "%2$1.3f SBD".blue) % [
-         _current_vote_value,
-         _max_vote_value])
+	 "%1$15.3f %3$-3s".colorize(
+	    if _voting_power == 1.0 then
+	       :green
+	    else
+	       :red
+	    end
+	 ) + " of " + "%2$1.3f %3$-3s".blue) % [
+	 _current_vote_value,
+	 _max_vote_value,
+	 DEBT_ASSET])
       puts(("  Account Value (steem)  = " + "%1$15.3f %2$s".green) % [
-         _account_value.to_f,
-         _account_value.asset])
+	 _account_value.to_f,
+	 _account_value.asset])
 
       _scc_balances = SCC::Balance.account account.name
       _scc_value    = Radiator::Type::Amount.new("0.0 SBD", Chain)
       _scc_balances.each do |_scc_balance|
-         token = _scc_balance.token
+	 token = _scc_balance.token
 
-         puts("  %1$-22.22s = %2$s" % [token.name, _scc_balance.to_ansi_s])
+	 puts("  %1$-22.22s = %2$s" % [token.name, _scc_balance.to_ansi_s])
 
-         # Add token value (in SDB to the account value.
-         begin
-            _sbd           = _scc_balance.to_sbd
-            _scc_value     = _scc_value + _sbd
-            _account_value = _account_value + _sbd
-         rescue KeyError
-            # do nothing.
-         end
+	 # Add token value (in SDB to the account value.
+	 begin
+	    _sbd           = _scc_balance.to_sbd
+	    _scc_value     = _scc_value + _sbd
+	    _account_value = _account_value + _sbd
+	 rescue KeyError
+	    # do nothing.
+	 end
       end
 
       puts(("  Account Value (engine) = " + "%1$15.3f %2$s".green) % [
-         _scc_value.to_f,
-         _scc_value.asset])
+	 _scc_value.to_f,
+	 _scc_value.asset])
       puts(("  Account Value          = " + "%1$15.3f %2$s".green) % [
-         _account_value.to_f,
-         _account_value.asset])
+	 _account_value.to_f,
+	 _account_value.asset])
    end
 
    return

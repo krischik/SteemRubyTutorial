@@ -120,12 +120,12 @@ else
       # requested chain
 
       puts "%1$18.6f %2$-5s = %3$15.3f %4$-5s,   100%% Upvote: %5$8.3f %6$-3s" % [
-	 value,
-	 VEST_ASSET,
-	 _steem,
-	 CORE_ASSET,
-	 _max_vote_value,
-	 DEBT_ASSET]
+         value,
+         VEST_ASSET,
+         _steem,
+         CORE_ASSET,
+         _max_vote_value,
+         DEBT_ASSET]
    end
 end
 

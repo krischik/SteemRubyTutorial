@@ -123,37 +123,37 @@ class Vote < Steem::Type::BaseType
       # All the magic happens in the `%` operators which
       # calls sprintf which in turn formats the string.
       return(
-	 (
-	 "%1$-16s | " +
-	    "%2$7.2f%%".colorize(
-	       if _percent > 0.0 then
-		  :green
-	       elsif _percent < -0.0 then
-		  :red
-	       else
-		  :white
-	       end
-	    ) +
-	    " |" +
-	    "%3$10.3f %4$-3s".colorize(
-	       if _estimate > 0.0005 then
-		  :green
-	       elsif _estimate < -0.0005 then
-		  :red
-	       else
-		  :white
-	       end
-	    ) +
-	    " |%5$10d |%6$16d |%7$20s |"
-	 ) % [
-	    @voter,
-	    _percent,
-	    _estimate,
-	    Steem::Type::Amount.debt_asset(Chain),
-	    @weight,
-	    @rshares,
-	    @time.strftime("%Y-%m-%d %H:%M:%S")
-	 ])
+         (
+         "%1$-16s | " +
+            "%2$7.2f%%".colorize(
+               if _percent > 0.0 then
+                  :green
+               elsif _percent < -0.0 then
+                  :red
+               else
+                  :white
+               end
+            ) +
+            " |" +
+            "%3$10.3f %4$-3s".colorize(
+               if _estimate > 0.0005 then
+                  :green
+               elsif _estimate < -0.0005 then
+                  :red
+               else
+                  :white
+               end
+            ) +
+            " |%5$10d |%6$16d |%7$20s |"
+         ) % [
+            @voter,
+            _percent,
+            _estimate,
+            Steem::Type::Amount.debt_asset(Chain),
+            @weight,
+            @rshares,
+            @time.strftime("%Y-%m-%d %H:%M:%S")
+         ])
    end
 
    class << self
@@ -170,37 +170,37 @@ class Vote < Steem::Type::BaseType
       #
       Contract ArrayOf[HashOf[String => Or[String, Num]]] => nil
       def print_list (votes)
-	 # used to calculate the total vote value
-	 _total_estimate = 0.0
+         # used to calculate the total vote value
+         _total_estimate = 0.0
 
-	 votes.each do |_vote|
-	    _vote = Vote.new _vote
+         votes.each do |_vote|
+            _vote = Vote.new _vote
 
-	    puts _vote.to_ansi_s
+            puts _vote.to_ansi_s
 
-	    # add up extimate
-	    _total_estimate = _total_estimate + _vote.estimate
-	 end
+            # add up extimate
+            _total_estimate = _total_estimate + _vote.estimate
+         end
 
-	 # print the total estimate after the last vote
-	 puts((
-	      "Total vote value |          |" +
-		 "%1$10.3f %2$-3s".colorize(
-		    if _total_estimate > 0.0005 then
-		       :green
-		    elsif _total_estimate < -0.0005 then
-		       :red
-		    else
-		       :white
-		    end
-		 ) +
-		 " |           |                 |                     |"
-	      ) % [
-	    _total_estimate,
-	    Steem::Type::Amount.debt_asset(Chain)
-	 ])
+         # print the total estimate after the last vote
+         puts((
+              "Total vote value |          |" +
+                 "%1$10.3f %2$-3s".colorize(
+                    if _total_estimate > 0.0005 then
+                       :green
+                    elsif _total_estimate < -0.0005 then
+                       :red
+                    else
+                       :white
+                    end
+                 ) +
+                 " |           |                 |                     |"
+              ) % [
+            _total_estimate,
+            Steem::Type::Amount.debt_asset(Chain)
+         ])
 
-	 return
+         return
       end
 
       ##
@@ -218,25 +218,25 @@ class Vote < Steem::Type::BaseType
       #
       Contract String => nil
       def print_url (url)
-	 _slug              = url.split('@').last
-	 _author, _permlink = _slug.split('/')
+         _slug              = url.split('@').last
+         _author, _permlink = _slug.split('/')
 
-	 puts(("Post Author      : " + "%1$s".blue) % [_author])
-	 puts(("Post ID          : " + "%1$s".blue) % [_permlink])
-	 puts("Voter name       |  percent |         value |    weight |         rshares |    vote date & time |")
-	 puts("-----------------+----------+---------------+-----------+-----------------+---------------------+")
+         puts(("Post Author      : " + "%1$s".blue) % [_author])
+         puts(("Post ID          : " + "%1$s".blue) % [_permlink])
+         puts("Voter name       |  percent |         value |    weight |         rshares |    vote date & time |")
+         puts("-----------------+----------+---------------+-----------+-----------------+---------------------+")
 
-	 Condenser_Api.get_active_votes(_author, _permlink) do |votes|
-	    if votes.length == 0 then
-	       puts "No votes found.".yellow
-	    else
-	       Vote.print_list votes
-	    end
-	 rescue => error
-	    Kernel::abort(("Error reading posting “%1$s”:\n".red + "%2$s") % [_permlink, error.to_s])
-	 end
+         Condenser_Api.get_active_votes(_author, _permlink) do |votes|
+            if votes.length == 0 then
+               puts "No votes found.".yellow
+            else
+               Vote.print_list votes
+            end
+         rescue => error
+            Kernel::abort(("Error reading posting “%1$s”:\n".red + "%2$s") % [_permlink, error.to_s])
+         end
 
-	 return
+         return
       end # print_url
    end # self
 end
