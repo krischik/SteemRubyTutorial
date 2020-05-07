@@ -142,12 +142,14 @@ module SCC
 	 #
 	 #  @param [String] name
 	 #     name of symbol
+	 #  @param [Symbol]
+	 #      chain to read the symbol from.
 	 #  @return [Array<SCC::Metric>]
 	 #     metric found
 	 #
 	 Contract String => Or[SCC::Metric, nil]
-	 def symbol (name)
-	    _metric = Steem_Engine.contracts_api.find_one(
+	 def symbol (name, chain)
+	    _metric = Steem_Engine.contracts_api(chain).find_one(
 	       contract: "market",
 	       table:    "metrics",
 	       query:    {

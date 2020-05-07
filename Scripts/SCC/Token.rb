@@ -20,7 +20,7 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "radiator", :version=>'1.0.0', :require => "steem"
+gem "radiator", :version => '1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
@@ -110,9 +110,10 @@ module SCC
 	 #  @return [SCC::Contract]
 	 #     contract found
 	 #
-	 Contract String => SCC::Token
-	 def symbol (name)
-	    _token = Steem_Engine.contracts_api.find_one(
+	 Contract String, Symbol => SCC::Token
+	 def symbol (name, chain)
+	    _contracts_api = Steem_Engine.contracts_api chain
+	    _token         = _contracts_api.find_one(
 	       contract: "tokens",
 	       table:    "tokens",
 	       query:    {
@@ -120,9 +121,7 @@ module SCC
 	       })
 
 	    return SCC::Token.new _token
-	 end
-
-	 # find
+	 end # symbol
 
 	 ##
 	 #  Get all token
@@ -132,13 +131,14 @@ module SCC
 	 #  @return [SCC::Contract]
 	 #     contract found
 	 #
-	 Contract String => ArrayOf[SCC::Token]
-	 def all
+	 Contract Symbol => ArrayOf[SCC::Token]
+	 def all(chain)
 	    _retval  = []
 	    _current = 0
 
 	    loop do
-	       _tokens = Steem_Engine.contracts_api.find(
+	       _contracts_api = Steem_Engine.contracts_api chain
+	       _tokens        = contracts_api.find(
 		  contract:   "tokens",
 		  table:      "tokens",
 		  query:      Steem_Engine::QUERY_ALL,

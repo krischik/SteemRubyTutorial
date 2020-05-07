@@ -53,26 +53,24 @@ module SCC
       class << self
 	 attr_reader :QUERY_ALL, :QUERY_LIMIT
 
-	 @api = nil
+	 @@contracts_api         = ::Hash.new
 
 	 ##
 	 # Access to contracts interface
 	 #
+	 # @param [Symbol]
+	 #      chain to read the symbol from.
 	 # @return [Radiator::SSC::Contracts]
 	 #     the contracts API.
 	 #
-	 Contract None => Radiator::SSC::Contracts
-	 def contracts_api
-	    if @api == nil then
-	       @api = Radiator::SSC::Contracts.new
+	 Contract Symbol => Radiator::SSC::Contracts
+	 def contracts_api (chain)
+	    unless @@contracts_api.key? chain then
+	       @@contracts_api.store(chain, Radiator::SSC::Contracts.new({chain: chain}))
 	    end
 
-	    return @api
+	    return @@contracts_api[chain]
 	 rescue => error
-	    # I am using Kernel::abort so the code snipped
-	    # including error handler can be copy pasted into other
-	    # scripts
-
 	    Kernel::abort("Error creating contracts API :\n".red + error.to_s)
 	 end #contracts
       end # self

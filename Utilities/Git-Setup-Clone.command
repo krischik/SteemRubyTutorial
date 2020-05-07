@@ -36,7 +36,7 @@ pushd "Wiki"
     git config "user.name"          "Martin Krischik"
     git config "user.email"         "krischik@users.sourceforge.net"
 
-    git lfs update
+    # Important: Don't add lfs or flow support for the Wiki!
 popd
 
 pushd "Frameworks/radiator"
