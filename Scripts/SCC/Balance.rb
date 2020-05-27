@@ -113,7 +113,7 @@ module SCC
 
 	 return Radiator::Type::Amount.to_amount(
 	    _steem,
-	    Radiator::Type::Amount::STEEM,
+	    Radiator::Type::Amount.core_asset(@chain),
 	    @chain)
       end
 

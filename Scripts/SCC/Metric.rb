@@ -147,7 +147,7 @@ module SCC
 	 #  @return [Array<SCC::Metric>]
 	 #     metric found
 	 #
-	 Contract String => Or[SCC::Metric, nil]
+	 Contract String, Symbol => Or[SCC::Metric, nil]
 	 def symbol (name, chain)
 	    _metric = Steem_Engine.contracts_api(chain).find_one(
 	       contract: "market",

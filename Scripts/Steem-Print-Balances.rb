@@ -37,7 +37,6 @@ Chain	   = Chain_Options[:chain]
 DEBT_ASSET = Radiator::Type::Amount.debt_asset Chain
 CORE_ASSET = Radiator::Type::Amount.core_asset Chain
 VEST_ASSET = Radiator::Type::Amount.vest_asset Chain
-
 Five_Days = 5 * 24 * 60 * 60
 
 begin
@@ -184,15 +183,15 @@ def print_account_balances(accounts)
       # decimal point
 
       puts(("Account: %1$s".blue + +" " + "(%2$s)".green) % [account.name, _vesting_shares.to_level])
-      puts("  Dept		     = " + _sbd_balance.to_ansi_s)
-      puts("  Dept Savings	     = " + _savings_sbd_balance.to_ansi_s)
-      puts("  Core		     = " + _balance.to_ansi_s)
-      puts("  Core Savings	     = " + _savings_balance.to_ansi_s)
-      puts("  Power		     = " + _vesting_shares.to_ansi_s)
-      puts("  Delegated Power	     = " + _delegated_vesting_shares.to_ansi_s)
-      puts("  Received Power	     = " + _received_vesting_shares.to_ansi_s)
-      puts("  Actual Power	     = " + _total_vests.to_ansi_s)
-      puts(("  Voting Power	      = " +
+      puts("  Dept                   = " + _sbd_balance.to_ansi_s)
+      puts("  Dept Savings           = " + _savings_sbd_balance.to_ansi_s)
+      puts("  Core                   = " + _balance.to_ansi_s)
+      puts("  Core Savings           = " + _savings_balance.to_ansi_s)
+      puts("  Power                  = " + _vesting_shares.to_ansi_s)
+      puts("  Delegated Power        = " + _delegated_vesting_shares.to_ansi_s)
+      puts("  Received Power         = " + _received_vesting_shares.to_ansi_s)
+      puts("  Actual Power           = " + _total_vests.to_ansi_s)
+      puts(("  Voting Power           = " +
 	 "%1$15.3f %3$-3s".colorize(
 	    if _voting_power == 1.0 then
 	       :green
@@ -227,7 +226,7 @@ def print_account_balances(accounts)
       puts(("  Account Value (engine) = " + "%1$15.3f %2$s".green) % [
 	 _scc_value.to_f,
 	 _scc_value.asset])
-      puts(("  Account Value	      = " + "%1$15.3f %2$s".green) % [
+      puts(("  Account Value          = " + "%1$15.3f %2$s".green) % [
 	 _account_value.to_f,
 	 _account_value.asset])
    end
