@@ -31,12 +31,11 @@ require_relative 'Steem/Price'
 ##
 # Store the chain name for convenience.
 #
-Chain	   = Chain_Options[:chain]
+Chain      = Chain_Options[:chain]
 DEBT_ASSET = Steem::Type::Amount.debt_asset Chain
 CORE_ASSET = Steem::Type::Amount.core_asset Chain
 VEST_ASSET = Steem::Type::Amount.vest_asset Chain
-
-Five_Days = 5 * 24 * 60 * 60
+Five_Days  = 5 * 24 * 60 * 60
 
 begin
    # read the  median history value and
@@ -45,7 +44,7 @@ begin
    # convert the string values into amounts.
 
    _median_history_price = Steem::Type::Price.get Chain
-   SBD_Median_Price	 = _median_history_price.to_f
+   SBD_Median_Price      = _median_history_price.to_f
 
    # read the reward funds.
 
@@ -85,16 +84,24 @@ end
 #     voting power as float from 0.0000 to 1.0000
 #
 def real_voting_power (account)
-   _last_vote_time = Time.strptime(account.last_vote_time + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
-   _current_time   = Time.now
-   _seconds_ago    = _current_time - _last_vote_time
-   _voting_power   = account.voting_power.to_f / 10000.0
-   _retval	   = _voting_power + (_seconds_ago / Five_Days)
+   _mana                     = account.voting_manabar
+   _vesting_shares           = Steem::Type::Amount.new(account.vesting_shares, Chain)
+   _received_vesting_shares  = Steem::Type::Amount.new(account.received_vesting_shares, Chain)
+   _delegated_vesting_shares = Steem::Type::Amount.new(account.delegated_vesting_shares, Chain)
+   _total_shares             = _vesting_shares + _received_vesting_shares - _delegated_vesting_shares
+   _max_mana                 = _total_shares.to_f * 1000000.0
+   _last_vote_time           = Time.strptime(_mana.last_update_time.to_s, "%s")
+   _current_time             = Time.now
+   _elapsed                  = _current_time - _last_vote_time
+   _current_mana             = _mana.current_mana.to_f + _elapsed * _max_mana / Five_Days
 
-   if _retval > 1.0 then
-      _retval = 1.0
-   end
+   _retval = if _current_mana > _max_mana then
+		1.0
+	     else
+		_current_mana / _max_mana
+	     end
 
+   #noinspection RubyYardReturnMatch
    return _retval.round(4)
 end
 
@@ -109,14 +116,14 @@ def print_account_balances(accounts)
       # create an amount instances for each balance to be
       # used for further processing
 
-      _balance			= Steem::Type::Amount.new(account.balance, Chain)
-      _savings_balance		= Steem::Type::Amount.new(account.savings_balance, Chain)
-      _sbd_balance		= Steem::Type::Amount.new(account.sbd_balance, Chain)
-      _savings_sbd_balance	= Steem::Type::Amount.new(account.savings_sbd_balance, Chain)
-      _vesting_shares		= Steem::Type::Amount.new(account.vesting_shares, Chain)
+      _balance                  = Steem::Type::Amount.new(account.balance, Chain)
+      _savings_balance          = Steem::Type::Amount.new(account.savings_balance, Chain)
+      _sbd_balance              = Steem::Type::Amount.new(account.sbd_balance, Chain)
+      _savings_sbd_balance      = Steem::Type::Amount.new(account.savings_sbd_balance, Chain)
+      _vesting_shares           = Steem::Type::Amount.new(account.vesting_shares, Chain)
       _delegated_vesting_shares = Steem::Type::Amount.new(account.delegated_vesting_shares, Chain)
-      _received_vesting_shares	= Steem::Type::Amount.new(account.received_vesting_shares, Chain)
-      _voting_power		= real_voting_power account
+      _received_vesting_shares  = Steem::Type::Amount.new(account.received_vesting_shares, Chain)
+      _voting_power             = real_voting_power account
 
       # calculate actual vesting by adding and subtracting
       # delegation as well at the final vest for vote
@@ -165,16 +172,16 @@ def print_account_balances(accounts)
       # ¹ Both the current and the last voting_power is
       #   called voting_power in the official documentation
 
-      _current_power	  = (_voting_power * _weight) / 50.0
-      _current_rshares	  = _current_power * _final_vest
+      _current_power      = (_voting_power * _weight) / 50.0
+      _current_rshares    = _current_power * _final_vest
       _current_vote_value = (_current_rshares / Recent_Claims) * Reward_Balance * SBD_Median_Price
 
       # calculate the account's maximum vote value for a 100% upvote.
 
       _max_voting_power = 1.0
-      _max_power	= (_max_voting_power * _weight) / 50.0
-      _max_rshares	= _max_power * _final_vest
-      _max_vote_value	= (_max_rshares / Recent_Claims) * Reward_Balance * SBD_Median_Price
+      _max_power        = (_max_voting_power * _weight) / 50.0
+      _max_rshares      = _max_power * _final_vest
+      _max_vote_value   = (_max_rshares / Recent_Claims) * Reward_Balance * SBD_Median_Price
 
       # pretty print out the balances. Note that for a
       # quick printout Steem::Type::Amount provides a
