@@ -42,9 +42,11 @@ function Do_Install ()
 }
 
 if test "${USER}" = "root"; then
-    Do_Install "/opt/local/bin/gem2.5"
-    Do_Install "/opt/local/bin/gem2.6"
-    Do_Install "/opt/local/bin/gem2.7"
+    for I in "gem2.5" "gem2.6" "gem2.6"; do
+        if test -x "/opt/local/bin/${I}"; then
+	    Do_Install "/opt/local/bin/${I}"
+        fi
+    done; unset I
 else
     setopt Multi_OS
 
