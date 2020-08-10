@@ -28,6 +28,8 @@ function Install ()
     ${in_Gem} install bundler
     ${in_Gem} install colorize
     ${in_Gem} install contracts
+    ${in_Gem} install faraday
+    ${in_Gem} install faraday_middleware
     ${in_Gem} install gems
     ${in_Gem} install irb
     ${in_Gem} install minitest
@@ -36,14 +38,13 @@ function Install ()
     ${in_Gem} install pry
     ${in_Gem} install rake
     ${in_Gem} install rb-readline
+    ${in_Gem} install rubocop
     ${in_Gem} install ruby-debug-ide
     ${in_Gem} install rubygems-update
     ${in_Gem} install simplecov
     ${in_Gem} install vcr
     ${in_Gem} install webmock
     ${in_Gem} install yard
-    ${in_Gem} install faraday
-    ${in_Gem} install faraday_middleware
     ${in_Gem} install steem-mechanize
     ${in_Gem} install steem-ruby
     ${in_Gem} install radiator
