@@ -218,8 +218,8 @@ class Vote < Radiator::Type::Serializer
          _slug              = url.split('@').last
          _author, _permlink = _slug.split('/')
 
-         puts("Post Author      : " + "%1$s".blue) % _author
-         puts("Post ID          : " + "%1$s".blue) % _permlink
+         puts(("Post Author      : " + "%1$s".blue) % _author)
+         puts(("Post ID          : " + "%1$s".blue) % _permlink)
          puts("Voter name       |  percent |         value |    weight |         rshares |    vote date & time |")
          puts("-----------------+----------+---------------+-----------+-----------------+---------------------+")
 

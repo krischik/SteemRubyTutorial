@@ -15,32 +15,34 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
+#
+# Deinstall outdated ruby gems.
 
 setopt No_XTrace
+setopt No_Err_Exit
 setopt Multi_OS
-setopt Err_Exit
 
-pushd "${PROJECT_HOME}/Frameworks/steem-ruby"
-    gem build "steem-ruby.gemspec"
-    gem install "steem-ruby"
-popd
+function Do_Deinstall ()
+{
+    local in_Gem="${1}"
 
-pushd "${PROJECT_HOME}"
-    (
-	for I in "steem" "hive"; do
-	    CHAIN_ID="${I}" Scripts/Steem-Dump-Accounts.rb		"steem" "busy.org" "steempeak"
-	    CHAIN_ID="${I}" Scripts/Steem-Dump-Balances.rb		"steem" "busy.org" "steempeak"
-	    CHAIN_ID="${I}" Scripts/Steem-Dump-Config.rb
-	    CHAIN_ID="${I}" Scripts/Steem-Dump-Global-Properties.rb
-	    CHAIN_ID="${I}" Scripts/Steem-Dump-Median-History-Price.rb
-	    CHAIN_ID="${I}" Scripts/Steem-Dump-Posting-Votes.rb		"https://steempeak.com/@krischik/using-steem-api-with-ruby-part-20"
-	    CHAIN_ID="${I}" Scripts/Steem-From-VEST.rb			"1000000" "10000000" "100000000" "1000000000"
-	done
-    ) 1>&1 2>&2 &>"Logs/Test-Steem.log"
+    echo "##### Deinstall outdated GEMs for ${in_Gem}"
+    
+    gem uninstall update_rubygems 
 
-    gview "Logs/Test-Steem.log"
-popd
+    gem cleanup --verbose 
+}
+
+if test "${USER}" = "root"; then
+    Do_Deinstall "/opt/local/bin/gem2.5"
+    Do_Deinstall "/opt/local/bin/gem2.6"
+    Do_Deinstall "/opt/local/bin/gem2.7"
+else
+    Do_Deinstall "/usr/local/opt/ruby/bin/gem"
+
+    sudo ${0:a} 1>&1 2>&2 &>~/Library/Logs/${0:r:t}.out
+fi
 
 ############################################################ {{{1 ###########
-# vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
+# vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 expandtab :
 # vim: set textwidth=0 filetype=zsh foldmethod=marker nospell :

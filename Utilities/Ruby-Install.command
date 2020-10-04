@@ -19,7 +19,11 @@
 setopt No_XTrace
 setopt No_Err_Exit
 
-if test "${USER}" = "root"; then
+function Do_Intall ()
+{
+    local in_Gem="${1}"
+
+    echo "##### Update for ${in_Gem}"
 
     gem install --no-document ntlm-http
     gem install awesome_print
@@ -41,13 +45,18 @@ if test "${USER}" = "root"; then
     gem install webmock
     gem install yard
 
-    gem install steem-mechanize
-    gem install steem-ruby
-    gem install radiator
+    gem update --system
+}
 
-    update_rubygems
+if test "${USER}" = "root"; then
+    Do_Intall "/opt/local/bin/gem2.5"
+    Do_Intall "/opt/local/bin/gem2.6"
+    Do_Intall "/opt/local/bin/gem2.7"
 else
     setopt Multi_OS
+
+    Do_Intall "/usr/local/opt/ruby/bin/gem"
+
     sudo ${0:a} 1>&1 2>&2 &>~/Library/Logs/${0:r:t}.out
 fi
 
