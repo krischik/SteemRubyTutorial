@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/bin/zsh
 ############################################################# {{{1 ##########
 #  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -9,18 +9,27 @@
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  MERCHANTABILITY or ENDIFFTNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
+#
+# Store passwords in password manager.
+#
 
-require_relative '../Test/Steem_Suite.rb'
-require_relative '../Test/Radiator_Suite.rb'
-require_relative '../Test/SCC_Suite.rb'
+setopt Err_Exit
+setopt No_XTrace
 
-############################################################ {{{1 ###########
-# vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
-# vim: set spell spelllang=en_gb fileencoding=utf-8 :
+for Account_Name in "$@"; do
+    Account_Key="$(security find-generic-password -s "Steem.${Account_Name}.Active.Private" -w)"
+
+    ${0:a:h}/../Scripts/Steem-Claim-Rewards.rb "${Account_Name}" "${Account_Key}"
+done
+
+############################################################## {{{1 ##########
+# vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
+# vim: set textwidth=0 filetype=zsh foldmethod=marker nospell :
+# vim: set spell spelllang=en_gb :
+

@@ -1,4 +1,4 @@
-#!/opt/local/bin/ruby
+#!/opt/local/bin/zsh
 ############################################################# {{{1 ##########
 #  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -9,18 +9,18 @@
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  MERCHANTABILITY or ENDIFFTNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-require_relative '../Test/Steem_Suite.rb'
-require_relative '../Test/Radiator_Suite.rb'
-require_relative '../Test/SCC_Suite.rb'
+setopt No_XTrace
+setopt Err_Exit
+
+Scripts/Steem-Print-SSC-Tables.rb "crittermanager" "market" "nft" "nftmarket" "steempegged" "tokens"
 
 ############################################################ {{{1 ###########
-# vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
-# vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :
-# vim: set spell spelllang=en_gb fileencoding=utf-8 :
+# vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
+# vim: set textwidth=0 filetype=zsh foldmethod=marker nospell :

@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/local/opt/ruby/bin/ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -19,25 +19,24 @@
 # use the steem.rb file from the radiator gem. This is only
 # needed if you have both steem-api and radiator installed.
 
-gem "radiator", :version=>'1.0.0', :require => "steem"
+gem "radiator", :require => "steem"
 
 require 'pp'
 require 'colorize'
+require 'radiator'
 
-require_relative 'Radiator/Chain'
+require_relative 'Radiator/Amount'
+require_relative 'SCC/Balance'
+require_relative 'SCC/Token'
 
-##
-# Store the chain name for convenience.
-#
-Chain = Chain_Options[:chain]
-
-if ARGV.length == 0 then
+if ARGV.length < 1 then
    puts "
-Steem-Print-Accounts — Print account infos from Steem database
+Claim-Rewards — Claim accont rewards
 
 Usage:
-   Steem-Print-Accounts account_name …
+   Claim-Rewards account_name active_key …
 
+      account_name account name
 "
 else
    # read arguments from command line
@@ -46,21 +45,40 @@ else
 
    # create instance to the steem database API
 
-   Database_Api = Radiator::DatabaseApi.new Chain_Options
+   Database_Api = Radiator::DatabaseApi.new
 
-   # request account information from the steem database
-   # and print out the accounts found using pretty print
-   # (pp) or print out error information when an error
-   # occurred.
+   # request the user information for a list of
+   # accounts.
 
-   Result = Database_Api.get_accounts(Account_Names)
+   User_Infos = Database_Api.get_accounts(Account_Names)
 
-   if Result.key?('error') then
+   if User_Infos.key?('error') then
       Kernel::abort("Error reading accounts:\n".red + error.to_s)
-   elsif Result.result.length == 0 then
-      puts "No accounts found.".yellow
+   elsif User_Infos.result.length == 0 then
+      puts "No account not found.".yellow
    else
-      pp Result.result
+      User_Infos.result.each do |_user_infos|
+	 # extract the outstanding rewards
+	 # of the main steemit chain for the user
+
+	 _reward_steem = Radiator::Type::Amount.new _user_infos.reward_steem_balance
+	 _reward_sdb   = Radiator::Type::Amount.new _user_infos.reward_sbd_balance
+	 _reward_vests = Radiator::Type::Amount.new _user_infos.reward_vesting_balance
+	 _account_name = _user_infos.name
+
+	 # print the outstanding rewards
+
+	 puts("Rewards to claim for %1$s:" % _account_name)
+	 puts("  Reward_Steem   = " + _reward_steem.to_ansi_s)
+	 puts("  Reward_SDB     = " + _reward_sdb.to_ansi_s)
+	 puts("  Reward_Vests   = " + _reward_vests.to_ansi_s)
+
+	 # get the users steem engine balances
+
+	 # _scc_balances = SCC::Balance.account _account_name
+
+	 # pp _scc_balances
+      end
    end
 end
 

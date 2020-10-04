@@ -44,6 +44,7 @@ typeset -x -g	   RUBYMINE_HOME="${Developer}/RubyMine.app"
 path=(${PROJECT_HOME}/Utilities ${path})
 path=(${RUBYHOME}/bin ${path})
 fpath=(${PROJECT_HOME}/Utilities ${fpath})
+rubylib=(${PROJECT_HOME}/Frameworks/Radiator/lib ${rubylib})
 
 function lxpm ()
 {
