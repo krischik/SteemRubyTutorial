@@ -1,4 +1,4 @@
-#!/usr/local/opt/ruby/bin/ruby
+#!/usr/bin/env ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
@@ -20,16 +20,21 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "radiator", :require => "steem"
+gem "radiator", :version=>'1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
 require 'contracts'
-require 'radiator'
 
+require_relative 'Radiator/Chain'
 require_relative 'Radiator/Amount'
 require_relative 'Radiator/Price'
 require_relative 'SCC/Metric'
+
+##
+# Store the chain name for convenience.
+#
+Chain = Chain_Options[:chain]
 
 _metrics = SCC::Metric.all
 

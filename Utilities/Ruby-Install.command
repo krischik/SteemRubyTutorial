@@ -19,39 +19,54 @@
 setopt No_XTrace
 setopt No_Err_Exit
 
+function Install ()
+{
+    local in_Gem="${1}"
+
+    echo "##### Update for ${in_Gem}"
+
+    ${in_Gem} install --no-document ntlm-http
+    ${in_Gem} install awesome_print
+    ${in_Gem} install bundler
+    ${in_Gem} install colorize
+    ${in_Gem} install contracts
+    ${in_Gem} install faraday
+    ${in_Gem} install faraday_middleware
+    ${in_Gem} install gems
+    ${in_Gem} install irb
+    ${in_Gem} install minitest
+    ${in_Gem} install minitest-line
+    ${in_Gem} install minitest-proveit
+    ${in_Gem} install pry
+    ${in_Gem} install rake
+    ${in_Gem} install rb-readline
+    ${in_Gem} install rubocop
+    ${in_Gem} install ruby-debug-ide
+    ${in_Gem} install rubygems-update
+    ${in_Gem} install simplecov
+    ${in_Gem} install vcr
+    ${in_Gem} install webmock
+    ${in_Gem} install yard
+    ${in_Gem} install steem-mechanize
+    ${in_Gem} install steem-ruby
+    ${in_Gem} install radiator
+}
+
 if test "${USER}" = "root"; then
+    for I in "gem2.5" "gem2.6" "gem2.6"; do
+        if test -x "/opt/local/bin/${I}"; then
+            Install "/opt/local/bin/${I}"
+        fi
+    done; unset I
 
-    path=("/opt/local/bin" ${path})
-
-    gem2.7 install --no-document ntlm-http  
-
-    gem2.7 install bundler
-    gem2.7 install colorize
-    gem2.7 install contracts
-    gem2.7 install gems
-    gem2.7 install ruby-debug-ide
-    gem2.7 install rubygems-update
-    gem2.7 install steem-ruby
-    gem2.7 install radiator
-    gem2.7 install steem-mechanize
-
+    chgrp -R _developer "/Library/Ruby"
+    chmod -R g=u "/Library/Ruby"
 else
+    Install "/usr/local/opt/ruby/bin/gem"
+
     setopt Multi_OS
 
-    path=("/usr/local/opt/ruby/bin" ${path})
-
-    gem install --no-document ntlm-http  
-
-    gem install bundler
-    gem install colorize
-    gem install contracts
-    gem install gems
-    gem install ruby-debug-ide
-    gem install rubygems-update
-    gem install steem-ruby
-    gem install radiator
-    gem install steem-mechanize
-    gem install debase
+    Do_Intall "/usr/local/opt/ruby/bin/gem"
 
     sudo ${0:a} 1>&1 2>&2 &>~/Library/Logs/${0:r:t}.out
 fi

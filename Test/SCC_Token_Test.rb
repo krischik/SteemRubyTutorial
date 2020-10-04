@@ -30,17 +30,17 @@ class Tokent_Test < Test::Unit::TestCase
    #
    if Test_All then
       def test_all_01
-         _test = SCC::Token.all
+	 _test = SCC::Token.all
 
-         assert_not_nil(_test, "There should be tokens")
-         assert_instance_of(Array, _test, "Tokens should be an array")
+	 assert_not_nil(_test, "There should be tokens")
+	 assert_instance_of(Array, _test, "Tokens should be an array")
 
-         _token = _test[0]
+	 _token = _test[0]
 
-         assert_not_nil(_token, "First token should exist")
-         assert_instance_of(SCC::Token, _token, "First token should be of type «SCC::Token»")
-         assert_equal(:symbol, _token.key, "First token key should be «:symbol»")
-         assert_equal("ENG", _token.value, "First token value should be “ENG”")
+	 assert_not_nil(_token, "First token should exist")
+	 assert_instance_of(SCC::Token, _token, "First token should be of type «SCC::Token»")
+	 assert_equal(:symbol, _token.key, "First token key should be «:symbol»")
+	 assert_equal("ENG", _token.value, "First token value should be “ENG”")
       end
    end
 

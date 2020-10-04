@@ -17,14 +17,29 @@
 ############################################################# }}}1 ##########
 
 setopt No_XTrace
+setopt Multi_OS
 setopt Err_Exit
 
-Scripts/Steem-Dump-Accounts.rb		    "steem" "busy.org" "steempeak"
-Scripts/Steem-Dump-Balances.rb		    "steem" "busy.org" "steempeak"
-Scripts/Steem-Dump-Global-Properties.rb
-Scripts/Steem-Dump-Median-History-Price.rb
-Scripts/Steem-Dump-Posting-Votes.rb	    "https://steempeak.com/@krischik/using-steem-api-with-ruby-part-7"
-Scripts/Steem-From-VEST.rb		    "1000000" "10000000" "100000000" "100000000"
+pushd "${PROJECT_HOME}/Frameworks/steem-ruby"
+    gem build "steem-ruby.gemspec"
+    gem install "steem-ruby"
+popd
+
+pushd "${PROJECT_HOME}"
+    (
+	for I in "steem" "hive"; do
+	    CHAIN_ID="${I}" Scripts/Steem-Dump-Accounts.rb		"steem" "busy.org" "steempeak"
+	    CHAIN_ID="${I}" Scripts/Steem-Dump-Balances.rb		"steem" "busy.org" "steempeak"
+	    CHAIN_ID="${I}" Scripts/Steem-Dump-Config.rb
+	    CHAIN_ID="${I}" Scripts/Steem-Dump-Global-Properties.rb
+	    CHAIN_ID="${I}" Scripts/Steem-Dump-Median-History-Price.rb
+	    CHAIN_ID="${I}" Scripts/Steem-Dump-Posting-Votes.rb		"https://steempeak.com/@krischik/using-steem-api-with-ruby-part-20"
+	    CHAIN_ID="${I}" Scripts/Steem-From-VEST.rb			"1000000" "10000000" "100000000" "1000000000"
+	done
+    ) 1>&1 2>&2 &>"Logs/Test-Steem.log"
+
+    gview "Logs/Test-Steem.log"
+popd
 
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :

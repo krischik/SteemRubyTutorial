@@ -38,11 +38,24 @@ function Fix_New_Line_After_Contract ()
    % substitute /\V\(         Contract None => String\n\)\n/\1/e
 endfunction
 
+function To_Hive()
+   1 substitute :\V#!\/opt\/local\/bin\/ruby:#!/usr/bin/env ruby:
+
+   % substitute /\(Steem::Type::Amount.new\) \(.*\)/\1(\2, Chain)
+
+   % substitute /Steem::DatabaseApi.new$/Steem::DatabaseApi.new Chain_Options/
+   % substitute /Steem::CondenserApi.new$/Steem::CondenserApi.new Chain_Options/
+   % substitute /Radiator::DatabaseApi.new$/Steem::DatabaseApi.new Chain_Options/
+   % substitute /Radiator::CondenserApi.new$/Steem::CondenserApi.new Chain_Options/
+endfunction
+   
+command! -range ToHive           <line1>,<line2>call To_Hive ()
 command! -range CommentToMakdown <line1>,<line2>call Comment_To_Makdown ()
 command!        SteemItToWiki                   call SteemIt_To_Wiki ()
 command!        FixNewLineAfterContract		call Fix_New_Line_After_Contract ()
 
-41vmenu Plugin.&Fix.Comment\ To\ &Makdown<Tab>F12m	 :CommentToMakdown<CR>
+41vmenu Plugin.&Convert.To\ Hive			 :ToHive<CR>
+41vmenu Plugin.&Convert.Comment\ To\ &Makdown<Tab>F12m	 :CommentToMakdown<CR>
 41menu  Plugin.&Fix.SteemIt\ To\ &Wiki<Tab>F12w		 :SteemItToWiki<CR>
 41menu  Plugin.&Fix.&New\ Line\ After\ Contract<Tab>F12n :FixNewLineAfterContract<CR>
 

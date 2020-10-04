@@ -30,19 +30,19 @@ class Balance_Test < Test::Unit::TestCase
    #
    if Test_All then
       def test_all_01
-         _test = SCC::Balance.all
+	 _test = SCC::Balance.all
 
-         assert_not_nil(_test, "There should be balances")
-         assert_instance_of(Array, _test, "balances should be an array")
+	 assert_not_nil(_test, "There should be balances")
+	 assert_instance_of(Array, _test, "balances should be an array")
 
-         _balance = _test[0]
+	 _balance = _test[0]
 
-         assert_not_nil(_balance, "First balance should exist")
-         assert_instance_of(SCC::Balance, _balance, "First balance should be of type «SCC::Balance»")
-         assert_instance_of(SCC::Metric, _balance.metric, "First balance metric should be of type «SCC::Metric»")
-         assert_instance_of(SCC::Token, _balance.token, "First balance token should be of type «SCC::Token»")
-         assert_equal(:symbol, _balance.key, "First balance key should be «:symbol»")
-         assert_equal("ENG", _balance.value, "First balance value should be “ENG”")
+	 assert_not_nil(_balance, "First balance should exist")
+	 assert_instance_of(SCC::Balance, _balance, "First balance should be of type «SCC::Balance»")
+	 assert_instance_of(SCC::Metric, _balance.metric, "First balance metric should be of type «SCC::Metric»")
+	 assert_instance_of(SCC::Token, _balance.token, "First balance token should be of type «SCC::Token»")
+	 assert_equal(:symbol, _balance.key, "First balance key should be «:symbol»")
+	 assert_equal("ENG", _balance.value, "First balance value should be “ENG”")
       end # test_all_01
    end #if
 
@@ -137,7 +137,9 @@ class Balance_Test < Test::Unit::TestCase
 
       assert_not_nil(_balance, "First balance can be converted into a steem amount ")
       assert_instance_of(Radiator::Type::Amount, _steem, "First balance should be of type «Radiator::Type::Amount»")
-   end # test_to_steem_01
+   end
+
+   # test_to_steem_01
 
    def test_to_ansi_s_01
       _test = SCC::Balance.account "krischik"

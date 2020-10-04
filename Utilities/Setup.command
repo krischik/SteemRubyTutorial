@@ -27,7 +27,8 @@ fpath=(~/.functions ${fpath})
 
 typeset -f -u realFile
 
-typeset -x -g -U -T RUBYLIB rubylib ":"
+typeset -x -g -U -T RUBYLIB  rubylib  ":"
+typeset -x -g -U -T GEM_PATH gem_path ":"
 
 typeset -x -g		     opt="/opt/local"
 typeset -x -g		RUBYHOME="/usr/local/opt/ruby"

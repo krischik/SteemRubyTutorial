@@ -20,7 +20,7 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "radiator", :require => "steem"
+gem "radiator", :version=>'1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
@@ -58,6 +58,7 @@ module SCC
       include Contracts::Builtin
 
       attr_reader :key, :value,
+		  :chain,
 		  :symbol,
 		  :account,
 		  :balance,
@@ -74,11 +75,14 @@ module SCC
       #
       # @param [Hash]
       #    JSON object from contract API.
+      # @param [Symbol]
+      #    Chain from which the balance was loaded
       #
-      Contract Any => nil
-      def initialize(balance)
+      Contract Hash, Symbol => nil
+      def initialize(balance, chain)
 	 super(:symbol, balance.symbol)
 
+	 @chain		  = chain
 	 @symbol          = balance.symbol
 	 @account         = balance.account
 	 @balance         = balance.balance.to_f
@@ -101,7 +105,7 @@ module SCC
       def to_steem
 	 _steem = if @symbol == "STEEMP" then
 		     @balance
-		  elsif token.staking_enabled then
+		  elsif token(chain).staking_enabled then
 		     (@balance + @stake) * metric.last_price
 		  else
 		     @balance * metric.last_price
@@ -109,7 +113,8 @@ module SCC
 
 	 return Radiator::Type::Amount.to_amount(
 	    _steem,
-	    Radiator::Type::Amount::STEEM)
+	    Radiator::Type::Amount.core_asset(@chain),
+	    @chain)
       end
 
       ##
@@ -134,7 +139,7 @@ module SCC
       Contract None => SCC::Metric
       def metric
 	 if @metric == nil then
-	    @metric = SCC::Metric.symbol @symbol
+	    @metric = SCC::Metric.symbol(@symbol, @chain)
 	 end
 
 	 return @metric
@@ -143,16 +148,18 @@ module SCC
       ##
       # The token information of the balance also as
       # lazy initialized property. The token
-      # informations contain, among other, the display
+      # information contain, among other, the display
       # name of the token.
       #
+      # @param [Symbol]
+      #      chain to read the symbol from.
       # @return [SCC::Metric]
       #     the metrics instance
       #
-      Contract None => SCC::Token
-      def token
+      Contract Symbol => SCC::Token
+      def token (chain)
 	 if @token == nil then
-	    @token = SCC::Token.symbol @symbol
+	    @token = SCC::Token.symbol(@symbol, chain)
 	 end
 
 	 return @token
@@ -175,7 +182,8 @@ module SCC
 	 begin
 	    _steem  = self.to_steem
 	    _sbd    = self.to_sbd
-	    _staked = self.token.staking_enabled
+	    _token  = self.token @chain
+	    _staked = _token.staking_enabled
 	    _retval = if _staked then
 			 (("%1$15.3f %2$s".white +
 			    " %3$15.3f %4$s".white +
@@ -225,11 +233,13 @@ module SCC
 	 #
 	 #  @param [String] name
 	 #     name of contract
+	 #  @param [Symbol]
+	 #    Chain from which the balance was loaded
 	 #  @return [Array<SCC::Balance>]
 	 #     contract found
 	 #
-	 Contract String => ArrayOf[SCC::Balance]
-	 def account (name)
+	 Contract String, Symbol => ArrayOf[SCC::Balance]
+	 def account (name, chain)
 	    _retval  = []
 	    _current = 0
 	    _query   = {
@@ -240,7 +250,8 @@ module SCC
 	       # Read the next batch of balances using
 	       # the find function.
 	       #
-	       _balances = Steem_Engine.contracts_api.find(
+	       _contracts_api = Steem_Engine.contracts_api chain
+	       _balances = _contracts_api.find(
 		  contract:   "tokens",
 		  table:      "balances",
 		  query:      _query,
@@ -256,7 +267,7 @@ module SCC
 	       # a class instacnce.
 	       #
 	       _retval += _balances.map do |_balance|
-		  SCC::Balance.new _balance
+		  SCC::Balance.new(_balance, chain)
 	       end
 
 	       # Move current by the actual amount of rows returned
@@ -272,11 +283,13 @@ module SCC
 	 #
 	 #  @param [String] name
 	 #     name of contract
+	 #  @param [Symbol]
+	 #    Chain from which the balance was loaded
 	 #  @return [Array<SCC::Balance>]
 	 #     contract found
 	 #
-	 Contract String => ArrayOf[SCC::Balance]
-	 def symbol (name)
+	 Contract String, Symbol => ArrayOf[SCC::Balance]
+	 def symbol (name, chain)
 	    _retval  = []
 	    _current = 0
 	    _query   = {
@@ -287,7 +300,8 @@ module SCC
 	       # Read the next batch of balances using
 	       # the find function.
 	       #
-	       _balances = Steem_Engine.contracts_api.find(
+	       _contracts_api = Steem_Engine.contracts_api chain
+	       _balances = _contracts_api.find(
 		  contract:   "tokens",
 		  table:      "balances",
 		  query:      _query,
@@ -304,7 +318,7 @@ module SCC
 	       # a class instacnce.
 	       #
 	       _retval += _balances.map do |_balance|
-		  SCC::Balance.new _balance
+		  SCC::Balance.new(_balance, chain)
 	       end
 
 	       # Move current by the actual amount of
@@ -319,11 +333,13 @@ module SCC
 	 ##
 	 #  Get all balances
 	 #
+	 # @param [Symbol]
+	 #    Chain from which the balance was loaded
 	 #  @return [SCC::Balance]
 	 #     token found
 	 #
-	 Contract String => ArrayOf[SCC::Balance]
-	 def all
+	 Contract Symbol => ArrayOf[SCC::Balance]
+	 def all (chain)
 	    _retval  = []
 	    _current = 0
 
@@ -331,7 +347,8 @@ module SCC
 	       # Read the next batch of balances using
 	       # the find function.
 	       #
-	       _balances = Steem_Engine.contracts_api.find(
+	       _contracts_api = Steem_Engine.contracts_api chain
+	       _balances = _contracts_api.find(
 		  contract:   "tokens",
 		  table:      "balances",
 		  query:      Steem_Engine::QUERY_ALL,

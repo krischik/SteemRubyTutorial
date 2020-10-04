@@ -19,7 +19,7 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "radiator", :require => "steem"
+gem "radiator", :version=>'1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
@@ -51,30 +51,28 @@ module SCC
       QUERY_ALL = {}
 
       class << self
-         attr_reader :QUERY_ALL, :QUERY_LIMIT
+	 attr_reader :QUERY_ALL, :QUERY_LIMIT
 
-         @api = nil
+	 @@contracts_api         = ::Hash.new
 
-         ##
-         # Access to contracts interface
-         #
-         # @return [Radiator::SSC::Contracts]
-         #     the contracts API.
-         #
-         Contract None => Radiator::SSC::Contracts
-         def contracts_api
-            if @api == nil then
-               @api = Radiator::SSC::Contracts.new
-            end
+	 ##
+	 # Access to contracts interface
+	 #
+	 # @param [Symbol]
+	 #      chain to read the symbol from.
+	 # @return [Radiator::SSC::Contracts]
+	 #     the contracts API.
+	 #
+	 Contract Symbol => Radiator::SSC::Contracts
+	 def contracts_api (chain)
+	    unless @@contracts_api.key? chain then
+	       @@contracts_api.store(chain, Radiator::SSC::Contracts.new({chain: chain}))
+	    end
 
-            return @api
-         rescue => error
-            # I am using Kernel::abort so the code snipped
-            # including error handler can be copy pasted into other
-            # scripts
-
-            Kernel::abort("Error creating contracts API :\n".red + error.to_s)
-         end #contracts
+	    return @@contracts_api[chain]
+	 rescue => error
+	    Kernel::abort("Error creating contracts API :\n".red + error.to_s)
+	 end #contracts
       end # self
    end # Token
 end # SCC

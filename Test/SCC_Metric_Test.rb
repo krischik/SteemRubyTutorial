@@ -30,17 +30,17 @@ class Metric_Test < Test::Unit::TestCase
    #
    if Test_All then
       def test_all_01
-         _test = SCC::Metric.all
+	 _test = SCC::Metric.all
 
-         assert_not_nil(_test, "There should be metrics")
-         assert_instance_of(Array, _test, "metric should be an array")
+	 assert_not_nil(_test, "There should be metrics")
+	 assert_instance_of(Array, _test, "metric should be an array")
 
-         _metric = _test[0]
+	 _metric = _test[0]
 
-         assert_not_nil(_metric, "First metric should exist")
-         assert_instance_of(SCC::Metric, _metric, "First metric should be of type «SCC::Metric»")
-         assert_equal(:symbol, _metric.key, "First metric key should be «:symbol»")
-         assert_equal("ENG", _metric.value, "First metric value should be “ENG”")
+	 assert_not_nil(_metric, "First metric should exist")
+	 assert_instance_of(SCC::Metric, _metric, "First metric should be of type «SCC::Metric»")
+	 assert_equal(:symbol, _metric.key, "First metric key should be «:symbol»")
+	 assert_equal("ENG", _metric.value, "First metric value should be “ENG”")
       end
    end
 
