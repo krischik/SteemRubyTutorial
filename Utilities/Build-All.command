@@ -24,9 +24,9 @@ pushd "${PROJECT_HOME}/Frameworks/radiator"
     # and only the original maintainer can fix them.
 
     for I in				\
-	"amount_test.rb"
+	"amount_test"
     do
-	ruby -I "lib" -I "test" "test/radiator/amount_test.rb"
+	ruby -I "lib" -I "test" "test/steem/${I}.rb"
     done; unset I
 
     gem build	"radiator.gemspec"
@@ -37,11 +37,13 @@ pushd "${PROJECT_HOME}/Frameworks/steem-ruby"
     # tests known to work. There are quite a few who don't work
     # and only the original maintainer can fix them.
 
-#    for I in				\
-#	"amount_test.rb"
-#    do
-#	ruby -I "lib" -I "test" "test/steem/amount_test.rb"
-#    done; unset I
+    for I in				\
+	"account_by_key_api_test"	\
+        "account_history_api_test"	\
+	"amount_test"
+    do
+	ruby -I "lib" -I "test" "test/steem/${I}.rb"
+    done; unset I
 
     gem build	"steem-ruby.gemspec"
     gem install "steem-ruby"

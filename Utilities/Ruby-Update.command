@@ -18,11 +18,13 @@
 
 setopt No_XTrace
 setopt No_Err_Exit
+setopt Multi_OS
 
 function Update ()
 {
     local in_Gem="${1}"
 
+    echo "##### Update for ${in_Gem}"
     ${in_Gem} update $(${in_Gem} list | cut -d ' ' -f 1)
     ${in_Gem} cleanup --verbose 
 }

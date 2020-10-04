@@ -23,6 +23,8 @@ function Install ()
 {
     local in_Gem="${1}"
 
+    echo "##### Update for ${in_Gem}"
+
     ${in_Gem} install --no-document ntlm-http
     ${in_Gem} install awesome_print
     ${in_Gem} install bundler
@@ -63,6 +65,9 @@ else
     Install "/usr/local/opt/ruby/bin/gem"
 
     setopt Multi_OS
+
+    Do_Intall "/usr/local/opt/ruby/bin/gem"
+
     sudo ${0:a} 1>&1 2>&2 &>~/Library/Logs/${0:r:t}.out
 fi
 

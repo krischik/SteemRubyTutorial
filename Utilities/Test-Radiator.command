@@ -29,23 +29,23 @@ pushd "${PROJECT_HOME}"
     (
 	for I in "steem" "hive"; do
 	    CHAIN_ID="${I}" Scripts/Steem-Print-Config.rb
-	    CHAIN_ID="${I}" Scripts/Steem-Print-Accounts.rb		    "steem" "busy.org" "steempeak"
-	    CHAIN_ID="${I}" Scripts/Steem-Print-Balances.rb		    "steem" "busy.org" "steempeak"
+	    CHAIN_ID="${I}" Scripts/Steem-Print-Accounts.rb		"steem" "busy.org" "steempeak"
+	    CHAIN_ID="${I}" Scripts/Steem-Print-Balances.rb		"steem" "busy.org" "steempeak"
 	    CHAIN_ID="${I}" Scripts/Steem-Print-Global-Properties.rb
-	    # CHAIN_ID="${I}" Scripts/Steem-Print-Median-History-Price.rb
-	    # CHAIN_ID="${I}" Scripts/Steem-Print-Posting-Votes.rb	    "https://steempeak.com/@krischik/using-steem-api-with-ruby-part-7"
-	    # CHAIN_ID="${I}" Scripts/Steem-To-VEST.rb		    "500" "5000" "50000" "50000"
-	    # CHAIN_ID="${I}" Scripts/Steem-Print-Vesting.rb	    "busy.org" "steempeak"
+	    CHAIN_ID="${I}" Scripts/Steem-Print-Median-History-Price.rb
+	    CHAIN_ID="${I}" Scripts/Steem-Print-Posting-Votes.rb	"https://steempeak.com/@krischik/using-steem-api-with-ruby-part-7"
+	    CHAIN_ID="${I}" Scripts/Steem-To-VEST.rb			"500" "5000" "50000" "50000"
+	    CHAIN_ID="${I}" Scripts/Steem-Print-Vesting.rb		"busy.org" "steempeak"
+	    CHAIN_ID="${I}" Scripts/Steem-Print-SSC-Contract.rb		"tokens" "market" "steempegged"
+	    CHAIN_ID="${I}" Scripts/Steem-Print-SSC-Table-First.rb	"tokens" "tokens"
+	    CHAIN_ID="${I}" Scripts/Steem-Print-SSC-Table-First.rb	"market" "metrics"
+	    CHAIN_ID="${I}" Scripts/Steem-Print-SSC-Table-All.rb	"tokens" "balances" "account" "krischik"
+	    CHAIN_ID="${I}" Scripts/Steem-Print-SSC-Table-All.rb	"tokens" "params"
+	    CHAIN_ID="${I}" Scripts/Steem-Print-SSC-Table-All.rb	"tokens" "balances" "symbol"  "BEER" "balance" "10.0000"
+	    CHAIN_ID="${I}" Scripts/Steem-Print-SSC-Table-All.rb	"tokens" "tokens"   "symbol"  "BEER"
 	done
     ) 1>&1 2>&2 &>"Logs/Test-Radiator.log"
     
-    Scripts/Steem-Print-SSC-Contract.rb	    "tokens" "market" "steempegged"
-    Scripts/Steem-Print-SSC-Table-First.rb    "tokens" "tokens"
-    Scripts/Steem-Print-SSC-Table-First.rb    "market" "metrics" "symbol"  "BEER"
-    Scripts/Steem-Print-SSC-Table-All.rb	    "tokens" "balances" "account" "krischik"
-    Scripts/Steem-Print-SSC-Table-All.rb	    "tokens" "balances" "symbol"  "BEER" "balance" "10.0000"
-    Scripts/Steem-Print-SSC-Table-All.rb	    "tokens" "params"
-    Scripts/Steem-Print-SSC-Table-All.rb	    "tokens" "tokens" "symbol"  "BEER"
 
     gview "Logs/Test-Radiator.log"
 popd

@@ -23,7 +23,15 @@ pushd "${PROJECT_HOME}/Frameworks/steem-ruby"
     # tests known to work. There are quite a few who don't work
     # and only the original maintainer can fix them.
 
-    ruby -I "lib" -I "test" "test/steem/amount_test.rb"
+    for I in				\
+        "account_history_api_test"	\
+	"account_by_key_api_test"	\
+	"amount_test"                   \
+	"api_test"                      \
+	"block_api_test"
+    do
+	ruby -I "lib" -I "test" "test/steem/${I}.rb"
+    done; unset I
 
     gem build "steem-ruby.gemspec"
     gem install "steem-ruby"

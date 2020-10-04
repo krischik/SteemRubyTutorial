@@ -18,6 +18,7 @@
 
 setopt No_XTrace
 setopt Err_Exit
+setopt Multi_OS
 
 function Do_Install ()
 {
@@ -48,8 +49,6 @@ if test "${USER}" = "root"; then
         fi
     done; unset I
 else
-    setopt Multi_OS
-
     pushd "${PROJECT_HOME}" 
 	Do_Install "/usr/local/opt/ruby/bin/gem"
 
