@@ -20,23 +20,29 @@ setopt No_XTrace
 setopt No_Err_Exit
 setopt Multi_OS
 
-function Do_Update ()
+function Update ()
 {
     local in_Gem="${1}"
 
     echo "##### Update for ${in_Gem}"
-    gem update --system
-    gem update $(gem list | cut -d ' ' -f 1)
-    gem cleanup --verbose 
+    ${in_Gem} update $(${in_Gem} list | cut -d ' ' -f 1)
+    ${in_Gem} cleanup --verbose 
 }
 
 if test "${USER}" = "root"; then
-    Do_Update "/opt/local/bin/gem2.5"
-    Do_Update "/opt/local/bin/gem2.6"
-    Do_Update "/opt/local/bin/gem2.7"
+    for I in "gem2.5" "gem2.6" "gem2.6"; do
+        if test -x "/opt/local/bin/${I}"; then
+            Update "/opt/local/bin/${I}"
+        fi
+    done; unset I
 else
-    Do_Update "/usr/local/opt/ruby/bin/gem"
+    for I in "/usr/local/opt/ruby/bin/gem" "/usr/bin/gem"; do
+        if test -x "${I}"; then
+            Update "${I}"
+        fi
+    done; unset I
 
+    setopt Multi_OS
     sudo ${0:a} 1>&1 2>&2 &>~/Library/Logs/${0:r:t}.out
 fi
 

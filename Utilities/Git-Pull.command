@@ -26,10 +26,10 @@ setopt No_XTrace
 pushd "${PROJECT_HOME}"
     echo "Hole origin"
     echo "Betrete '.'"
-    git pull --prune
-    git submodule foreach git pull --prune
+    git pull --all --prune
+    git submodule foreach git pull --prune --all
     echo "Hole upstream"
-    git submodule foreach git fetch upstream
+    git submodule foreach git fetch --all
 popd
 
 ############################################################## {{{1 ##########
