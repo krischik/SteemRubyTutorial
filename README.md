@@ -1,3 +1,5 @@
+Continue on GitLab: https://github.com/krischik/SteemRubyTutorial
+
 # Steem Ruby Tutorial
 
 A tutorial for the steem-ruby and radiator application programming interfaces.
