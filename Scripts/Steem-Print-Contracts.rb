@@ -60,10 +60,14 @@ begin
    # use the Amount class from Part 2 to convert the string
    # values into amounts.
 
-   _global_properties        = _condenser_api.get_dynamic_global_properties.result
-   _total_vesting_fund_steem = Radiator::Type::Amount.new(_global_properties.total_vesting_fund_steem, Chain)
-   _total_vesting_shares     = Radiator::Type::Amount.new(_global_properties.total_vesting_shares, Chain)
-   Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
+   _global_properties    = _condenser_api.get_dynamic_global_properties.result
+   _total_vesting_fund_x = Radiator::Type::Amount.new(if Chain != :hive then
+							 _global_properties.total_vesting_fund_steem
+						      else
+							 _global_properties.total_vesting_fund_hive
+						      end, Chain)
+   _total_vesting_shares = Radiator::Type::Amount.new(_global_properties.total_vesting_shares, Chain)
+   Conversion_Rate_Vests = _total_vesting_fund_x.to_f / _total_vesting_shares.to_f
 
    # read the reward funds. `get_reward_fund` takes one
    # parameter is always "post".
@@ -130,8 +134,16 @@ def print_account_balances(accounts)
 
       _balance                  = Radiator::Type::Amount.new(account.balance, Chain)
       _savings_balance          = Radiator::Type::Amount.new(account.savings_balance, Chain)
-      _sbd_balance              = Radiator::Type::Amount.new(account.sbd_balance, Chain)
-      _savings_sbd_balance      = Radiator::Type::Amount.new(account.savings_sbd_balance, Chain)
+      _xbd_balance              = Radiator::Type::Amount.new(if Chain != :hive then
+								account.sbd_balance
+							     else
+								account.hbd_balance
+							     end, Chain)
+      _savings_xbd_balance      = Radiator::Type::Amount.new(if Chain != :hive then
+								account.savings_sbd_balance
+							     else
+								account.savings_hbd_balance
+							     end, Chain)
       _vesting_shares           = Radiator::Type::Amount.new(account.vesting_shares, Chain)
       _delegated_vesting_shares = Radiator::Type::Amount.new(account.delegated_vesting_shares, Chain)
       _received_vesting_shares  = Radiator::Type::Amount.new(account.received_vesting_shares, Chain)
@@ -149,8 +161,8 @@ def print_account_balances(accounts)
       _account_value =
          _balance.to_sbd +
             _savings_balance.to_sbd +
-            _sbd_balance.to_sbd +
-            _savings_sbd_balance.to_sbd +
+            _xbd_balance.to_sbd +
+            _savings_xbd_balance.to_sbd +
             _vesting_shares.to_sbd
 
       # calculate the vote value for 100% upvotes
@@ -201,8 +213,8 @@ def print_account_balances(accounts)
       # decimal point
 
       puts(("Account: %1$s".blue + +" " + "(%2$s)".green) % [account.name, _vesting_shares.to_level])
-      puts("  SBD             = " + _sbd_balance.to_ansi_s)
-      puts("  SBD Savings     = " + _savings_sbd_balance.to_ansi_s)
+      puts("  SBD             = " + _xbd_balance.to_ansi_s)
+      puts("  SBD Savings     = " + _savings_xbd_balance.to_ansi_s)
       puts("  Steem           = " + _balance.to_ansi_s)
       puts("  Steem Savings   = " + _savings_balance.to_ansi_s)
       puts("  Steem Power     = " + _vesting_shares.to_ansi_s)

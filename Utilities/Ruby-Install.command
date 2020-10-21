@@ -18,6 +18,7 @@
 
 setopt No_XTrace
 setopt No_Err_Exit
+setopt Multi_OS
 
 function Install ()
 {
@@ -26,8 +27,8 @@ function Install ()
     if test -x "${in_Gem}"; then
         echo "##### Update for ${in_Gem}"
 
-        ${in_Gem} install --no-document ntlm-http
         ${in_Gem} install awesome_print
+        ${in_Gem} install bundler
         ${in_Gem} install bundler
         ${in_Gem} install colorize
         ${in_Gem} install contracts
@@ -38,6 +39,8 @@ function Install ()
         ${in_Gem} install minitest
         ${in_Gem} install minitest-line
         ${in_Gem} install minitest-proveit
+        ${in_Gem} install net-http-persistent
+        ${in_Gem} install ntlm-http
         ${in_Gem} install pry
         ${in_Gem} install rake
         ${in_Gem} install rb-readline
@@ -48,6 +51,7 @@ function Install ()
         ${in_Gem} install vcr
         ${in_Gem} install webmock
         ${in_Gem} install yard
+
         ${in_Gem} install steem-mechanize
         ${in_Gem} install steem-ruby
         ${in_Gem} install radiator
@@ -59,16 +63,12 @@ if test "${USER}" = "root"; then
         Install "/opt/local/bin/${I}"
     done; unset I
 
-    Install "/usr/bin/gem"
-
     chgrp -R _developer "/Library/Ruby"
     chmod -R g=u "/Library/Ruby"
 else
-    Install "/usr/local/opt/ruby/bin/gem"
-
-    setopt Multi_OS
-
-    Do_Intall "/usr/local/opt/ruby/bin/gem"
+    for I in "/usr/local/opt/ruby/bin/gem" "/usr/bin/gem"; do
+        Install "${I}"
+    done; unset I
 
     sudo ${0:a} 1>&1 2>&2 &>~/Library/Logs/${0:r:t}.out
 fi

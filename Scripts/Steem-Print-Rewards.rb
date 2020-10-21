@@ -62,7 +62,11 @@ else
 	 # of the main steemit chain for the user
 
 	 _reward_steem = Radiator::Type::Amount.new _user_infos.reward_steem_balance
-	 _reward_sdb   = Radiator::Type::Amount.new _user_infos.reward_sbd_balance
+	 _reward_xdb   = Radiator::Type::Amount.new(if Chain != :hive then
+						       _user_infos.reward_sbd_balance
+						    else
+						       _user_infos.reward_hbd_balance
+						    end)
 	 _reward_vests = Radiator::Type::Amount.new _user_infos.reward_vesting_balance
 	 _account_name = _user_infos.name
 
@@ -70,7 +74,7 @@ else
 
 	 puts("Rewards to claim for %1$s:" % _account_name)
 	 puts("  Reward_Steem   = " + _reward_steem.to_ansi_s)
-	 puts("  Reward_SDB     = " + _reward_sdb.to_ansi_s)
+	 puts("  Reward_SDB     = " + _reward_xdb.to_ansi_s)
 	 puts("  Reward_Vests   = " + _reward_vests.to_ansi_s)
 
 	 # get the users steem engine balances

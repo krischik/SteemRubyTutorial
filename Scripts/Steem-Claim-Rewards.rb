@@ -29,7 +29,7 @@ require_relative 'Radiator/Amount'
 
 if ARGV.length < 2 then
    puts "
-Claim-Rewards — Claim accont rewards
+Claim-Rewards — Claim account rewards
 
 Usage:
    Claim-Rewards account_name active_key
@@ -62,15 +62,19 @@ else
       User_Info = User_Infos.result[0]
 
       Reward_Steem = Radiator::Type::Amount.new User_Info.reward_steem_balance
-      Reward_SDB   = Radiator::Type::Amount.new User_Info.reward_sbd_balance
+      Reward_XDB   = Radiator::Type::Amount.new(if Chain != :hive then
+						   User_Info.reward_sbd_balance
+						else
+						   User_Info.reward_hbd_balance
+						end)
       Reward_Vests = Radiator::Type::Amount.new User_Info.reward_vesting_balance
 
       puts("Rewards to claim for %1$s:" % Account_Name)
       puts("  Reward_Steem   = " + Reward_Steem.to_ansi_s)
-      puts("  Reward_SDB     = " + Reward_SDB.to_ansi_s)
+      puts("  Reward_SDB     = " + Reward_XDB.to_ansi_s)
       puts("  Reward_Vests   = " + Reward_Vests.to_ansi_s)
 
-      if Reward_SDB.to_f == 0 && Reward_SDB.to_f == 0 && Reward_Vests.to_f == 0 then
+      if Reward_XDB.to_f == 0 && Reward_XDB.to_f == 0 && Reward_Vests.to_f == 0 then
 	 puts("Nothing to claim.".yellow)
       else
 	 puts("Start claiming.")
@@ -82,7 +86,7 @@ else
 
 	 Chain.claim_reward_balance(
             reward_steem: Reward_Steem.to_s,
-	    reward_sbd:   Reward_SDB.to_s,
+	    reward_sbd:   Reward_XDB.to_s,
 	    reward_vests: Reward_Vests.to_s)
 	 Chain.broadcast!
 

@@ -249,10 +249,15 @@ module Steem
 	    #    Conversion rate Steem ⇔ VESTS
 	    #
 	    Contract Symbol => Num
+
 	    def conversion_rate_vests(chain)
 	       unless @@conversion_rate_vests.key? chain then
 		  _global_properties        = self.condenser_api(chain).get_dynamic_global_properties.result
-		  _total_vesting_fund_steem = Amount.new(_global_properties.total_vesting_fund_steem, chain)
+		  _total_vesting_fund_steem = Amount.new(if chain != :hive then
+							    _global_properties.total_vesting_fund_steem
+							 else
+							    _global_properties.total_vesting_fund_hive
+							 end, chain)
 		  _total_vesting_shares     = Amount.new(_global_properties.total_vesting_shares, chain)
 		  @@conversion_rate_vests.store(chain, _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f)
 	       end
