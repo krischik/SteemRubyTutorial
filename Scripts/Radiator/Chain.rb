@@ -46,6 +46,25 @@ case ENV["CHAIN_ID"]&.downcase
       }
 end
 
+##
+# hive has renamed all values with “sbd” and "steem" in the name
+# to "hdb" and "hive".
+# @param [Hash]
+# 	hash returned either by a steem or hive api call
+# @param [String]
+# 	key name containing "sbd" or "steem"
+# @return [Object]
+#     the value referenced by the hash key
+#
+def get_chain_value (hash, key)
+   if Chain_Options[:chain] == :hive then
+      key.gsub!(/sbd/, 'hbd')
+      key.gsub!(/steem/, 'hive')
+   end
+
+   return hash[key]
+end
+
 ############################################################ {{{1 ###########
 # vim: set nowrap tabstop=8 shiftwidth=3 softtabstop=3 expandtab :
 # vim: set textwidth=0 filetype=ruby foldmethod=syntax nospell :

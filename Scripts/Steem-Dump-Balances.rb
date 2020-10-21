@@ -130,16 +130,8 @@ def print_account_balances(accounts)
 
       _balance                  = Steem::Type::Amount.new(account.balance, Chain)
       _savings_balance          = Steem::Type::Amount.new(account.savings_balance, Chain)
-      _xbd_balance              = Steem::Type::Amount.new(if Chain != :hive then
-							     account.sbd_balance
-							  else
-							     account.hbd_balance
-							  end, Chain)
-      _savings_xbd_balance      = Steem::Type::Amount.new(if Chain != :hive then
-							     account.savings_sbd_balance
-							  else
-							     account.savings_hbd_balance
-							  end, Chain)
+      _xbd_balance              = Steem::Type::Amount.new(get_chain_value(account, 'sbd_balance'), Chain)
+      _savings_xbd_balance      = Steem::Type::Amount.new(get_chain_value(account, 'savings_sbd_balance'), Chain)
       _vesting_shares           = Steem::Type::Amount.new(account.vesting_shares, Chain)
       _delegated_vesting_shares = Steem::Type::Amount.new(account.delegated_vesting_shares, Chain)
       _received_vesting_shares  = Steem::Type::Amount.new(account.received_vesting_shares, Chain)
@@ -248,14 +240,14 @@ def print_account_balances(accounts)
 
    if accounts.length > 1 then
       puts "All Account: ".blue
-      puts ("  Dept                   = " + _total_xbd_balance.to_ansi_s)
-      puts ("  Dept Savings           = " + _total_savings_xbd_balance.to_ansi_s)
-      puts ("  Core                   = " + _total_balance.to_ansi_s)
-      puts ("  Core Savings           = " + _total_savings_balance.to_ansi_s)
-      puts ("  Power                  = " + _total_vesting_shares.to_ansi_s)
-      puts ("  Delegated Power        = " + _total_delegated_vesting_shares.to_ansi_s)
-      puts ("  Received Power         = " + _total_received_vesting_shares.to_ansi_s)
-      puts ("  Actual Power           = " + _total_total_vests.to_ansi_s)
+      puts("  Dept                   = " + _total_xbd_balance.to_ansi_s)
+      puts("  Dept Savings           = " + _total_savings_xbd_balance.to_ansi_s)
+      puts("  Core                   = " + _total_balance.to_ansi_s)
+      puts("  Core Savings           = " + _total_savings_balance.to_ansi_s)
+      puts("  Power                  = " + _total_vesting_shares.to_ansi_s)
+      puts("  Delegated Power        = " + _total_delegated_vesting_shares.to_ansi_s)
+      puts("  Received Power         = " + _total_received_vesting_shares.to_ansi_s)
+      puts("  Actual Power           = " + _total_total_vests.to_ansi_s)
       puts ("  Total Value            = " + "%1$15.3f %2$s".green.bold) % [
 	 _total_account_value.to_f,
 	 _total_account_value.asset]
