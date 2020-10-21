@@ -36,13 +36,13 @@ if test ${#} -eq 1; then
 	echo "Task Number : ${Task_No}"
 	read -sk1 "? add, commit and push (Y/N): "
 	echo
-#		"Wiki"				\
 
 	if test "${REPLY:u}" = "Y"; then
 	    for I in				\
 		"Frameworks/radiator"		\
 		"Frameworks/steem-ruby"		\
 		"Frameworks/steem-mechanize"	\
+		"Wiki"				\
 		"."
 	    do
 		pushd "${I}"
