@@ -1,6 +1,6 @@
-#!/opt/local/bin/ruby
+#!/usr/local/opt/ruby/bin/ruby
 ############################################################# {{{1 ##########
-#  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
+#  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -20,17 +20,23 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "radiator", :require => "steem"
+gem "radiator", :version=>'1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
-require 'radiator'
+
+require_relative 'Radiator/Chain'
+
+##
+# Store the chain name for convenience.
+#
+Chain = Chain_Options[:chain]
 
 begin
    # create instance to the steem condenser API which
    # will give us access to the median history price
 
-   Contracts = Radiator::SSC::Contracts.new
+   Contracts = Radiator::SSC::Contracts.new Chain_Options
 rescue => error
    # I am using Kernel::abort so the code snipped
    # including error handler can be copy pasted into other

@@ -1,6 +1,6 @@
 #!/opt/local/bin/ruby
 ############################################################# {{{1 ##########
-#  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
+#  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "radiator", :require => "steem"
+gem "radiator", :version => '1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
@@ -39,122 +39,128 @@ module SCC
       include Contracts::Builtin
 
       attr_reader :key, :value,
-                  :symbol,
-                  :issuer,
-                  :name,
-                  :metadata,
-                  :precision,
-                  :max_supply,
-                  :supply,
-                  :circulating_supply,
-                  :staking_enabled,
-                  :unstaking_cooldown,
-                  :delegation_enabled,
-                  :undelegation_cooldown,
-                  :loki
+		  :symbol,
+		  :issuer,
+		  :name,
+		  :metadata,
+		  :precision,
+		  :max_supply,
+		  :supply,
+		  :circulating_supply,
+		  :staking_enabled,
+		  :unstaking_cooldown,
+		  :delegation_enabled,
+		  :undelegation_cooldown,
+		  :loki
 
       public
 
-         ##
-         # create instance form Steem Engine JSON object.
-         #
-         # @param [Hash]
-         #    JSON object from contract API.
-         #
-         Contract Any => nil
-         def initialize(token)
-            super(:symbol, token.symbol)
+      ##
+      # create instance form Steem Engine JSON object.
+      #
+      # @param [Hash]
+      #    JSON object from contract API.
+      #
+      Contract Any => nil
+      def initialize(token)
+	 super(:symbol, token.symbol)
 
-            @symbol                = token.symbol
-            @issuer                = token.issuer
-            @name                  = token.name
-            @metadata              = JSON.parse(token.metadata)
-            @precision             = token.precision
-            @max_supply            = token.maxSupply
-            @supply                = token.supply
-            @circulating_supply    = token.circulatingSupply
-            @staking_enabled       = token.stakingEnabled
-            @total_staked          = token.totalStaked
-            @unstaking_cooldown    = token.unstakingCooldown
-            @delegation_enabled    = token.delegationEnabled
-            @undelegation_cooldown = token.undelegationCooldown
-            @loki                  = token["$loki"]
+	 @symbol                = token.symbol
+	 @issuer                = token.issuer
+	 @name                  = token.name
+	 @metadata              = JSON.parse(token.metadata)
+	 @precision             = token.precision
+	 @max_supply            = token.maxSupply
+	 @supply                = token.supply
+	 @circulating_supply    = token.circulatingSupply
+	 @staking_enabled       = token.stakingEnabled
+	 @total_staked          = token.totalStaked
+	 @unstaking_cooldown    = token.unstakingCooldown
+	 @delegation_enabled    = token.delegationEnabled
+	 @undelegation_cooldown = token.undelegationCooldown
+	 @loki                  = token["$loki"]
 
-            return
-         end # initialize
+	 return
+      end
 
-         ##
-         # The tokens current market value
-         #
-         # @return [SCC::Metric]
-         #     the metrics instance
-         Contract None => SCC::Metric
-         def metric
-            if @metric == nil then
-               @metric = SCC::Metric.symbol @symbol
-            end
+      # initialize
 
-            return @metric
-         end # metric
+      ##
+      # The tokens current market value
+      #
+      # @return [SCC::Metric]
+      #     the metrics instance
+      Contract None => SCC::Metric
+      def metric
+	 if @metric == nil then
+	    @metric = SCC::Metric.symbol @symbol
+	 end
 
-         class << self
-            ##
-            #  Get contract for given symbol
-            #
-            #  @param [String] name
-            #     name of contract
-            #  @return [SCC::Contract]
-            #     contract found
-            #
-            Contract String => SCC::Token
-            def symbol (name)
-               _token = Steem_Engine.contracts_api.find_one(
-                  contract: "tokens",
-                  table:    "tokens",
-                  query:    {
-                     "symbol": name
-                  })
+	 return @metric
+      end
 
-               return SCC::Token.new _token
-            end # find
+      # metric
 
-            ##
-            #  Get all token
-            #
-            #  @param [String] name
-            #     name of contract
-            #  @return [SCC::Contract]
-            #     contract found
-            #
-            Contract String => ArrayOf[SCC::Token]
-            def all
-               _retval  = []
-               _current = 0
+      class << self
+	 ##
+	 #  Get contract for given symbol
+	 #
+	 #  @param [String] name
+	 #     name of contract
+	 #  @return [SCC::Contract]
+	 #     contract found
+	 #
+	 Contract String, Symbol => SCC::Token
+	 def symbol (name, chain)
+	    _contracts_api = Steem_Engine.contracts_api chain
+	    _token         = _contracts_api.find_one(
+	       contract: "tokens",
+	       table:    "tokens",
+	       query:    {
+		  "symbol": name
+	       })
 
-               loop do
-                  _tokens = Steem_Engine.contracts_api.find(
-                     contract:   "tokens",
-                     table:      "tokens",
-                     query:      Steem_Engine::QUERY_ALL,
-                     limit:      Steem_Engine::QUERY_LIMIT,
-                     offset:     _current,
-                     descending: false)
+	    return SCC::Token.new _token
+	 end # symbol
 
-                  # Exit loop when no result set is returned.
-                  #
-                  break if (not _tokens) || (_tokens.length == 0)
-                  _retval += _tokens.map do |_token|
-                     SCC::Token.new _token
-                  end
+	 ##
+	 #  Get all token
+	 #
+	 #  @param [String] name
+	 #     name of contract
+	 #  @return [SCC::Contract]
+	 #     contract found
+	 #
+	 Contract Symbol => ArrayOf[SCC::Token]
+	 def all(chain)
+	    _retval  = []
+	    _current = 0
 
-                  # Move current by the actual amount of rows returned
-                  #
-                  _current = _current + _tokens.length
-               end
+	    loop do
+	       _contracts_api = Steem_Engine.contracts_api chain
+	       _tokens        = contracts_api.find(
+		  contract:   "tokens",
+		  table:      "tokens",
+		  query:      Steem_Engine::QUERY_ALL,
+		  limit:      Steem_Engine::QUERY_LIMIT,
+		  offset:     _current,
+		  descending: false)
 
-               return _retval
-            end # all
-         end # self
+	       # Exit loop when no result set is returned.
+	       #
+	       break if (not _tokens) || (_tokens.length == 0)
+	       _retval += _tokens.map do |_token|
+		  SCC::Token.new _token
+	       end
+
+	       # Move current by the actual amount of rows returned
+	       #
+	       _current = _current + _tokens.length
+	    end
+
+	    return _retval
+	 end # all
+      end # self
    end # Token
 end # SCC
 

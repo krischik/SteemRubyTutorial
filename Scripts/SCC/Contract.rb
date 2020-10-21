@@ -1,6 +1,6 @@
-#!/opt/local/bin/ruby
+#!/usr/local/opt/ruby/bin/ruby
 ############################################################# {{{1 ##########
-#  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
+#  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "radiator", :require => "steem"
+gem "radiator", :version=>'1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
@@ -40,40 +40,40 @@ module SCC
 
       public
 
-         ##
-         # create instance form Steem Engine JSON object.
-         #
-         # @param [Hash]
-         #    JSON object from contract API.
-         #
-         Contract Any => nil
-         def initialize(contract)
-            super(:name, contract.name)
+      ##
+      # create instance form Steem Engine JSON object.
+      #
+      # @param [Hash]
+      #    JSON object from contract API.
+      #
+      Contract Any => nil
+      def initialize(contract)
+	 super(:name, contract.name)
 
-            @name      = contract.name
-            @owner     = contract.owner
-            @code      = contract.code
-            @code_hash = contract.codeHash
-            @tables    = contract.tables
+	 @name      = contract.name
+	 @owner     = contract.owner
+	 @code      = contract.code
+	 @code_hash = contract.codeHash
+	 @tables    = contract.tables
 
-            return
-         end
+	 return
+      end
 
-         class << self
-            ##
-            #
-            #  @param [String] name
-            #     name of contract
-            #  @return [SCC::Contract]
-            #     contract found
-            #
-            Contract String => SCC::Contract
-            def symbol (name)
-               _contract = Steem_Engine.contracts_api.contract name
+      class << self
+	 ##
+	 #
+	 #  @param [String] name
+	 #     name of contract
+	 #  @return [SCC::Contract]
+	 #     contract found
+	 #
+	 Contract String => SCC::Contract
+	 def symbol (name)
+	    _contract = Steem_Engine.contracts_api.contract name
 
-               return SCC::Contract.new _contract
-            end
-         end # self
+	    return SCC::Contract.new _contract
+	 end
+      end # self
    end # Token
 end # SCC
 

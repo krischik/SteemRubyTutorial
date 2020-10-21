@@ -1,6 +1,6 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
 ############################################################# {{{1 ##########
-#  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
+#  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -16,21 +16,22 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the steem-ruby gem. This is
-# only needed if you have both steem-api and radiator
-# installed.
-
-gem "steem-ruby", :require => "steem"
-
 require 'pp'
 require 'colorize'
-require 'radiator'
 
-# The Amount class is used in most Scripts so it was moved
-# into a separate file.
+# initialize access to the steem or hive blockchain.
+# The script will initialize the constant Chain_Options
+# with suitable parameter for the chain selected with
+# the  `CHAIN_ID` environment variable.
 
+require_relative 'Radiator/Chain'
 require_relative 'Radiator/Amount'
 require_relative 'Radiator/Price'
+
+##
+# Store the chain name for convenience.
+#
+Chain = Chain_Options[:chain]
 
 ##
 # Class to hold a vesting delegation. The vesting holds the
@@ -63,13 +64,14 @@ class Vesting < Radiator::Type::Serializer
    #     `list_vesting_delegations`.
    #
    Contract HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]] => nil
+
    def initialize(value)
       super(:id, value)
 
       @id                  = value.id
       @delegator           = value.delegator
       @delegatee           = value.delegatee
-      @vesting_shares      = Radiator::Type::Amount.new(value.vesting_shares)
+      @vesting_shares      = Radiator::Type::Amount.new(value.vesting_shares, Chain)
       @min_delegation_time = Time.strptime(value.min_delegation_time + ":Z", "%Y-%m-%dT%H:%M:%S:%Z")
 
       return
@@ -86,21 +88,24 @@ class Vesting < Radiator::Type::Serializer
    #    formatted value
    #
    Contract None => String
+
    def to_ansi_s
       # All the magic happens in the `%` operators which
       # calls sprintf which in turn formats the string.
-      return (
-      "%1$10d | " +
-         "%2$-16s ⇒ " +
-         "%3$-16s | " +
-         "%4$-68s | " +
-         "%5$20s | ") % [
-         @id,
-         @delegator,
-         @delegatee,
-         @vesting_shares.to_ansi_s,
-         @min_delegation_time.strftime("%Y-%m-%d %H:%M:%S")
-      ]
+      return(
+         (
+         "%1$10d | " +
+            "%2$-16s ⇒ " +
+            "%3$-16s | " +
+            "%4$-68s | " +
+            "%5$20s | "
+         ) % [
+            @id,
+            @delegator,
+            @delegatee,
+            @vesting_shares.to_ansi_s,
+            @min_delegation_time.strftime("%Y-%m-%d %H:%M:%S")
+         ])
    end
 
    # to_ansi_s
@@ -118,6 +123,7 @@ class Vesting < Radiator::Type::Serializer
       #     list of vesting
       #
       Contract ArrayOf[HashOf[String => Or[String, Num, HashOf[String => Or[String, Num]]]]] => nil
+
       def print_list (vesting)
          vesting.each do |vest|
             _vest = Vesting.new vest
@@ -135,6 +141,7 @@ class Vesting < Radiator::Type::Serializer
       #     account of the posting.
       #
       Contract String => nil
+
       def print_account (account)
 
          puts("-----------|------------------+------------------+--------------------------------------------------------------------+----------------------+")
@@ -204,15 +211,12 @@ begin
    # give us access to to the global properties and median
    # history
 
-   Condenser_Api = Radiator::CondenserApi.new
+   Condenser_Api = Radiator::CondenserApi.new Chain_Options
 
    # read the global properties and median history values
    # and calculate the conversion Rate for steem to SBD
    # We use the Amount class from Part 2 to convert the
    # string values into amounts.
-
-   _median_history_price = Radiator::Type::Price.new Condenser_Api.get_current_median_history_price.result
-   SBD_Median_Price      = _median_history_price.sbd_median_price
 
    # read the global properties and
    # calculate the conversion Rate for VESTS to steem. We
@@ -220,15 +224,15 @@ begin
    # values into amounts.
 
    _global_properties        = Condenser_Api.get_dynamic_global_properties.result
-   _total_vesting_fund_steem = Radiator::Type::Amount.new _global_properties.total_vesting_fund_steem
-   _total_vesting_shares     = Radiator::Type::Amount.new _global_properties.total_vesting_shares
+   _total_vesting_fund_steem = Radiator::Type::Amount.new(_global_properties.total_vesting_fund_steem, Chain)
+   _total_vesting_shares     = Radiator::Type::Amount.new(_global_properties.total_vesting_shares, Chain)
    Conversion_Rate_Vests     = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 
-rescue => error
-   # I am using `Kernel::abort` so the script ends when
-   # data can't be loaded
-
-   Kernel::abort("Error reading global properties:\n".red + error.to_s)
+   #  rescue => error
+   #   # I am using `Kernel::abort` so the script ends when
+   #   # data can't be loaded
+   #
+   #   Kernel::abort("Error reading global properties:\n".red + error.to_s)
 end
 
 if ARGV.length == 0 then

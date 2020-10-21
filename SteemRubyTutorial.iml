@@ -59,7 +59,13 @@
     </shared>
   </component>
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$/../../Projects/SteemRubyTutorial">
+      <sourceFolder url="file://$MODULE_DIR$/../../Projects/SteemRubyTutorial/Test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../Projects/SteemRubyTutorial/Scripts" />
+      <sourceFolder url="file://$MODULE_DIR$/../../Projects/SteemRubyTutorial/Frameworks/Radiator/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/../../Projects/SteemRubyTutorial/Pictures" />
+      <excludeFolder url="file://$MODULE_DIR$/../../Projects/SteemRubyTutorial/Wiki" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="awesome_print (v1.8.0, ruby-2.5.3-p105) [gem]" level="application" />

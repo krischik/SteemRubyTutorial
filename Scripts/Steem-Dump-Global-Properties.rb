@@ -1,6 +1,6 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
 ############################################################# {{{1 ##########
-#  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
+#  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -16,21 +16,16 @@
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
 
-# use the "steem.rb" file from the steem-ruby gem. This is
-# only needed if you have both steem-api and radiator
-# installed.
-
-gem "steem-ruby", :require => "steem"
-
 require 'pp'
 require 'colorize'
-require 'steem'
+
+require_relative 'Steem/Chain'
 
 begin
    # create instance to the steem condenser API which
    # will give us access to
 
-   Condenser_Api = Steem::CondenserApi.new
+   Condenser_Api = Steem::CondenserApi.new Chain_Options
 
    # read the global properties. Yes, it's as simple as
    # this.

@@ -1,6 +1,6 @@
-#!/opt/local/bin/ruby
+#!/usr/local/opt/ruby/bin/ruby
 ############################################################# {{{1 ##########
-#  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
+#  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 # only needed if you have both steem-api and radiator
 # installed.
 
-gem "radiator", :require => "steem"
+gem "radiator", :version=>'1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'
@@ -41,63 +41,51 @@ require_relative 'Amount'
 module Radiator
    module Type
       class Price
-         include Contracts::Core
-         include Contracts::Builtin
+	 include Contracts::Core
+	 include Contracts::Builtin
 
-         ##
-         # add the missing attribute reader.
-         #
-         attr_reader :base, :quote
+	 class << self
+	    @@condenser_api         = ::Hash.new
 
-         ##
-         # the actual conversion rate between Steem and
-         # SBD.
-         #
-         Contract None => Num
-         def to_f
-            return @base.amount.to_f / @quote.amount.to_f
-         end
+	    ##
+	    # create instance to the steem condenser API
+	    # which will give us access to to the global
+	    # properties and median history.
+	    #
+	    # @param [Symbol] chain
+	    # 	  chain for which to create an api instance
+	    # @return [Steem::CondenserApi]
+	    #     The condenser API
+	    #
+	    Contract Symbol => Radiator::CondenserApi
+	    def condenser_api(chain)
+	       unless @@condenser_api.key? chain then
+		  @@condenser_api.store(chain, Radiator::CondenserApi.new({chain: chain}))
+	       end
 
-         class << self
-            ##
-            # create instance to the steem condenser API
-            # which will give us access to to the global
-            # properties and median history.
-            #
-            # return [Steem::CondenserApi]
-            #     The condenser API
-            #
-            Contract None => Radiator::CondenserApi
-            def condenser_api
-               if @condenser_api == nil then
-                  @condenser_api = Radiator::CondenserApi.new
-               end
+	       return @@condenser_api[chain]
+	    rescue => error
+	       Kernel::abort("Error creating condenser API :\n".red + error.to_s)
+	    end
 
-               return @condenser_api
-            rescue => error
-               # I am using Kernel::abort so the code
-               # snipped including error handler can be
-               # copy pasted into other scripts
+	    ##
+	    # read the  median history value and Calculate
+	    # the conversion Rate for Vests to steem backed
+	    # dollar. We use the Amount class from Part 2
+	    # to convert the string values into amounts.
+	    #
+	    # @param [Symbol] chain
+	    # 	  chain for which to create an api instance
+	    # @return [Float]
+	    #    Conversion rate Steem ⇔ SBD
+	    #
+	    Contract Symbol => Radiator::Type::Price
+	    def get(chain)
+	       _median_history_price = condenser_api(chain).get_current_median_history_price.result
 
-               Kernel::abort("Error creating condenser API :\n".red + error.to_s)
-            end
-
-            ##
-            # read the  median history value and Calculate
-            # the conversion Rate for Vests to steem backed
-            # dollar. We use the Amount class from Part 2
-            # to convert the string values into amounts.
-            #
-            # @return [Float]
-            #    Conversion rate Steem ⇔ SBD
-            #
-            Contract None => Radiator::Type::Price
-            def get
-               _median_history_price = self.condenser_api.get_current_median_history_price.result
-
-               return Radiator::Type::Price.new _median_history_price
-            end
-         end # self
+	       return Radiator::Type::Price.new(_median_history_price, chain)
+	    end
+	 end # self
       end # Price
    end # Type
 end # Radiator

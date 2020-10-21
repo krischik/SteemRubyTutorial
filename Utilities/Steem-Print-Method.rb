@@ -1,6 +1,6 @@
-#!/opt/local/bin/ruby
+#!/usr/local/opt/ruby/bin/ruby
 ############################################################## {{{1 ##########
-#  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
+#  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 # use the "steem.rb" file from the steem-ruby gem. This is only needed if you have
 # both steem-api and radiator installed.
 
-gem "radiator", :require => "steem"
+gem "radiator", :version=>'1.0.0', :require => "steem"
 
 require 'pp'
 require 'colorize'

@@ -153,8 +153,8 @@ read arguments from command line
 Calculate the conversion Rate. We use the Amount class from [Part 2](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) to convert the string values into amounts.
 
 ```ruby
-   _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
-   _total_vesting_shares     = Amount.new Global_Properties.total_vesting_shares
+   _total_vesting_fund_steem = Amount.new Chain_Configuration.total_vesting_fund_steem
+   _total_vesting_shares     = Amount.new Chain_Configuration.total_vesting_shares
    _conversion_rate          = _total_vesting_fund_steem / _total_vesting_shares
 ```
 
@@ -212,8 +212,8 @@ read arguments from command line
 Calculate the conversion Rate. We use the Amount class from [Part 2 of the tutorial](https://steemit.com/@krischik/using-steem-api-with-ruby-part-2) to convert the string values into amounts.
 
 ```ruby
-   _total_vesting_fund_steem = Amount.new Global_Properties.total_vesting_fund_steem
-   _total_vesting_shares     = Amount.new Global_Properties.total_vesting_shares
+   _total_vesting_fund_steem = Amount.new Chain_Configuration.total_vesting_fund_steem
+   _total_vesting_shares     = Amount.new Chain_Configuration.total_vesting_shares
    _conversion_rate          = _total_vesting_fund_steem / _total_vesting_shares
 ```
 

@@ -94,7 +94,7 @@ Create instance to the steem condenser API which will give us access to
 Read the global properties. Yes, it's as simple as this.
 
 ```ruby
-   Global_Properties = Condenser_Api.get_dynamic_global_properties
+   Chain_Configuration = Condenser_Api.get_dynamic_global_properties
 rescue => error
 ```
 
@@ -108,7 +108,7 @@ end
 Pretty print the result. It might look strange to do so outside the begin / rescue but the value is now available in constant for the rest of the script. Do note that using constant is only suitable for short running script.  Long running scripts would need to re-read the value on a regular basis.
 
 ```ruby
-pp Global_Properties
+pp Chain_Configuration
 ```
 
 -----
@@ -140,7 +140,7 @@ Create instance to the steem condenser API which will give us access to
 Read the global properties. Yes, it's as simple as this.
 
 ```ruby
-   Global_Properties = Condenser_Api.get_dynamic_global_properties
+   Chain_Configuration = Condenser_Api.get_dynamic_global_properties
 rescue => error
 ```
 
@@ -154,7 +154,7 @@ end
 Pretty print the result. It might look strange to do so outside the begin / rescue but the value is now available in constant for the rest of the script. Do note that using constant is only suitable for short running script.  Long running scripts would need to re-read the value on a regular basis.
 
 ```ruby
-pp Global_Properties
+pp Chain_Configuration
 ```
 
 -----
