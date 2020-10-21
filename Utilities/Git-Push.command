@@ -1,6 +1,6 @@
 #!/opt/local/bin/zsh
 ############################################################# {{{1 ##########
-#  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
+#  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -15,42 +15,60 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see «http://www.gnu.org/licenses/».
 ############################################################# }}}1 ##########
-#
-# Push current branch, develop and master:
-#
-# ⑴ stash changes
-# ⑵ merge server version of develop with local develop and push
-# ⑶ merge server version of master with local master push
-# ⑷ unstash changes
-#
-# This is needed to merge develop into your feature branch to avoid merger
-# confict within the pull requests.
-#
+
+if test -z "${PROJECT_HOME}"; then
+    source "${0:h}/Setup.command"
+fi
 
 setopt Err_Exit
 setopt No_XTrace
 
-local Current_Branch=$(git branch | grep "*" | cut -d ' ' -f2)
 
-git stash push
-git fetch --all
-git fetch --prune
-git fetch --tags
+pushd "${PROJECT_HOME}"
+    git status
+    git submodule foreach git status
 
-git checkout    "master"
-git merge       "FETCH_HEAD"
-git push 
+    read -sk1 "? push (Y/N): "
+    echo
 
-git checkout    "develop"
-git merge       "FETCH_HEAD"
-git push 
+    if test "${REPLY:u}" = "Y"; then
+        for I in				\
+            "Frameworks/radiator"		\
+            "Frameworks/steem-ruby"		\
+            "Frameworks/steem-mechanize"	\
+            "Wiki"				\
+            "."
+        do
+            pushd "${I}"
+                echo "### Push ${Task_Type} «${Task_No}» for «${I}»"
 
-git checkout    "${Current_Branch}"
-git push --all
-git stash pop
+# local Current_Branch=$(git branch | grep "*" | cut -d ' ' -f2)
+# git stash push
+# git fetch --all
+# git fetch --prune
+# git fetch --tags
 
-git push --tags
+# git checkout    "master"
+# git merge       "FETCH_HEAD"
+# git push        "origin"
 
-############################################################ {{{1 ###########
-# vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 expandtab :
+# git checkout    "develop"
+# git merge       "FETCH_HEAD"
+# git push         "origin"
+
+# git checkout    "${Current_Branch}"
+# git push 
+# git stash pop
+
+# git push --tags
+
+                git push "origin"
+            popd
+        done; unset I
+    fi
+popd
+
+############################################################## {{{1 ##########
+# vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
 # vim: set textwidth=0 filetype=zsh foldmethod=marker nospell :
+#!/opt/local/bin/zsh

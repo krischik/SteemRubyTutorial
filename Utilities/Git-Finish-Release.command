@@ -50,6 +50,9 @@ if test ${#} -eq 1; then
 
 		    git flow release finish "${in_Task}"
 		    git push
+		    git checkout master
+		    git push origin
+		    git checkout develop
 		popd
 	    done; unset I
 	fi
