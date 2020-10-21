@@ -26,7 +26,7 @@ pushd "${PROJECT_HOME}/Frameworks/radiator"
     for I in				\
 	"amount_test"
     do
-	ruby -I "lib" -I "test" "test/steem/${I}.rb"
+	ruby -I "lib" -I "test" "test/radiator/${I}.rb"
     done; unset I
 
     gem build	"radiator.gemspec"

@@ -20,26 +20,51 @@ setopt No_XTrace
 setopt No_Err_Exit
 setopt Multi_OS
 
-function Update ()
+function Update_Projects ()
 {
     local in_Gem="${1}"
 
-    echo "##### Update for ${in_Gem}"
-    ${in_Gem} update $(${in_Gem} list | cut -d ' ' -f 1)
-    ${in_Gem} cleanup --verbose 
+    if test -x "${in_Gem}"; then
+        echo "##### Update Projects for ${in_Gem}"
+
+        pushd "${PROJECT_HOME}/Frameworks/radiator" 
+            ${in_Gem} build   "radiator.gemspec"
+            ${in_Gem} install "radiator"
+        popd
+
+        pushd "${PROJECT_HOME}/Frameworks/steem-ruby" 
+            ${in_Gem} build   "steem-ruby.gemspec"
+            ${in_Gem} install "steem-ruby"
+        popd
+
+        pushd "${PROJECT_HOME}/Frameworks/steem-mechanize" 
+            ${in_Gem} build   "steem-mechanize.gemspec"
+            ${in_Gem} install "steem-mechanize"
+        popd
+    fi
+}
+
+function Update_Library ()
+{
+    local in_Gem="${1}"
+
+    if test -x "${in_Gem}"; then
+        echo "##### Update Library for ${in_Gem}"
+
+        ${in_Gem} update $(${in_Gem} list | cut -d ' ' -f 1)
+        ${in_Gem} cleanup --verbose 
+    fi
 }
 
 if test "${USER}" = "root"; then
     for I in "gem2.5" "gem2.6" "gem2.6"; do
-        if test -x "/opt/local/bin/${I}"; then
-            Update "/opt/local/bin/${I}"
-        fi
+        Update_Library  "/opt/local/bin/${I}"
+        Update_Projects "/opt/local/bin/${I}"
     done; unset I
 else
     for I in "/usr/local/opt/ruby/bin/gem" "/usr/bin/gem"; do
-        if test -x "${I}"; then
-            Update "${I}"
-        fi
+        Update_Library  "${I}"
+        Update_Projects "${I}"
     done; unset I
 
     setopt Multi_OS

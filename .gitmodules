@@ -9,5 +9,5 @@
 	url = https://github.com/krischik/steem-mechanize
 [submodule "Wiki"]
 	path = Wiki
-	url = https://github.com/krischik/SteemRubyTutorial.wiki.git
+	url = https://gitlab.com/krischik/SteemRubyTutorial.wiki.git
 	branch = master

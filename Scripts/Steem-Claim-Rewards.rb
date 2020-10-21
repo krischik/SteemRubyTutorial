@@ -29,7 +29,7 @@ require_relative 'Radiator/Amount'
 
 if ARGV.length < 2 then
    puts "
-Claim-Rewards — Claim accont rewards
+Claim-Rewards — Claim account rewards
 
 Usage:
    Claim-Rewards account_name active_key
@@ -62,31 +62,31 @@ else
       User_Info = User_Infos.result[0]
 
       Reward_Steem = Radiator::Type::Amount.new User_Info.reward_steem_balance
-      Reward_SDB   = Radiator::Type::Amount.new User_Info.reward_sbd_balance
+      Reward_XDB   = Radiator::Type::Amount.new(get_chain_value(User_Info, 'reward_sbd_balance'), Chain)
       Reward_Vests = Radiator::Type::Amount.new User_Info.reward_vesting_balance
 
       puts("Rewards to claim for %1$s:" % Account_Name)
       puts("  Reward_Steem   = " + Reward_Steem.to_ansi_s)
-      puts("  Reward_SDB     = " + Reward_SDB.to_ansi_s)
+      puts("  Reward_SDB     = " + Reward_XDB.to_ansi_s)
       puts("  Reward_Vests   = " + Reward_Vests.to_ansi_s)
 
-      if Reward_SDB.to_f == 0 && Reward_SDB.to_f == 0 && Reward_Vests.to_f == 0 then
-	 puts("Nothing to claim.".yellow)
+      if Reward_XDB.to_f == 0 && Reward_XDB.to_f == 0 && Reward_Vests.to_f == 0 then
+         puts("Nothing to claim.".yellow)
       else
-	 puts("Start claiming.")
+         puts("Start claiming.")
 
-	 Chain = Radiator::Chain.new(
-	    chain:        :steem,
-	    account_name: Account_Name,
-	    wif:          Active_Key)
+         Chain = Radiator::Chain.new(
+            chain:        :steem,
+            account_name: Account_Name,
+            wif:          Active_Key)
 
-	 Chain.claim_reward_balance(
+         Chain.claim_reward_balance(
             reward_steem: Reward_Steem.to_s,
-	    reward_sbd:   Reward_SDB.to_s,
-	    reward_vests: Reward_Vests.to_s)
-	 Chain.broadcast!
+            reward_sbd:   Reward_XDB.to_s,
+            reward_vests: Reward_Vests.to_s)
+         Chain.broadcast!
 
-	 puts("Finished claiming.")
+         puts("Finished claiming.")
       end
    end
 end

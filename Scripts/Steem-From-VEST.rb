@@ -70,7 +70,7 @@ else
    # The chain need to be passed as different chains have
    # different symbols
 
-   _total_vesting_fund_steem = Steem::Type::Amount.new(Global_Properties.total_vesting_fund_steem, Chain)
+   _total_vesting_fund_steem = Steem::Type::Amount.new(get_chain_value(Global_Properties, "total_vesting_fund_steem"), Chain)
    _total_vesting_shares     = Steem::Type::Amount.new(Global_Properties.total_vesting_shares, Chain)
    _conversion_rate          = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
 

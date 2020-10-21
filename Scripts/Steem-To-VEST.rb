@@ -76,9 +76,9 @@ else
    # The chain need to be passed as different chains have
    # different symbols
 
-   _total_vesting_fund_steem = Radiator::Type::Amount.new(Global_Properties.total_vesting_fund_steem, Chain)
-   _total_vesting_shares     = Radiator::Type::Amount.new(Global_Properties.total_vesting_shares, Chain)
-   _conversion_rate          = _total_vesting_fund_steem.to_f / _total_vesting_shares.to_f
+   _total_vesting_fund_x = Radiator::Type::Amount.new(get_chain_value(Global_Properties, 'total_vesting_fund_steem'), Chain)
+   _total_vesting_shares = Radiator::Type::Amount.new(Global_Properties.total_vesting_shares, Chain)
+   _conversion_rate      = _total_vesting_fund_x.to_f / _total_vesting_shares.to_f
 
    # read the  median history value and Calculate the
    # conversion Rate for Vests to steem backed dollar.
