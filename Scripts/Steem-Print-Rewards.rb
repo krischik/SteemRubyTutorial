@@ -58,26 +58,26 @@ else
       puts "No account not found.".yellow
    else
       User_Infos.result.each do |_user_infos|
-	 # extract the outstanding rewards
-	 # of the main steemit chain for the user
+         # extract the outstanding rewards
+         # of the main steemit chain for the user
 
 	 _reward_steem = Radiator::Type::Amount.new _user_infos.reward_steem_balance
-	 _reward_sdb   = Radiator::Type::Amount.new _user_infos.reward_sbd_balance
+	 _reward_xdb   = Radiator::Type::Amount.new(get_chain_value(_user_infos, 'reward_sbd_balance'), Chain)
 	 _reward_vests = Radiator::Type::Amount.new _user_infos.reward_vesting_balance
 	 _account_name = _user_infos.name
 
 	 # print the outstanding rewards
 
-	 puts("Rewards to claim for %1$s:" % _account_name)
-	 puts("  Reward_Steem   = " + _reward_steem.to_ansi_s)
-	 puts("  Reward_SDB     = " + _reward_sdb.to_ansi_s)
-	 puts("  Reward_Vests   = " + _reward_vests.to_ansi_s)
+         puts("Rewards to claim for %1$s:" % _account_name)
+         puts("  Reward_Steem   = " + _reward_steem.to_ansi_s)
+         puts("  Reward_SDB     = " + _reward_xdb.to_ansi_s)
+         puts("  Reward_Vests   = " + _reward_vests.to_ansi_s)
 
-	 # get the users steem engine balances
+         # get the users steem engine balances
 
-	 # _scc_balances = SCC::Balance.account _account_name
+         # _scc_balances = SCC::Balance.account _account_name
 
-	 # pp _scc_balances
+         # pp _scc_balances
       end
    end
 end

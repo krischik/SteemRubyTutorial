@@ -1,6 +1,6 @@
 #!/opt/local/bin/zsh
 ############################################################# {{{1 ##########
-#  Copyright © 2019 Martin Krischik «krischik@users.sourceforge.net»
+#  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -19,22 +19,9 @@
 setopt No_XTrace
 setopt Err_Exit
 
-pushd "${PROJECT_HOME}/Frameworks/steem-ruby" 
-    # tests known to work. There are quite a few who don't work
-    # and only the original maintainer can fix them.
-
-    # for I in				\
-        # "account_history_api_test"	\
-	# "account_by_key_api_test"	\
-	# "amount_test"                   \
-	# "api_test"                      \
-	# "block_api_test"
-    # do
-	# ruby -I "lib" -I "test" "test/steem/${I}.rb"
-    # done; unset I
-
-    gem build "steem-ruby.gemspec"
-    gem install "steem-ruby"
+pushd ${PROJECT_HOME}
+    CHAIN_ID=steem Scripts/Steem-Dump-Config.rb
+    CHAIN_ID=hive  Scripts/Steem-Dump-Config.rb
 popd
 
 ############################################################ {{{1 ###########

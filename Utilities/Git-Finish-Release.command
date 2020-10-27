@@ -23,52 +23,48 @@ fi
 setopt Err_Exit
 setopt No_XTrace
 
+if test ${#} -eq 1; then
+    local   in_Task="${1}"
+    local Task_Type="${in_Task%%[0-9]*}"
+    local   Task_No="${in_Task#${Task_Type}}"
 
-pushd "${PROJECT_HOME}"
-    git status
-    git submodule foreach git status
+    pushd "${PROJECT_HOME}"
+	git status
+	git submodule foreach git status
 
-    read -sk1 "? push (Y/N): "
-    echo
+	echo "Task Type   : ${Task_Type}"
+	echo "Task Number : ${Task_No}"
+	read -sk1 "? finish and push (Y/N): "
+	echo
 
-    if test "${REPLY:u}" = "Y"; then
-        for I in				\
-            "Frameworks/radiator"		\
-            "Frameworks/steem-ruby"		\
-            "Frameworks/steem-mechanize"	\
-            "Wiki"				\
-            "."
-        do
-            pushd "${I}"
-                echo "### Push ${Task_Type} «${Task_No}» for «${I}»"
+	if test "${REPLY:u}" = "Y"; then
+	    for I in				\
+		"Frameworks/radiator"		\
+		"Frameworks/steem-ruby"		\
+		"Frameworks/steem-mechanize"	\
+		"Wiki"				\
+		"."
+	    do
+		pushd "${I}"
+		    echo "### Finishe ${Task_Type} «${Task_No}» for «${I}»"
 
-# local Current_Branch=$(git branch | grep "*" | cut -d ' ' -f2)
-# git stash push
-# git fetch --all
-# git fetch --prune
-# git fetch --tags
+		    git flow release finish "${in_Task}"
+		    git push
+		    git checkout master
+		    git push origin
+		    git checkout develop
+		popd
+	    done; unset I
+	fi
+    popd
+else
+   echo '
+Git-Finish-Feature Task
 
-# git checkout    "master"
-# git merge       "FETCH_HEAD"
-# git push        "origin"
-
-# git checkout    "develop"
-# git merge       "FETCH_HEAD"
-# git push         "origin"
-
-# git checkout    "${Current_Branch}"
-# git push 
-# git stash pop
-
-# git push --tags
-
-                git push "origin"
-            popd
-        done; unset I
-    fi
-popd
+    Task    Task to finish
+'
+fi
 
 ############################################################## {{{1 ##########
 # vim: set nowrap tabstop=8 shiftwidth=4 softtabstop=4 noexpandtab :
 # vim: set textwidth=0 filetype=zsh foldmethod=marker nospell :
-#!/opt/local/bin/zsh
