@@ -66,11 +66,11 @@ if test "${USER}" = "root"; then
     chgrp -R _developer "/Library/Ruby"
     chmod -R g=u "/Library/Ruby"
 else
+    sudo ${0:a} 1>&1 2>&2 &>~/Library/Logs/${0:r:t}.out
+
     for I in "/usr/local/opt/ruby/bin/gem" "/usr/bin/gem"; do
         Install "${I}"
     done; unset I
-
-    sudo ${0:a} 1>&1 2>&2 &>~/Library/Logs/${0:r:t}.out
 fi
 
 ############################################################ {{{1 ###########
