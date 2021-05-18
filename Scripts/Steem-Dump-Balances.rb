@@ -1,4 +1,4 @@
-#!/usr/local/opt/ruby/bin/ruby
+#!/opt/local/bin/ruby
 ############################################################# {{{1 ##########
 #  Copyright © 2019 … 2020 Martin Krischik «krischik@users.sourceforge.net»
 #############################################################################

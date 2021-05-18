@@ -59,7 +59,7 @@ function Install ()
 }
 
 if test "${USER}" = "root"; then
-    for I in "gem2.5" "gem2.6" "gem2.6"; do
+    for I in "gem2.5" "gem2.6" "gem2.6" "gem2.7"; do
         Install "/opt/local/bin/${I}"
     done; unset I
 
