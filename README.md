@@ -1,4 +1,6 @@
-Continue on GitLab: https://github.com/krischik/SteemRubyTutorial
+Moved to [SourceForge](https://sourceforge.net/projects/steem-ruby-tutorial/)
+
+![Moved and Archived](https://repository-images.githubusercontent.com/31208484/6c58e800-0d76-11eb-9d04-92456b4b7510)
 
 # Steem Ruby Tutorial
 
